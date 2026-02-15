@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: agentic-coding-app
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+logging:
+  pattern:
+    level: "%5p traceId=%X{traceId:-} spanId=%X{spanId:-}"
