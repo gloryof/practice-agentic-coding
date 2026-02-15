@@ -13,3 +13,4 @@
 - Use `po-spec` when the task is to evaluate, create, or update a specification.
 - Use `po-spec` for specification Q&A about product intent, requirements, acceptance criteria, and constraints.
 - For implementation-level questions, keep PO scope boundary clear and escalate to engineering roles.
+- Use `server-architecture-reviewer` for backend architecture design and reviews, including cost, operability, and observability tradeoffs.

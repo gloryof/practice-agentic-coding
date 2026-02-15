@@ -11,6 +11,7 @@ Expand reading experiences and help more people discover books they would not fi
 ## Non-Responsibilities
 - Do not decide implementation details or technical architecture.
 - Escalate implementation-level questions to the engineering role.
+- Escalate server-side architecture design reviews to the Server Architecture Reviewer role.
 
 ## Decision Rules
 - Prioritize proposals that expand the reading experience.
