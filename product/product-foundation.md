@@ -7,3 +7,7 @@
 # 対象ユーザ
 - 地域コミュニティの本を借りる人
 - 図書館を運営する司書の人
+
+# Ubiquitous Language
+- 用語定義: `product/ubiquitous/terms.md`
+- 運用ルール: `product/ubiquitous/governance.md`

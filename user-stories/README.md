@@ -31,6 +31,7 @@
 - Move to `InProgress` only when:
 - Acceptance criteria are testable and complete.
 - `API Impact` and `Test Scenarios` are filled (`None` is allowed).
+- Ubiquitous language alignment is confirmed with `product/ubiquitous/terms.md`.
 - Move to `Done` only when:
 - Acceptance criteria are covered by tests or explicit verification notes.
 - API coding rules compliance is confirmed for `api/` changes, or exceptions are documented.
@@ -44,3 +45,6 @@
 - `security-engineer-reviewer`
 - `server-architecture-reviewer`
 - For any work under `api/`, follow `api/AGENTS.md` and `api/docs/coding-rules.md`.
+- For terminology decisions and wording checks, refer to:
+- `product/ubiquitous/terms.md`
+- `product/ubiquitous/governance.md`
