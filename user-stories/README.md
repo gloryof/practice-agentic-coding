@@ -27,7 +27,8 @@
 - Ubiquitous language alignment is confirmed with `product/ubiquitous/terms.md`.
 - Move to `Done` only when:
 - Acceptance criteria are covered by tests or explicit verification notes.
-- Any implementation details (API/data/test design) are handled during implementation, not as required story sections.
+- Any implementation details (API/data/test design) are handled outside user stories.
+- API specifications must be managed under `api/docs/specs/` as separate documents.
 
 ## Routing
 - Use `po-story` for writing and refining stories.

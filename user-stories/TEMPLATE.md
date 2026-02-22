@@ -4,7 +4,9 @@
 Todo
 
 ## User Story
-As a <役割>, I want <達成したいこと>, so that <得られる価値>.
+As a <役割>,  
+I want <達成したいこと>,  
+so that <得られる価値>.
 
 ## User Benefit
 <ユーザー価値を1段落で記載>
@@ -13,3 +15,6 @@ As a <役割>, I want <達成したいこと>, so that <得られる価値>.
 - [ ] <受け入れ条件1>
 - [ ] <受け入れ条件2>
 - [ ] <受け入れ条件3>
+
+## Notes
+- API仕様は `api/docs/specs/` 配下の別ファイルで管理する。

@@ -71,12 +71,12 @@
 
 ### 6.2 リクエスト/レスポンス
 - `MUST` API入出力はDTOで定義し、Domainモデルを直接公開しない。
-- `MUST` JSONプロパティは `camelCase` を使用する。
+- `MUST` JSONプロパティは `snake_case` を使用する。
 - `SHOULD` 意味を持たない `null` フィールドは返却しない。
 
 ### 6.3 エラーとバリデーション
 - `MUST` 入力検証は Web 境界で実施し、失敗時は `400 Bad Request` を返す。
-- `MUST` エラーレスポンスは共通形式とし、`code`、`message`、`details`、`traceId` を含める。
+- `MUST` エラーレスポンスは共通形式とし、`code`、`message`、`details`、`trace_id` を含める。
 - `MUST NOT` スタックトレースや内部実装情報をクライアントへ返却しない。
 
 ## 7. クエリAPI規約

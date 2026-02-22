@@ -1,7 +1,7 @@
 # User Stories Index
 
 ## Priority Order
-1. US-0001 - Initialize story workflow and quality gates (`Todo`)
+1. US-0001 - 図書館利用者として登録しログインを開始できる (`Todo`)
 
 ## Status Legend
 - `Todo`
