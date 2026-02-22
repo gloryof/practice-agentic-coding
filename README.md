@@ -4,3 +4,6 @@ Codexを使ってAgentic Codingの連取をする場所。
 
 ## Docs
 - APIコーディングルール: `api/docs/coding-rules.md`
+
+## Checks
+- ローカル絶対パス参照の検知: `./scripts/check-no-local-paths.sh`
