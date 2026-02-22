@@ -8,7 +8,7 @@
 - Use one file per story.
 - File name format: `US-XXXX-<short-title>.md`.
 - Start from `US-0001` and keep the ID stable after creation.
-- If a story is deprecated, keep the file and mark it in `Notes` instead of deleting it.
+- If a story is deprecated, keep the file and set `Status` to `Done` with a short reason.
 
 ## Status Model
 - `Todo`: drafted and not started.
@@ -20,22 +20,14 @@
 - `User Story`
 - `User Benefit`
 - `Acceptance Criteria`
-- `Scope`
-- `API Impact`
-- `Data Impact`
-- `Test Scenarios`
-- `Dependencies`
-- `Notes`
 
 ## Gate Rules
 - Move to `InProgress` only when:
 - Acceptance criteria are testable and complete.
-- `API Impact` and `Test Scenarios` are filled (`None` is allowed).
 - Ubiquitous language alignment is confirmed with `product/ubiquitous/terms.md`.
 - Move to `Done` only when:
 - Acceptance criteria are covered by tests or explicit verification notes.
-- API coding rules compliance is confirmed for `api/` changes, or exceptions are documented.
-- Remaining issues are listed in `Notes` (`None` if empty).
+- Any implementation details (API/data/test design) are handled during implementation, not as required story sections.
 
 ## Routing
 - Use `po-story` for writing and refining stories.
