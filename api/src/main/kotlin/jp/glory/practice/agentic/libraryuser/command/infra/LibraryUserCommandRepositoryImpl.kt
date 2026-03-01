@@ -2,6 +2,7 @@ package jp.glory.practice.agentic.libraryuser.command.infra
 
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
+import jp.glory.practice.agentic.libraryuser.command.domain.model.EmailExistence
 import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUserCommandRepository
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
@@ -28,11 +29,12 @@ class LibraryUserCommandRepositoryImpl(
         }
     }
 
-    override fun existsByEmail(email: Email): Boolean {
-        return database.runQuery {
+    override fun existsByEmail(email: Email): EmailExistence {
+        val exists = database.runQuery {
             QueryDsl.from(table)
                 .where { table.email eq email.value }
                 .firstOrNull()
         } != null
+        return EmailExistence(exists)
     }
 }

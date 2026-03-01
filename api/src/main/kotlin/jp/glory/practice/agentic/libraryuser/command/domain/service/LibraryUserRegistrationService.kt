@@ -11,7 +11,7 @@ class LibraryUserRegistrationService(
     private val repository: LibraryUserCommandRepository,
 ) {
     fun verify(email: Email): Result<Unit, DomainError> {
-        if (repository.existsByEmail(email)) {
+        if (repository.existsByEmail(email).value) {
             return Err(DomainError.DuplicateEmail)
         }
         return Ok(Unit)

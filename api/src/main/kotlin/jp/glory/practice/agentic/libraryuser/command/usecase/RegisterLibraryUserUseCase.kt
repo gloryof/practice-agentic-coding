@@ -6,6 +6,7 @@ import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.zip
 import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
+import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
 import jp.glory.practice.agentic.auth.command.domain.service.PasswordHasher
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
@@ -78,7 +79,12 @@ class RegisterLibraryUserUseCase(
 
     private fun persistRegistration(context: RegistrationContext): RegistrationContext {
         libraryUserRepository.save(context.event)
-        authCredentialRepository.save(context.libraryUserId.value, passwordHasher.hash(context.rawPassword.value))
+        authCredentialRepository.save(
+            AuthCredential(
+                libraryUserId = context.libraryUserId,
+                passwordHash = passwordHasher.hash(context.rawPassword.value),
+            )
+        )
         return context
     }
 

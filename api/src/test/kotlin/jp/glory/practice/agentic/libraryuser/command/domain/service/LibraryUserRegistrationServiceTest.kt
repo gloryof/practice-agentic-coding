@@ -5,6 +5,7 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.fold
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
+import jp.glory.practice.agentic.libraryuser.command.domain.model.EmailExistence
 import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUserCommandRepository
 import jp.glory.practice.agentic.shared.domain.DomainError
 import kotlin.test.Test
@@ -15,7 +16,7 @@ class LibraryUserRegistrationServiceTest {
     fun `returns ok when email is unique`() {
         val repository = object : LibraryUserCommandRepository {
             override fun save(event: LibraryUserRegisteredEvent) = Unit
-            override fun existsByEmail(email: Email): Boolean = false
+            override fun existsByEmail(email: Email): EmailExistence = EmailExistence(false)
         }
         val service = LibraryUserRegistrationService(repository)
         val email = Email.create("user@example.com").fold(
@@ -31,7 +32,7 @@ class LibraryUserRegistrationServiceTest {
     fun `returns duplicate email error`() {
         val repository = object : LibraryUserCommandRepository {
             override fun save(event: LibraryUserRegisteredEvent) = Unit
-            override fun existsByEmail(email: Email): Boolean = true
+            override fun existsByEmail(email: Email): EmailExistence = EmailExistence(true)
         }
         val service = LibraryUserRegistrationService(repository)
         val email = Email.create("user@example.com").fold(

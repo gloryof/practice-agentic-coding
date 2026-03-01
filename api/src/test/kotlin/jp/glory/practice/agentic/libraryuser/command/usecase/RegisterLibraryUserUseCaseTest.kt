@@ -2,10 +2,13 @@ package jp.glory.practice.agentic.libraryuser.command.usecase
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.fold
+import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
+import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
 import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
 import jp.glory.practice.agentic.auth.command.domain.service.PasswordHasher
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
+import jp.glory.practice.agentic.libraryuser.command.domain.model.EmailExistence
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUserCommandRepository
 import jp.glory.practice.agentic.libraryuser.command.domain.service.LibraryUserRegistrationService
@@ -17,6 +20,12 @@ import java.time.Instant
 import java.time.ZoneOffset
 
 class RegisterLibraryUserUseCaseTest {
+    private fun hashed(value: String): PasswordHash =
+        PasswordHash.create(value).fold(
+            success = { it },
+            failure = { error("expected valid password hash") },
+        )
+
     @Test
     fun `registers user and credential`() {
         val userRepository = InMemoryLibraryUserRepository(false)
@@ -25,7 +34,7 @@ class RegisterLibraryUserUseCaseTest {
             registrationService = LibraryUserRegistrationService(userRepository),
             libraryUserRepository = userRepository,
             authCredentialRepository = credentialRepository,
-            passwordHasher = PasswordHasher { "hashed-$it" },
+            passwordHasher = PasswordHasher { hashed("hashed-$it") },
             clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
         )
 
@@ -35,7 +44,10 @@ class RegisterLibraryUserUseCaseTest {
                 assertEquals("user@example.com", it.email)
                 assertEquals("LibraryUserRegisteredEvent", it.eventName)
                 assertEquals(1, userRepository.userIds.size)
-                assertEquals("hashed-Str0ng!Passw0rd", credentialRepository.credentials[it.libraryUserId])
+                assertEquals(
+                    hashed("hashed-Str0ng!Passw0rd"),
+                    credentialRepository.credentials[LibraryUserId(it.libraryUserId)]
+                )
             },
             failure = { error("expected success") },
         )
@@ -48,7 +60,7 @@ class RegisterLibraryUserUseCaseTest {
             registrationService = LibraryUserRegistrationService(userRepository),
             libraryUserRepository = userRepository,
             authCredentialRepository = InMemoryAuthCredentialRepository(),
-            passwordHasher = PasswordHasher { "hashed-$it" },
+            passwordHasher = PasswordHasher { hashed("hashed-$it") },
             clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
         )
 
@@ -63,7 +75,7 @@ class RegisterLibraryUserUseCaseTest {
             registrationService = LibraryUserRegistrationService(userRepository),
             libraryUserRepository = userRepository,
             authCredentialRepository = InMemoryAuthCredentialRepository(),
-            passwordHasher = PasswordHasher { "hashed-$it" },
+            passwordHasher = PasswordHasher { hashed("hashed-$it") },
             clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
         )
 
@@ -81,16 +93,16 @@ class RegisterLibraryUserUseCaseTest {
             userIds.add(event.libraryUserId)
         }
 
-        override fun existsByEmail(email: Email): Boolean = existsByEmail
+        override fun existsByEmail(email: Email): EmailExistence = EmailExistence(existsByEmail)
     }
 
     private class InMemoryAuthCredentialRepository : AuthCredentialRepository {
-        val credentials = mutableMapOf<String, String>()
+        val credentials = mutableMapOf<LibraryUserId, PasswordHash>()
 
-        override fun save(libraryUserId: String, passwordHash: String) {
-            credentials[libraryUserId] = passwordHash
+        override fun save(credential: AuthCredential) {
+            credentials[credential.libraryUserId] = credential.passwordHash
         }
 
-        override fun findByLibraryUserId(libraryUserId: String) = null
+        override fun findByLibraryUserId(libraryUserId: LibraryUserId) = null
     }
 }

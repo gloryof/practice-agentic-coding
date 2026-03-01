@@ -1,7 +1,10 @@
 package jp.glory.practice.agentic.auth.command.infra
 
+import com.github.michaelbull.result.fold
 import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
+import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
 import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
+import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
 import org.komapper.core.dsl.query.firstOrNull
@@ -15,27 +18,30 @@ class AuthCredentialRepositoryImpl(
 ) : AuthCredentialRepository {
     private val table = Meta.authCredentialTable.clone(table = "auth_credentials")
 
-    override fun save(libraryUserId: String, passwordHash: String) {
+    override fun save(credential: AuthCredential) {
         database.runQuery {
             QueryDsl.insert(table).single(
                 AuthCredentialTable(
-                    libraryUserId = libraryUserId,
-                    passwordHash = passwordHash,
+                    libraryUserId = credential.libraryUserId.value,
+                    passwordHash = credential.passwordHash.value,
                 )
             )
         }
     }
 
-    override fun findByLibraryUserId(libraryUserId: String): AuthCredential? {
+    override fun findByLibraryUserId(libraryUserId: LibraryUserId): AuthCredential? {
         val credential = database.runQuery {
             QueryDsl.from(table)
-                .where { table.libraryUserId eq libraryUserId }
+                .where { table.libraryUserId eq libraryUserId.value }
                 .firstOrNull()
         } ?: return null
 
         return AuthCredential(
-            libraryUserId = credential.libraryUserId,
-            passwordHash = credential.passwordHash,
+            libraryUserId = LibraryUserId(credential.libraryUserId),
+            passwordHash = PasswordHash.create(credential.passwordHash).fold(
+                success = { it },
+                failure = { throw IllegalStateException("Invalid password hash stored in auth_credentials") }
+            ),
         )
     }
 }

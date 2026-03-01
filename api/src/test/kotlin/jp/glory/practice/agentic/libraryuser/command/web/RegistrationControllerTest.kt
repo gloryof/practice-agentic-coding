@@ -1,9 +1,14 @@
 package jp.glory.practice.agentic.libraryuser.command.web
 
+import com.github.michaelbull.result.fold
+import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
+import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
 import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
 import jp.glory.practice.agentic.auth.command.domain.service.PasswordHasher
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
+import jp.glory.practice.agentic.libraryuser.command.domain.model.EmailExistence
+import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUserCommandRepository
 import jp.glory.practice.agentic.libraryuser.command.domain.service.LibraryUserRegistrationService
 import jp.glory.practice.agentic.libraryuser.command.usecase.RegisterLibraryUserUseCase
@@ -21,6 +26,12 @@ import java.time.Instant
 import java.time.ZoneOffset
 
 class RegistrationControllerTest {
+    private fun hashed(value: String): PasswordHash =
+        PasswordHash.create(value).fold(
+            success = { it },
+            failure = { error("expected valid password hash") },
+        )
+
     @Test
     fun `returns 201 on success`() {
         val repo = InMemoryUserRepository(false)
@@ -28,7 +39,7 @@ class RegistrationControllerTest {
             registrationService = LibraryUserRegistrationService(repo),
             libraryUserRepository = repo,
             authCredentialRepository = InMemoryCredentialRepository(),
-            passwordHasher = PasswordHasher { "hashed-$it" },
+            passwordHasher = PasswordHasher { hashed("hashed-$it") },
             clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
         )
         val mvc = buildMockMvc(useCase)
@@ -50,7 +61,7 @@ class RegistrationControllerTest {
             registrationService = LibraryUserRegistrationService(repo),
             libraryUserRepository = repo,
             authCredentialRepository = InMemoryCredentialRepository(),
-            passwordHasher = PasswordHasher { "hashed-$it" },
+            passwordHasher = PasswordHasher { hashed("hashed-$it") },
             clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
         )
         val mvc = buildMockMvc(useCase)
@@ -73,7 +84,7 @@ class RegistrationControllerTest {
             registrationService = LibraryUserRegistrationService(repo),
             libraryUserRepository = repo,
             authCredentialRepository = InMemoryCredentialRepository(),
-            passwordHasher = PasswordHasher { "hashed-$it" },
+            passwordHasher = PasswordHasher { hashed("hashed-$it") },
             clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
         )
         val mvc = buildMockMvc(useCase)
@@ -98,12 +109,12 @@ class RegistrationControllerTest {
     private class InMemoryUserRepository(private val duplicated: Boolean) : LibraryUserCommandRepository {
         override fun save(event: LibraryUserRegisteredEvent) = Unit
 
-        override fun existsByEmail(email: Email): Boolean = duplicated
+        override fun existsByEmail(email: Email): EmailExistence = EmailExistence(duplicated)
     }
 
     private class InMemoryCredentialRepository : AuthCredentialRepository {
-        override fun save(libraryUserId: String, passwordHash: String) = Unit
+        override fun save(credential: AuthCredential) = Unit
 
-        override fun findByLibraryUserId(libraryUserId: String) = null
+        override fun findByLibraryUserId(libraryUserId: LibraryUserId) = null
     }
 }
