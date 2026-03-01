@@ -1,4 +1,4 @@
-package jp.glory.practice.agentic.auth.command.infra
+package jp.glory.practice.agentic.auth.command.infra.adapter.persistence
 
 import com.github.michaelbull.result.fold
 import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential

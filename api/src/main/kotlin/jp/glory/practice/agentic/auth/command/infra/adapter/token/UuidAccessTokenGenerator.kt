@@ -1,4 +1,4 @@
-package jp.glory.practice.agentic.auth.command.infra
+package jp.glory.practice.agentic.auth.command.infra.adapter.token
 
 import jp.glory.practice.agentic.auth.command.domain.service.AccessTokenGenerator
 import org.springframework.stereotype.Component

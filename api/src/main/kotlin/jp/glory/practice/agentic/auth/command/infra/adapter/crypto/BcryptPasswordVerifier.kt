@@ -1,4 +1,4 @@
-package jp.glory.practice.agentic.auth.command.infra
+package jp.glory.practice.agentic.auth.command.infra.adapter.crypto
 
 import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
 import jp.glory.practice.agentic.auth.command.domain.service.PasswordVerifier

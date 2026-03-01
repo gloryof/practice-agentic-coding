@@ -1,4 +1,4 @@
-package jp.glory.practice.agentic.libraryuser.command.infra
+package jp.glory.practice.agentic.libraryuser.command.infra.adapter.persistence
 
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email

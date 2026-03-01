@@ -1,4 +1,4 @@
-package jp.glory.practice.agentic.auth.command.infra
+package jp.glory.practice.agentic.auth.command.infra.adapter.persistence
 
 import org.komapper.annotation.KomapperEntity
 import org.komapper.annotation.KomapperId
