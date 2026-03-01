@@ -1,6 +1,20 @@
-build:
-  maxIssues: 0
+complexity:
+  CyclomaticComplexMethod:
+    active: true
+    allowedComplexity: 14
+  ComplexCondition:
+    active: false
+  LongMethod:
+    active: true
+    allowedLines: 25
+  NestedBlockDepth:
+    active: true
+    allowedDepth: 3
 
 style:
   MagicNumber:
+    active: false
+  ReturnCount:
+    active: false
+  UnusedParameter:
     active: false

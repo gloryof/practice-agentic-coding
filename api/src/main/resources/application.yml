@@ -1,6 +1,12 @@
 spring:
   application:
     name: agentic-coding-app
+  datasource:
+    url: jdbc:postgresql://localhost:5432/agentic
+    username: agentic
+    password: agentic
+  flyway:
+    enabled: true
 
 management:
   endpoints:
@@ -15,3 +21,7 @@ management:
 logging:
   pattern:
     level: "%5p traceId=%X{traceId:-} spanId=%X{spanId:-}"
+
+auth:
+  token:
+    expiration-seconds: 86400

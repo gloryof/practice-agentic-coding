@@ -22,7 +22,7 @@
 ```
 
 ## Login API
-- Endpoint: `POST /v1/auth/login`
+- Endpoint: `POST /api/v1/auth/login`
 - Request:
 ```json
 {
@@ -38,10 +38,15 @@
   "expires_in_seconds": 86400
 }
 ```
+- `expires_in_seconds` is configurable. Default is `86400`.
 
 ## Validation Rules
 - `email`: Required. Only half-width characters are allowed (no email format validation).
 - `password`: Required. At least 12 characters and must include uppercase, lowercase, number, and symbol.
+
+## Error Handling Policy
+- Business failures are represented as `Result` in Domain/Usecase layers.
+- HTTP error mapping and exception throwing are performed only in the Web layer.
 
 ## Error Contract
 - Common Error Response:
@@ -59,5 +64,5 @@
 }
 ```
 - Status Codes:
-  - `400 Bad Request`: Invalid input, duplicate email
-  - `401 Unauthorized`: Login failed
+  - `400 Bad Request`: Invalid input (`VALIDATION_ERROR`), duplicate email (`DUPLICATE_EMAIL`)
+  - `401 Unauthorized`: Login failed (`UNAUTHORIZED`)
