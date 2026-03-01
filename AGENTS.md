@@ -16,6 +16,7 @@
 - Use `server-architecture-reviewer` for backend architecture design and reviews, including cost, operability, and observability tradeoffs.
 - Use `security-engineer-reviewer` for security-focused design and coding reviews, including threat surfaces, access control, data protection, and remediation priorities.
 - Use `qa-test-reviewer` for QA-focused test code reviews, especially unit-test reliability, maintainability, flaky-risk analysis, and CI feedback quality.
+- Use `dba-reviewer` for database-focused design and change reviews, including schema integrity, migration safety, query/index performance, and operational recovery readiness.
 
 ## Skills
 A skill is a set of local instructions to follow that is stored in a `SKILL.md` file. Below is the list of skills that can be used. Each entry includes a name, description, and file path so you can open the source for full instructions when using a specific skill.
@@ -25,6 +26,7 @@ A skill is a set of local instructions to follow that is stored in a `SKILL.md` 
 - server-architecture-reviewer: Design and review backend architecture with explicit tradeoffs across operability, observability, and cost. Use when evaluating service boundaries, dependencies, deployment safety, incident readiness, scaling strategy, and architecture alternatives for server-side systems. (file: `.codex/skills/server-architecture-reviewer/SKILL.md`)
 - security-engineer-reviewer: Review security in both system design and implementation with explicit risk tradeoffs and actionable remediation. Use when evaluating threat surfaces, trust boundaries, authentication/authorization, data protection, dependency risk, and secure coding issues for backend or full-stack systems. (file: `.codex/skills/security-engineer-reviewer/SKILL.md`)
 - qa-test-reviewer: Review test code quality from a QA perspective, focused on unit-test reliability, maintainability, and execution efficiency. Use when evaluating test correctness, flaky risk, assertion quality, fixture/mocking strategy, and CI stability impact. (file: `.codex/skills/qa-test-reviewer/SKILL.md`)
+- dba-reviewer: Review database design and change plans with explicit risk tradeoffs across data integrity, performance, and operational safety. Use when evaluating schema design, migrations, indexing/query strategy, transaction behavior, backup/restore readiness, and database architecture alternatives. (file: `.codex/skills/dba-reviewer/SKILL.md`)
 
 ## Documentation Path Policy
 - AI-generated and human-authored documents `MUST NOT` include machine-local absolute paths (for example: `/Users/...`, `/home/...`, `C:\Users\...`, `file:///...`).
