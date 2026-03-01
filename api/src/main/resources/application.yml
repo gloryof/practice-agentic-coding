@@ -25,3 +25,9 @@ logging:
 auth:
   token:
     expiration-seconds: 86400
+
+springdoc:
+  api-docs:
+    enabled: ${OPENAPI_ENABLED:false}
+  swagger-ui:
+    enabled: ${OPENAPI_ENABLED:false}

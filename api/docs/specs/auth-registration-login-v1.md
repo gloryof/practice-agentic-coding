@@ -66,3 +66,11 @@
 - Status Codes:
   - `400 Bad Request`: Invalid input (`VALIDATION_ERROR`), duplicate email (`DUPLICATE_EMAIL`)
   - `401 Unauthorized`: Login failed (`UNAUTHORIZED`)
+
+## OpenAPI UI
+- OpenAPI UI/JSON is disabled by default.
+- Enable with environment variable:
+  - `cd api && OPENAPI_ENABLED=true ./gradlew bootRun`
+- Access URLs when enabled:
+  - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+  - OpenAPI JSON: `http://localhost:8080/v3/api-docs`

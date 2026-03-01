@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AgenticCodingAppApplicationKt" type="JetRunConfigurationType" nameIsGenerated="true">
+    <envs>
+      <env name="OPENAPI_ENABLED" value="true" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="jp.glory.practice.agentic.AgenticCodingAppApplicationKt" />
+    <module name="agentic-coding-app.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
