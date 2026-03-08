@@ -19,19 +19,23 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class LoginControllerTest {
+    private data class TestContext(
+        val mvc: MockMvc,
+        val useCase: LoginUseCase,
+    )
+
     @Test
     fun `returns 200 on success`() {
-        val useCase = mockk<LoginUseCase>()
-        every { useCase.login(any()) } returns Ok(
+        val context = createSut()
+        every { context.useCase.login(any()) } returns Ok(
             LoginResult(
                 accessToken = "token-123",
                 tokenType = "Bearer",
                 expiresInSeconds = 86400,
             )
         )
-        val mvc = buildMockMvc(useCase)
 
-        val response = mvc.perform(
+        val response = context.mvc.perform(
             post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}""")
@@ -43,11 +47,10 @@ class LoginControllerTest {
 
     @Test
     fun `returns 401 on auth failure`() {
-        val useCase = mockk<LoginUseCase>()
-        every { useCase.login(any()) } returns Err(UsecaseError.AuthenticationFailed)
-        val mvc = buildMockMvc(useCase)
+        val context = createSut()
+        every { context.useCase.login(any()) } returns Err(UsecaseError.AuthenticationFailed)
 
-        val response = mvc.perform(
+        val response = context.mvc.perform(
             post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"email":"user@example.com","password":"Str0ng!Wrong12"}""")
@@ -60,10 +63,9 @@ class LoginControllerTest {
 
     @Test
     fun `returns 400 on validation error`() {
-        val useCase = mockk<LoginUseCase>()
-        val mvc = buildMockMvc(useCase)
+        val context = createSut()
 
-        val response = mvc.perform(
+        val response = context.mvc.perform(
             post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"email":"","password":"short"}""")
@@ -73,13 +75,18 @@ class LoginControllerTest {
         assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
         assertTrue(response.contentAsString.contains("\"details\":["))
         assertTrue(response.contentAsString.contains("\"trace_id\":\""))
-        verify(exactly = 0) { useCase.login(any()) }
+        verify(exactly = 0) { context.useCase.login(any()) }
     }
 
-    private fun buildMockMvc(useCase: LoginUseCase): MockMvc {
+    private fun createSut(
+        useCase: LoginUseCase = mockk(),
+    ): TestContext {
         val builder: StandaloneMockMvcBuilder = MockMvcBuilders
             .standaloneSetup(LoginController(LoginRequestValidator(), useCase))
         builder.setControllerAdvice(GlobalExceptionHandler())
-        return builder.build()
+        return TestContext(
+            mvc = builder.build(),
+            useCase = useCase,
+        )
     }
 }

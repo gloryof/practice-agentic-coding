@@ -14,33 +14,43 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class LibraryUserRegistrationServiceTest {
+    private data class TestContext(
+        val sut: LibraryUserRegistrationService,
+        val repository: LibraryUserCommandRepository,
+    )
+
     @Test
     fun `returns ok when email is unique`() {
-        val repository = mockk<LibraryUserCommandRepository>()
-        every { repository.existsByEmail(any()) } returns EmailExistence(false)
-        val service = LibraryUserRegistrationService(repository)
+        val context = createSut()
+        every { context.repository.existsByEmail(any()) } returns EmailExistence(false)
         val email = Email.create("user@example.com").fold(
             success = { it },
             failure = { error("expected success") },
         )
 
-        val result = service.verify(email)
+        val result = context.sut.verify(email)
         assertEquals(Ok(Unit), result)
-        verify(exactly = 0) { repository.save(any()) }
+        verify(exactly = 0) { context.repository.save(any()) }
     }
 
     @Test
     fun `returns duplicate email error`() {
-        val repository = mockk<LibraryUserCommandRepository>()
-        every { repository.existsByEmail(any()) } returns EmailExistence(true)
-        val service = LibraryUserRegistrationService(repository)
+        val context = createSut()
+        every { context.repository.existsByEmail(any()) } returns EmailExistence(true)
         val email = Email.create("user@example.com").fold(
             success = { it },
             failure = { error("expected success") },
         )
 
-        val result = service.verify(email)
+        val result = context.sut.verify(email)
         assertEquals(Err(DomainError.DuplicateEmail), result)
-        verify(exactly = 0) { repository.save(any()) }
+        verify(exactly = 0) { context.repository.save(any()) }
+    }
+
+    private fun createSut(
+        repository: LibraryUserCommandRepository = mockk(),
+    ): TestContext {
+        val sut = LibraryUserRegistrationService(repository)
+        return TestContext(sut = sut, repository = repository)
     }
 }

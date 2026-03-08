@@ -19,41 +19,26 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class LoginUseCaseTest {
+    private data class TestContext(
+        val sut: LoginUseCase,
+        val authAccountRepository: AuthAccountRepository,
+        val authCredentialRepository: AuthCredentialRepository,
+    )
+
     private fun hashed(value: String): PasswordHash =
         PasswordHash.create(value).fold(
             success = { it },
             failure = { error("expected valid password hash") },
         )
 
-    private val authAccountRepository = mockk<AuthAccountRepository>()
-    private val authCredentialRepository = mockk<AuthCredentialRepository>()
-
-    private fun buildUseCase(passwordVerifier: PasswordVerifier): LoginUseCase {
-        val email = Email.create("user@example.com").fold(
-            success = { it },
-            failure = { error("expected valid email") },
-        )
-        every { authAccountRepository.findByEmail(any()) } returns AuthAccount(LibraryUserId("user-id"), email)
-        every { authCredentialRepository.findByLibraryUserId(any()) } returns AuthCredential(
-            LibraryUserId("user-id"),
-            hashed("hashed")
-        )
-        return LoginUseCase(
-            authAccountRepository = authAccountRepository,
-            authCredentialRepository = authCredentialRepository,
-            passwordVerifier = passwordVerifier,
-            accessTokenGenerator = AccessTokenGenerator { "token-123" },
-            expirationSeconds = 86400,
-        )
-    }
-
     @Test
     fun `returns token on valid credentials`() {
-        val useCase = buildUseCase(
-            PasswordVerifier { raw, hash -> raw == "Str0ng!Passw0rd" && hash.value == "hashed" }
+        val context = createSut(
+            passwordVerifier = PasswordVerifier { raw, hash -> raw == "Str0ng!Passw0rd" && hash.value == "hashed" }
         )
+        stubUserLookup(context)
 
-        val result = useCase.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
+        val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
         result.fold(
             success = {
                 assertEquals("token-123", it.accessToken)
@@ -62,24 +47,58 @@ class LoginUseCaseTest {
             },
             failure = { error("expected success") },
         )
-        verify(exactly = 0) { authCredentialRepository.save(any()) }
+        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
     }
 
     @Test
     fun `returns err on invalid credentials`() {
-        val useCase = buildUseCase(PasswordVerifier { _, _ -> false })
+        val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> false })
+        stubUserLookup(context)
 
-        val result = useCase.login(LoginInput("user@example.com", "Str0ng!Wrong12"))
+        val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Wrong12"))
         assertEquals(Err(UsecaseError.AuthenticationFailed), result)
-        verify(exactly = 0) { authCredentialRepository.save(any()) }
+        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
     }
 
     @Test
     fun `returns validation error on invalid email`() {
-        val useCase = buildUseCase(PasswordVerifier { _, _ -> true })
+        val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
 
-        val result = useCase.login(LoginInput("", "Str0ng!Passw0rd"))
+        val result = context.sut.login(LoginInput("", "Str0ng!Passw0rd"))
         assertEquals(Err(UsecaseError.Validation(field = "email", reason = "required")), result)
-        verify(exactly = 0) { authCredentialRepository.save(any()) }
+        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+    }
+
+    private fun createSut(
+        authAccountRepository: AuthAccountRepository = mockk(),
+        authCredentialRepository: AuthCredentialRepository = mockk(),
+        passwordVerifier: PasswordVerifier,
+        accessTokenGenerator: AccessTokenGenerator = AccessTokenGenerator { "token-123" },
+        expirationSeconds: Long = 86400,
+    ): TestContext {
+        val sut = LoginUseCase(
+            authAccountRepository = authAccountRepository,
+            authCredentialRepository = authCredentialRepository,
+            passwordVerifier = passwordVerifier,
+            accessTokenGenerator = accessTokenGenerator,
+            expirationSeconds = expirationSeconds,
+        )
+        return TestContext(
+            sut = sut,
+            authAccountRepository = authAccountRepository,
+            authCredentialRepository = authCredentialRepository,
+        )
+    }
+
+    private fun stubUserLookup(context: TestContext) {
+        val email = Email.create("user@example.com").fold(
+            success = { it },
+            failure = { error("expected valid email") },
+        )
+        every { context.authAccountRepository.findByEmail(any()) } returns AuthAccount(LibraryUserId("user-id"), email)
+        every { context.authCredentialRepository.findByLibraryUserId(any()) } returns AuthCredential(
+            LibraryUserId("user-id"),
+            hashed("hashed")
+        )
     }
 }

@@ -20,10 +20,15 @@ import kotlin.test.assertTrue
 import java.time.Instant
 
 class RegistrationControllerTest {
+    private data class TestContext(
+        val mvc: MockMvc,
+        val useCase: RegisterLibraryUserUseCase,
+    )
+
     @Test
     fun `returns 201 on success`() {
-        val useCase = mockk<RegisterLibraryUserUseCase>()
-        every { useCase.register(any()) } returns Ok(
+        val context = createSut()
+        every { context.useCase.register(any()) } returns Ok(
             RegisterLibraryUserResult(
                 libraryUserId = "user-id-1",
                 email = "user@example.com",
@@ -31,9 +36,8 @@ class RegistrationControllerTest {
                 eventName = "LibraryUserRegisteredEvent",
             )
         )
-        val mvc = buildMockMvc(useCase)
 
-        val response = mvc.perform(
+        val response = context.mvc.perform(
             post("/api/v1/library-users/registrations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}""")
@@ -45,10 +49,9 @@ class RegistrationControllerTest {
 
     @Test
     fun `returns 400 on validation error`() {
-        val useCase = mockk<RegisterLibraryUserUseCase>()
-        val mvc = buildMockMvc(useCase)
+        val context = createSut()
 
-        val response = mvc.perform(
+        val response = context.mvc.perform(
             post("/api/v1/library-users/registrations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"email":"","password":"short"}""")
@@ -57,16 +60,15 @@ class RegistrationControllerTest {
         assertEquals(400, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
         assertTrue(response.contentAsString.contains("\"trace_id\":\""))
-        verify(exactly = 0) { useCase.register(any()) }
+        verify(exactly = 0) { context.useCase.register(any()) }
     }
 
     @Test
     fun `returns 400 on duplicate email`() {
-        val useCase = mockk<RegisterLibraryUserUseCase>()
-        every { useCase.register(any()) } returns Err(UsecaseError.DuplicateEmail)
-        val mvc = buildMockMvc(useCase)
+        val context = createSut()
+        every { context.useCase.register(any()) } returns Err(UsecaseError.DuplicateEmail)
 
-        val response = mvc.perform(
+        val response = context.mvc.perform(
             post("/api/v1/library-users/registrations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}""")
@@ -76,10 +78,15 @@ class RegistrationControllerTest {
         assertTrue(response.contentAsString.contains("\"code\":\"DUPLICATE_EMAIL\""))
     }
 
-    private fun buildMockMvc(useCase: RegisterLibraryUserUseCase): MockMvc {
+    private fun createSut(
+        useCase: RegisterLibraryUserUseCase = mockk(),
+    ): TestContext {
         val builder: StandaloneMockMvcBuilder = MockMvcBuilders
             .standaloneSetup(RegistrationController(RegistrationRequestValidator(), useCase))
         builder.setControllerAdvice(GlobalExceptionHandler())
-        return builder.build()
+        return TestContext(
+            mvc = builder.build(),
+            useCase = useCase,
+        )
     }
 }
