@@ -1,18 +1,14 @@
 package jp.glory.practice.agentic.libraryuser.command.web
 
-import com.github.michaelbull.result.fold
-import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
-import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
-import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
-import jp.glory.practice.agentic.auth.command.domain.service.PasswordHasher
-import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
-import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
-import jp.glory.practice.agentic.libraryuser.command.domain.model.EmailExistence
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
-import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUserCommandRepository
-import jp.glory.practice.agentic.libraryuser.command.domain.service.LibraryUserRegistrationService
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import jp.glory.practice.agentic.libraryuser.command.usecase.RegisterLibraryUserResult
 import jp.glory.practice.agentic.libraryuser.command.usecase.RegisterLibraryUserUseCase
 import jp.glory.practice.agentic.shared.spring.GlobalExceptionHandler
+import jp.glory.practice.agentic.shared.usecase.UsecaseError
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -21,26 +17,19 @@ import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneOffset
 
 class RegistrationControllerTest {
-    private fun hashed(value: String): PasswordHash =
-        PasswordHash.create(value).fold(
-            success = { it },
-            failure = { error("expected valid password hash") },
-        )
-
     @Test
     fun `returns 201 on success`() {
-        val repo = InMemoryUserRepository(false)
-        val useCase = RegisterLibraryUserUseCase(
-            registrationService = LibraryUserRegistrationService(repo),
-            libraryUserRepository = repo,
-            authCredentialRepository = InMemoryCredentialRepository(),
-            passwordHasher = PasswordHasher { hashed("hashed-$it") },
-            clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
+        val useCase = mockk<RegisterLibraryUserUseCase>()
+        every { useCase.register(any()) } returns Ok(
+            RegisterLibraryUserResult(
+                libraryUserId = "user-id-1",
+                email = "user@example.com",
+                registeredAt = Instant.parse("2026-02-22T12:34:56Z"),
+                eventName = "LibraryUserRegisteredEvent",
+            )
         )
         val mvc = buildMockMvc(useCase)
 
@@ -56,14 +45,7 @@ class RegistrationControllerTest {
 
     @Test
     fun `returns 400 on validation error`() {
-        val repo = InMemoryUserRepository(false)
-        val useCase = RegisterLibraryUserUseCase(
-            registrationService = LibraryUserRegistrationService(repo),
-            libraryUserRepository = repo,
-            authCredentialRepository = InMemoryCredentialRepository(),
-            passwordHasher = PasswordHasher { hashed("hashed-$it") },
-            clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
-        )
+        val useCase = mockk<RegisterLibraryUserUseCase>()
         val mvc = buildMockMvc(useCase)
 
         val response = mvc.perform(
@@ -75,18 +57,13 @@ class RegistrationControllerTest {
         assertEquals(400, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
         assertTrue(response.contentAsString.contains("\"trace_id\":\""))
+        verify(exactly = 0) { useCase.register(any()) }
     }
 
     @Test
     fun `returns 400 on duplicate email`() {
-        val repo = InMemoryUserRepository(true)
-        val useCase = RegisterLibraryUserUseCase(
-            registrationService = LibraryUserRegistrationService(repo),
-            libraryUserRepository = repo,
-            authCredentialRepository = InMemoryCredentialRepository(),
-            passwordHasher = PasswordHasher { hashed("hashed-$it") },
-            clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
-        )
+        val useCase = mockk<RegisterLibraryUserUseCase>()
+        every { useCase.register(any()) } returns Err(UsecaseError.DuplicateEmail)
         val mvc = buildMockMvc(useCase)
 
         val response = mvc.perform(
@@ -104,17 +81,5 @@ class RegistrationControllerTest {
             .standaloneSetup(RegistrationController(RegistrationRequestValidator(), useCase))
         builder.setControllerAdvice(GlobalExceptionHandler())
         return builder.build()
-    }
-
-    private class InMemoryUserRepository(private val duplicated: Boolean) : LibraryUserCommandRepository {
-        override fun save(event: LibraryUserRegisteredEvent) = Unit
-
-        override fun existsByEmail(email: Email): EmailExistence = EmailExistence(duplicated)
-    }
-
-    private class InMemoryCredentialRepository : AuthCredentialRepository {
-        override fun save(credential: AuthCredential) = Unit
-
-        override fun findByLibraryUserId(libraryUserId: LibraryUserId) = null
     }
 }

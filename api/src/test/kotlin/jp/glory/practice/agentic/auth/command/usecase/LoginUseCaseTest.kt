@@ -2,6 +2,9 @@ package jp.glory.practice.agentic.auth.command.usecase
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.fold
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import jp.glory.practice.agentic.auth.command.domain.model.AuthAccount
 import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
 import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
@@ -22,20 +25,27 @@ class LoginUseCaseTest {
             failure = { error("expected valid password hash") },
         )
 
-    private fun buildUseCase(passwordVerifier: PasswordVerifier): LoginUseCase =
-        LoginUseCase(
-            authAccountRepository = object : AuthAccountRepository {
-                override fun findByEmail(email: Email) = AuthAccount(LibraryUserId("user-id"), email)
-            },
-            authCredentialRepository = object : AuthCredentialRepository {
-                override fun save(credential: AuthCredential) = Unit
-                override fun findByLibraryUserId(libraryUserId: LibraryUserId) =
-                    AuthCredential(libraryUserId, hashed("hashed"))
-            },
+    private val authAccountRepository = mockk<AuthAccountRepository>()
+    private val authCredentialRepository = mockk<AuthCredentialRepository>()
+
+    private fun buildUseCase(passwordVerifier: PasswordVerifier): LoginUseCase {
+        val email = Email.create("user@example.com").fold(
+            success = { it },
+            failure = { error("expected valid email") },
+        )
+        every { authAccountRepository.findByEmail(any()) } returns AuthAccount(LibraryUserId("user-id"), email)
+        every { authCredentialRepository.findByLibraryUserId(any()) } returns AuthCredential(
+            LibraryUserId("user-id"),
+            hashed("hashed")
+        )
+        return LoginUseCase(
+            authAccountRepository = authAccountRepository,
+            authCredentialRepository = authCredentialRepository,
             passwordVerifier = passwordVerifier,
             accessTokenGenerator = AccessTokenGenerator { "token-123" },
             expirationSeconds = 86400,
         )
+    }
 
     @Test
     fun `returns token on valid credentials`() {
@@ -52,6 +62,7 @@ class LoginUseCaseTest {
             },
             failure = { error("expected success") },
         )
+        verify(exactly = 0) { authCredentialRepository.save(any()) }
     }
 
     @Test
@@ -60,6 +71,7 @@ class LoginUseCaseTest {
 
         val result = useCase.login(LoginInput("user@example.com", "Str0ng!Wrong12"))
         assertEquals(Err(UsecaseError.AuthenticationFailed), result)
+        verify(exactly = 0) { authCredentialRepository.save(any()) }
     }
 
     @Test
@@ -68,5 +80,6 @@ class LoginUseCaseTest {
 
         val result = useCase.login(LoginInput("", "Str0ng!Passw0rd"))
         assertEquals(Err(UsecaseError.Validation(field = "email", reason = "required")), result)
+        verify(exactly = 0) { authCredentialRepository.save(any()) }
     }
 }

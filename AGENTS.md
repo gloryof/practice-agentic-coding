@@ -33,3 +33,7 @@ A skill is a set of local instructions to follow that is stored in a `SKILL.md` 
 - `MUST` use repository-relative paths for files in this repository (for example: `.codex/skills/po-spec/SKILL.md`).
 - `MUST` use environment variables for external paths only when unavoidable (for example: `$CODEX_HOME/skills/...`), and explain why.
 - `MUST` run `./scripts/check-no-local-paths.sh` before finalizing documentation changes.
+
+## Test Double Rules
+- `MUST` use MockK for test doubles when replacing dependencies across architectural layers in unit tests.
+- `SHOULD` verify invocations for side-effect methods that return `Unit` (for example: `save`, `publish`, `send`).
