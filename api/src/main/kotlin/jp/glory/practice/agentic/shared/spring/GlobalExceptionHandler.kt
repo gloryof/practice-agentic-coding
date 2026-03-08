@@ -1,8 +1,8 @@
 package jp.glory.practice.agentic.shared.spring
 
+import jakarta.servlet.http.HttpServletRequest
 import jp.glory.practice.agentic.shared.web.ApiError
 import jp.glory.practice.agentic.shared.web.ApiException
-import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.http.HttpStatus
@@ -15,8 +15,8 @@ class GlobalExceptionHandler {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(ApiException::class)
-    fun handleApiException(ex: ApiException): ResponseEntity<ApiError> {
-        return ResponseEntity
+    fun handleApiException(ex: ApiException): ResponseEntity<ApiError> =
+        ResponseEntity
             .status(ex.status)
             .body(
                 ApiError(
@@ -24,18 +24,20 @@ class GlobalExceptionHandler {
                     message = ex.message ?: "",
                     details = ex.details,
                     traceId = currentTraceId(),
-                )
+                ),
             )
-    }
 
     @ExceptionHandler(Exception::class)
-    fun handleUnexpectedException(ex: Exception, request: HttpServletRequest): ResponseEntity<ApiError> {
+    fun handleUnexpectedException(
+        ex: Exception,
+        request: HttpServletRequest,
+    ): ResponseEntity<ApiError> {
         logger.error(
             "Unhandled exception occurred. traceId={}, method={}, path={}",
             currentTraceId(),
             request.method,
             request.requestURI,
-            ex
+            ex,
         )
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -45,11 +47,9 @@ class GlobalExceptionHandler {
                     message = "システムエラーが発生しました。",
                     details = emptyList(),
                     traceId = currentTraceId(),
-                )
+                ),
             )
     }
 
-    private fun currentTraceId(): String {
-        return MDC.get(TraceIdFilter.TRACE_ID_MDC_KEY) ?: ""
-    }
+    private fun currentTraceId(): String = MDC.get(TraceIdFilter.TRACE_ID_MDC_KEY) ?: ""
 }

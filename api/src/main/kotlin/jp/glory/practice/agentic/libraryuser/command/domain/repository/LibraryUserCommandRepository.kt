@@ -6,5 +6,6 @@ import jp.glory.practice.agentic.libraryuser.command.domain.model.EmailExistence
 
 interface LibraryUserCommandRepository {
     fun save(event: LibraryUserRegisteredEvent)
+
     fun existsByEmail(email: Email): EmailExistence
 }

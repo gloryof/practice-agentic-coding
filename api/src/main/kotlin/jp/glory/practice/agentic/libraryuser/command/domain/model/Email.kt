@@ -6,7 +6,9 @@ import com.github.michaelbull.result.Result
 import jp.glory.practice.agentic.shared.domain.DomainError
 
 @JvmInline
-value class Email private constructor(val value: String) {
+value class Email private constructor(
+    val value: String,
+) {
     companion object {
         private val halfWidthRegex = Regex("^[\\u0020-\\u007E]+$")
 

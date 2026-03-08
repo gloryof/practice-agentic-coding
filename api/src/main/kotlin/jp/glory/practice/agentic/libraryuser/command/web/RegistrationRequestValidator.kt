@@ -9,17 +9,19 @@ import org.springframework.stereotype.Component
 
 @Component
 class RegistrationRequestValidator {
-    private val halfWidthValidation = Validation<String> {
-        pattern(Regex("^[\\u0020-\\u007E]+$"))
-    }
+    private val halfWidthValidation =
+        Validation<String> {
+            pattern(Regex("^[\\u0020-\\u007E]+$"))
+        }
 
-    private val passwordValidation = Validation<String> {
-        minLength(12)
-        pattern(Regex(".*[A-Z].*"))
-        pattern(Regex(".*[a-z].*"))
-        pattern(Regex(".*[0-9].*"))
-        pattern(Regex(".*[^A-Za-z0-9].*"))
-    }
+    private val passwordValidation =
+        Validation<String> {
+            minLength(12)
+            pattern(Regex(".*[A-Z].*"))
+            pattern(Regex(".*[a-z].*"))
+            pattern(Regex(".*[0-9].*"))
+            pattern(Regex(".*[^A-Za-z0-9].*"))
+        }
 
     fun validateOrThrow(request: RegisterLibraryUserRequest) {
         val details = mutableListOf<ApiErrorDetail>()

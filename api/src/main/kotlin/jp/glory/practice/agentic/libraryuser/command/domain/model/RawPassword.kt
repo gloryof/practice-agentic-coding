@@ -6,7 +6,9 @@ import com.github.michaelbull.result.Result
 import jp.glory.practice.agentic.shared.domain.DomainError
 
 @JvmInline
-value class RawPassword private constructor(val value: String) {
+value class RawPassword private constructor(
+    val value: String,
+) {
     companion object {
         private val uppercaseRegex = Regex(".*[A-Z].*")
         private val lowercaseRegex = Regex(".*[a-z].*")

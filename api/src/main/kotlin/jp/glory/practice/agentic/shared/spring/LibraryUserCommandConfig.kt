@@ -14,7 +14,5 @@ class LibraryUserCommandConfig {
     @Bean
     fun libraryUserRegistrationService(
         repository: LibraryUserCommandRepository,
-    ): LibraryUserRegistrationService {
-        return LibraryUserRegistrationService(repository)
-    }
+    ): LibraryUserRegistrationService = LibraryUserRegistrationService(repository)
 }

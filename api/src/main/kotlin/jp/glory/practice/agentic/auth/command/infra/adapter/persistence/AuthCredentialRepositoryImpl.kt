@@ -24,24 +24,27 @@ class AuthCredentialRepositoryImpl(
                 AuthCredentialTable(
                     libraryUserId = credential.libraryUserId.value,
                     passwordHash = credential.passwordHash.value,
-                )
+                ),
             )
         }
     }
 
     override fun findByLibraryUserId(libraryUserId: LibraryUserId): AuthCredential? {
-        val credential = database.runQuery {
-            QueryDsl.from(table)
-                .where { table.libraryUserId eq libraryUserId.value }
-                .firstOrNull()
-        } ?: return null
+        val credential =
+            database.runQuery {
+                QueryDsl
+                    .from(table)
+                    .where { table.libraryUserId eq libraryUserId.value }
+                    .firstOrNull()
+            } ?: return null
 
         return AuthCredential(
             libraryUserId = LibraryUserId(credential.libraryUserId),
-            passwordHash = PasswordHash.create(credential.passwordHash).fold(
-                success = { it },
-                failure = { throw IllegalStateException("Invalid password hash stored in auth_credentials") }
-            ),
+            passwordHash =
+                PasswordHash.create(credential.passwordHash).fold(
+                    success = { it },
+                    failure = { throw IllegalStateException("Invalid password hash stored in auth_credentials") },
+                ),
         )
     }
 }

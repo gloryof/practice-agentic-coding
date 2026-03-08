@@ -17,24 +17,27 @@ class LoginController(
     private val useCase: LoginUseCase,
 ) {
     @PostMapping
-    fun login(@RequestBody request: LoginRequest): LoginResponse {
+    fun login(
+        @RequestBody request: LoginRequest,
+    ): LoginResponse {
         validator.validateOrThrow(request)
 
-        return useCase.login(
-            LoginInput(
-                email = request.email!!,
-                password = request.password!!,
+        return useCase
+            .login(
+                LoginInput(
+                    email = request.email!!,
+                    password = request.password!!,
+                ),
+            ).fold(
+                success = {
+                    LoginResponse(
+                        accessToken = it.accessToken,
+                        tokenType = it.tokenType,
+                        expiresInSeconds = it.expiresInSeconds,
+                    )
+                },
+                failure = { throw toApiException(it) },
             )
-        ).fold(
-            success = {
-                LoginResponse(
-                    accessToken = it.accessToken,
-                    tokenType = it.tokenType,
-                    expiresInSeconds = it.expiresInSeconds,
-                )
-            },
-            failure = { throw toApiException(it) },
-        )
     }
 }
 

@@ -16,6 +16,7 @@ plugins {
     id("org.flywaydb.flyway") version "11.15.0"
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
     id("dev.detekt") version "2.0.0-alpha.1"
+    id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
 }
 
 group = "jp.glory.practice.agentic"
@@ -33,15 +34,21 @@ repositories {
 }
 
 val komapperVersion = "6.0.0"
-val flywayUrl = providers.gradleProperty("flywayUrl")
-    .orElse(providers.environmentVariable("FLYWAY_URL"))
-    .orElse("jdbc:postgresql://localhost:5432/agentic")
-val flywayUser = providers.gradleProperty("flywayUser")
-    .orElse(providers.environmentVariable("FLYWAY_USER"))
-    .orElse("agentic")
-val flywayPassword = providers.gradleProperty("flywayPassword")
-    .orElse(providers.environmentVariable("FLYWAY_PASSWORD"))
-    .orElse("agentic")
+val flywayUrl =
+    providers
+        .gradleProperty("flywayUrl")
+        .orElse(providers.environmentVariable("FLYWAY_URL"))
+        .orElse("jdbc:postgresql://localhost:5432/agentic")
+val flywayUser =
+    providers
+        .gradleProperty("flywayUser")
+        .orElse(providers.environmentVariable("FLYWAY_USER"))
+        .orElse("agentic")
+val flywayPassword =
+    providers
+        .gradleProperty("flywayPassword")
+        .orElse(providers.environmentVariable("FLYWAY_PASSWORD"))
+        .orElse("agentic")
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -87,8 +94,39 @@ detekt {
     source.setFrom("src/main/kotlin")
 }
 
+ktlint {
+    filter {
+        include("src/**/*.kt")
+        include("*.kts")
+    }
+}
+
+tasks.withType<org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask>().configureEach {
+    exclude("**/build/generated/**")
+}
+
+tasks.withType<org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask>().configureEach {
+    exclude("**/build/generated/**")
+}
+
+tasks.named<org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask>("runKtlintCheckOverMainSourceSet") {
+    setSource(fileTree("src/main/kotlin") { include("**/*.kt") })
+}
+
+tasks.named<org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask>("runKtlintFormatOverMainSourceSet") {
+    setSource(fileTree("src/main/kotlin") { include("**/*.kt") })
+}
+
+tasks.named<org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask>("runKtlintCheckOverTestSourceSet") {
+    setSource(fileTree("src/test/kotlin") { include("**/*.kt") })
+}
+
+tasks.named<org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask>("runKtlintFormatOverTestSourceSet") {
+    setSource(fileTree("src/test/kotlin") { include("**/*.kt") })
+}
+
 tasks.named("check") {
-    dependsOn("detekt")
+    dependsOn("detekt", "ktlintCheck")
 }
 
 flyway {

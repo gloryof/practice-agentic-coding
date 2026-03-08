@@ -6,7 +6,9 @@ import com.github.michaelbull.result.Result
 import jp.glory.practice.agentic.shared.domain.DomainError
 
 @JvmInline
-value class PasswordHash private constructor(val value: String) {
+value class PasswordHash private constructor(
+    val value: String,
+) {
     companion object {
         fun create(raw: String): Result<PasswordHash, DomainError> {
             if (raw.isBlank()) {

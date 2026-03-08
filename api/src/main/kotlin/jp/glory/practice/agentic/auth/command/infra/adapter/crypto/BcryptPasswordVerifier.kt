@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component
 class BcryptPasswordVerifier(
     private val encoder: BCryptPasswordEncoder,
 ) : PasswordVerifier {
-    override fun matches(rawPassword: String, hash: PasswordHash): Boolean {
-        return encoder.matches(rawPassword, hash.value)
-    }
+    override fun matches(
+        rawPassword: String,
+        hash: PasswordHash,
+    ): Boolean = encoder.matches(rawPassword, hash.value)
 }

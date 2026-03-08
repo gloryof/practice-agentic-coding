@@ -14,10 +14,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
+import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import java.time.Instant
 
 class RegistrationControllerTest {
     private data class TestContext(
@@ -28,20 +28,24 @@ class RegistrationControllerTest {
     @Test
     fun `returns 201 on success`() {
         val context = createSut()
-        every { context.useCase.register(any()) } returns Ok(
-            RegisterLibraryUserResult(
-                libraryUserId = "user-id-1",
-                email = "user@example.com",
-                registeredAt = Instant.parse("2026-02-22T12:34:56Z"),
-                eventName = "LibraryUserRegisteredEvent",
+        every { context.useCase.register(any()) } returns
+            Ok(
+                RegisterLibraryUserResult(
+                    libraryUserId = "user-id-1",
+                    email = "user@example.com",
+                    registeredAt = Instant.parse("2026-02-22T12:34:56Z"),
+                    eventName = "LibraryUserRegisteredEvent",
+                ),
             )
-        )
 
-        val response = context.mvc.perform(
-            post("/api/v1/library-users/registrations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}""")
-        ).andReturn().response
+        val response =
+            context.mvc
+                .perform(
+                    post("/api/v1/library-users/registrations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}"""),
+                ).andReturn()
+                .response
 
         assertEquals(201, response.status)
         assertTrue(response.contentAsString.contains("library_user_id"))
@@ -51,11 +55,14 @@ class RegistrationControllerTest {
     fun `returns 400 on validation error`() {
         val context = createSut()
 
-        val response = context.mvc.perform(
-            post("/api/v1/library-users/registrations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"","password":"short"}""")
-        ).andReturn().response
+        val response =
+            context.mvc
+                .perform(
+                    post("/api/v1/library-users/registrations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"email":"","password":"short"}"""),
+                ).andReturn()
+                .response
 
         assertEquals(400, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
@@ -68,21 +75,23 @@ class RegistrationControllerTest {
         val context = createSut()
         every { context.useCase.register(any()) } returns Err(UsecaseError.DuplicateEmail)
 
-        val response = context.mvc.perform(
-            post("/api/v1/library-users/registrations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}""")
-        ).andReturn().response
+        val response =
+            context.mvc
+                .perform(
+                    post("/api/v1/library-users/registrations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}"""),
+                ).andReturn()
+                .response
 
         assertEquals(400, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"DUPLICATE_EMAIL\""))
     }
 
-    private fun createSut(
-        useCase: RegisterLibraryUserUseCase = mockk(),
-    ): TestContext {
-        val builder: StandaloneMockMvcBuilder = MockMvcBuilders
-            .standaloneSetup(RegistrationController(RegistrationRequestValidator(), useCase))
+    private fun createSut(useCase: RegisterLibraryUserUseCase = mockk()): TestContext {
+        val builder: StandaloneMockMvcBuilder =
+            MockMvcBuilders
+                .standaloneSetup(RegistrationController(RegistrationRequestValidator(), useCase))
         builder.setControllerAdvice(GlobalExceptionHandler())
         return TestContext(
             mvc = builder.build(),

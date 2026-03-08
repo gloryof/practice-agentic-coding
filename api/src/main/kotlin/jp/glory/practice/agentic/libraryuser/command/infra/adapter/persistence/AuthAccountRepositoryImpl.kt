@@ -18,16 +18,19 @@ class AuthAccountRepositoryImpl(
     private val table = Meta.libraryUserTable.clone(table = "library_users")
 
     override fun findByEmail(email: Email): AuthAccount? {
-        val user = database.runQuery {
-            QueryDsl.from(table)
-                .where { table.email eq email.value }
-                .firstOrNull()
-        } ?: return null
+        val user =
+            database.runQuery {
+                QueryDsl
+                    .from(table)
+                    .where { table.email eq email.value }
+                    .firstOrNull()
+            } ?: return null
 
-        val storedEmail = Email.create(user.email).fold(
-            success = { it },
-            failure = { throw IllegalStateException("Invalid email stored in library_users: ${user.email}") }
-        )
+        val storedEmail =
+            Email.create(user.email).fold(
+                success = { it },
+                failure = { throw IllegalStateException("Invalid email stored in library_users: ${user.email}") },
+            )
 
         return AuthAccount(
             libraryUserId = LibraryUserId(user.id),

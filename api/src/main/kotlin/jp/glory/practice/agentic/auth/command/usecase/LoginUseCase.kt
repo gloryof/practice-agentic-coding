@@ -35,14 +35,14 @@ class LoginUseCase(
             { RawPassword.create(input.password) },
         ) { email, rawPassword ->
             ValidatedInput(email = email, rawPassword = rawPassword)
-        }
-            .mapError(UsecaseError::fromDomain)
+        }.mapError(UsecaseError::fromDomain)
             .andThen(::authenticate)
 
     private fun authenticate(input: ValidatedInput): Result<LoginResult, UsecaseError> {
         val user = authAccountRepository.findByEmail(input.email) ?: return Err(UsecaseError.AuthenticationFailed)
-        val credential = authCredentialRepository.findByLibraryUserId(user.libraryUserId)
-            ?: return Err(UsecaseError.AuthenticationFailed)
+        val credential =
+            authCredentialRepository.findByLibraryUserId(user.libraryUserId)
+                ?: return Err(UsecaseError.AuthenticationFailed)
         if (!passwordVerifier.matches(input.rawPassword.value, credential.passwordHash)) {
             return Err(UsecaseError.AuthenticationFailed)
         }
@@ -51,7 +51,7 @@ class LoginUseCase(
                 accessToken = accessTokenGenerator.generate(),
                 tokenType = "Bearer",
                 expiresInSeconds = expirationSeconds,
-            )
+            ),
         )
     }
 }

@@ -20,11 +20,11 @@ import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUs
 import jp.glory.practice.agentic.libraryuser.command.domain.service.LibraryUserRegistrationService
 import jp.glory.practice.agentic.shared.domain.DomainError
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class RegisterLibraryUserUseCaseTest {
     private data class TestContext(
@@ -42,10 +42,11 @@ class RegisterLibraryUserUseCaseTest {
         val eventSlot = slot<LibraryUserRegisteredEvent>()
         val credentialSlot = slot<AuthCredential>()
 
-        val context = createSut(
-            passwordHasher = PasswordHasher { hashed("hashed-$it") },
-            clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
-        )
+        val context =
+            createSut(
+                passwordHasher = PasswordHasher { hashed("hashed-$it") },
+                clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
+            )
         every { context.registrationService.verify(email) } returns Ok(Unit)
         every { context.libraryUserRepository.save(any()) } just Runs
         every { context.authCredentialRepository.save(any()) } just Runs
@@ -84,7 +85,7 @@ class RegisterLibraryUserUseCaseTest {
         val result = context.sut.register(RegisterLibraryUserInput("user@example.com", "short"))
         assertEquals(
             Err(UsecaseError.Validation(field = "password", reason = "must_meet_password_policy")),
-            result
+            result,
         )
         verify(exactly = 0) { context.libraryUserRepository.existsByEmail(any()) }
         verify(exactly = 0) { context.libraryUserRepository.save(any()) }
@@ -98,13 +99,14 @@ class RegisterLibraryUserUseCaseTest {
         passwordHasher: PasswordHasher = mockk(),
         clock: Clock = Clock.systemDefaultZone(),
     ): TestContext {
-        val sut = RegisterLibraryUserUseCase(
-            registrationService = registrationService,
-            libraryUserRepository = libraryUserRepository,
-            authCredentialRepository = authCredentialRepository,
-            passwordHasher = passwordHasher,
-            clock = clock
-        )
+        val sut =
+            RegisterLibraryUserUseCase(
+                registrationService = registrationService,
+                libraryUserRepository = libraryUserRepository,
+                authCredentialRepository = authCredentialRepository,
+                passwordHasher = passwordHasher,
+                clock = clock,
+            )
         return TestContext(
             sut = sut,
             registrationService = registrationService,

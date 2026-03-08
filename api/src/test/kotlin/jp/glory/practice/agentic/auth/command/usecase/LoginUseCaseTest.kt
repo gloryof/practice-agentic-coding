@@ -33,9 +33,10 @@ class LoginUseCaseTest {
 
     @Test
     fun `returns token on valid credentials`() {
-        val context = createSut(
-            passwordVerifier = PasswordVerifier { raw, hash -> raw == "Str0ng!Passw0rd" && hash.value == "hashed" }
-        )
+        val context =
+            createSut(
+                passwordVerifier = PasswordVerifier { raw, hash -> raw == "Str0ng!Passw0rd" && hash.value == "hashed" },
+            )
         stubUserLookup(context)
 
         val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
@@ -76,13 +77,14 @@ class LoginUseCaseTest {
         accessTokenGenerator: AccessTokenGenerator = AccessTokenGenerator { "token-123" },
         expirationSeconds: Long = 86400,
     ): TestContext {
-        val sut = LoginUseCase(
-            authAccountRepository = authAccountRepository,
-            authCredentialRepository = authCredentialRepository,
-            passwordVerifier = passwordVerifier,
-            accessTokenGenerator = accessTokenGenerator,
-            expirationSeconds = expirationSeconds,
-        )
+        val sut =
+            LoginUseCase(
+                authAccountRepository = authAccountRepository,
+                authCredentialRepository = authCredentialRepository,
+                passwordVerifier = passwordVerifier,
+                accessTokenGenerator = accessTokenGenerator,
+                expirationSeconds = expirationSeconds,
+            )
         return TestContext(
             sut = sut,
             authAccountRepository = authAccountRepository,
@@ -91,14 +93,16 @@ class LoginUseCaseTest {
     }
 
     private fun stubUserLookup(context: TestContext) {
-        val email = Email.create("user@example.com").fold(
-            success = { it },
-            failure = { error("expected valid email") },
-        )
+        val email =
+            Email.create("user@example.com").fold(
+                success = { it },
+                failure = { error("expected valid email") },
+            )
         every { context.authAccountRepository.findByEmail(any()) } returns AuthAccount(LibraryUserId("user-id"), email)
-        every { context.authCredentialRepository.findByLibraryUserId(any()) } returns AuthCredential(
-            LibraryUserId("user-id"),
-            hashed("hashed")
-        )
+        every { context.authCredentialRepository.findByLibraryUserId(any()) } returns
+            AuthCredential(
+                LibraryUserId("user-id"),
+                hashed("hashed"),
+            )
     }
 }

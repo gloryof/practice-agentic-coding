@@ -67,12 +67,13 @@ class GlobalExceptionHandlerTest {
 
         try {
             MDC.put(TraceIdFilter.TRACE_ID_MDC_KEY, "trace-456")
-            val apiException = ApiException(
-                status = HttpStatus.BAD_REQUEST,
-                code = "VALIDATION_ERROR",
-                message = "invalid",
-                details = listOf(ApiErrorDetail("field", "invalid"))
-            )
+            val apiException =
+                ApiException(
+                    status = HttpStatus.BAD_REQUEST,
+                    code = "VALIDATION_ERROR",
+                    message = "invalid",
+                    details = listOf(ApiErrorDetail("field", "invalid")),
+                )
 
             val response = handler.handleApiException(apiException)
 

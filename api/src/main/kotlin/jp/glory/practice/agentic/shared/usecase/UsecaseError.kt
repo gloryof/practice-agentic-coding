@@ -7,16 +7,20 @@ import jp.glory.practice.agentic.shared.domain.DomainError
  * Unexpected technical failures must be propagated as exceptions.
  */
 sealed interface UsecaseError {
-    data class Validation(val field: String, val reason: String) : UsecaseError
+    data class Validation(
+        val field: String,
+        val reason: String,
+    ) : UsecaseError
+
     data object DuplicateEmail : UsecaseError
+
     data object AuthenticationFailed : UsecaseError
 
     companion object {
-        fun fromDomain(error: DomainError): UsecaseError {
-            return when (error) {
+        fun fromDomain(error: DomainError): UsecaseError =
+            when (error) {
                 is DomainError.Validation -> Validation(field = error.field, reason = error.reason)
                 DomainError.DuplicateEmail -> DuplicateEmail
             }
-        }
     }
 }

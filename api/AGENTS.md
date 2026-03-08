@@ -8,6 +8,8 @@
 - `MUST` read `api/docs/coding-rules.md` before implementing or reviewing API-related changes.
 - `MUST` align implementation decisions with `api/docs/coding-rules.md`.
 - `MUST` follow exception handling rule 4.4 in `api/docs/coding-rules.md`.
+- `MUST` run `./gradlew ktlintFormat` before finalizing Kotlin changes.
+- `MUST` run `./gradlew check` before sharing implementation or review results.
 - `MUST` stop and propose a rules update first if implementation needs to violate the coding rules.
 
 ## Priority Checkpoints (from coding rules)

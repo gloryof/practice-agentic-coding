@@ -21,24 +21,27 @@ class RegistrationController(
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun register(@RequestBody request: RegisterLibraryUserRequest): RegisterLibraryUserResponse {
+    fun register(
+        @RequestBody request: RegisterLibraryUserRequest,
+    ): RegisterLibraryUserResponse {
         validator.validateOrThrow(request)
 
-        return useCase.register(
-            RegisterLibraryUserInput(
-                email = request.email!!,
-                password = request.password!!,
+        return useCase
+            .register(
+                RegisterLibraryUserInput(
+                    email = request.email!!,
+                    password = request.password!!,
+                ),
+            ).fold(
+                success = {
+                    RegisterLibraryUserResponse(
+                        libraryUserId = it.libraryUserId,
+                        email = it.email,
+                        registeredAt = it.registeredAt,
+                    )
+                },
+                failure = { throw toApiException(it) },
             )
-        ).fold(
-            success = {
-                RegisterLibraryUserResponse(
-                    libraryUserId = it.libraryUserId,
-                    email = it.email,
-                    registeredAt = it.registeredAt,
-                )
-            },
-            failure = { throw toApiException(it) },
-        )
     }
 }
 

@@ -7,7 +7,10 @@ fun interface PasswordHasher {
 }
 
 fun interface PasswordVerifier {
-    fun matches(rawPassword: String, hash: PasswordHash): Boolean
+    fun matches(
+        rawPassword: String,
+        hash: PasswordHash,
+    ): Boolean
 }
 
 fun interface AccessTokenGenerator {

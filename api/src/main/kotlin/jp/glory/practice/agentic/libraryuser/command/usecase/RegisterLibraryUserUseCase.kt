@@ -5,8 +5,8 @@ import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.zip
-import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
 import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
+import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
 import jp.glory.practice.agentic.auth.command.domain.service.PasswordHasher
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
@@ -32,6 +32,7 @@ class RegisterLibraryUserUseCase(
         val email: Email,
         val rawPassword: RawPassword,
     )
+
     private data class RegistrationContext(
         val libraryUserId: LibraryUserId,
         val registeredAt: Instant,
@@ -56,18 +57,20 @@ class RegisterLibraryUserUseCase(
         }.mapError(UsecaseError::fromDomain)
 
     private fun verifyRegistration(validated: ValidatedInput): Result<ValidatedInput, UsecaseError> =
-        registrationService.verify(validated.email)
+        registrationService
+            .verify(validated.email)
             .mapError(UsecaseError::fromDomain)
             .map { validated }
 
     private fun createRegistrationContext(validated: ValidatedInput): RegistrationContext {
         val libraryUserId = LibraryUserId.issue()
         val registeredAt = Instant.now(clock)
-        val event = LibraryUserRegisteredEvent(
-            libraryUserId = libraryUserId,
-            email = validated.email,
-            occurredAt = registeredAt,
-        )
+        val event =
+            LibraryUserRegisteredEvent(
+                libraryUserId = libraryUserId,
+                email = validated.email,
+                occurredAt = registeredAt,
+            )
 
         return RegistrationContext(
             libraryUserId = libraryUserId,
@@ -83,7 +86,7 @@ class RegisterLibraryUserUseCase(
             AuthCredential(
                 libraryUserId = context.libraryUserId,
                 passwordHash = passwordHasher.hash(context.rawPassword.value),
-            )
+            ),
         )
         return context
     }

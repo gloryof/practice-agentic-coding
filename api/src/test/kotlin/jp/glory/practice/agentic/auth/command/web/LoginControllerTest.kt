@@ -27,19 +27,23 @@ class LoginControllerTest {
     @Test
     fun `returns 200 on success`() {
         val context = createSut()
-        every { context.useCase.login(any()) } returns Ok(
-            LoginResult(
-                accessToken = "token-123",
-                tokenType = "Bearer",
-                expiresInSeconds = 86400,
+        every { context.useCase.login(any()) } returns
+            Ok(
+                LoginResult(
+                    accessToken = "token-123",
+                    tokenType = "Bearer",
+                    expiresInSeconds = 86400,
+                ),
             )
-        )
 
-        val response = context.mvc.perform(
-            post("/api/v1/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}""")
-        ).andReturn().response
+        val response =
+            context.mvc
+                .perform(
+                    post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}"""),
+                ).andReturn()
+                .response
 
         assertEquals(200, response.status)
         assertTrue(response.contentAsString.contains("access_token"))
@@ -50,11 +54,14 @@ class LoginControllerTest {
         val context = createSut()
         every { context.useCase.login(any()) } returns Err(UsecaseError.AuthenticationFailed)
 
-        val response = context.mvc.perform(
-            post("/api/v1/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"user@example.com","password":"Str0ng!Wrong12"}""")
-        ).andReturn().response
+        val response =
+            context.mvc
+                .perform(
+                    post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"email":"user@example.com","password":"Str0ng!Wrong12"}"""),
+                ).andReturn()
+                .response
 
         assertEquals(401, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"UNAUTHORIZED\""))
@@ -65,11 +72,14 @@ class LoginControllerTest {
     fun `returns 400 on validation error`() {
         val context = createSut()
 
-        val response = context.mvc.perform(
-            post("/api/v1/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"email":"","password":"short"}""")
-        ).andReturn().response
+        val response =
+            context.mvc
+                .perform(
+                    post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"email":"","password":"short"}"""),
+                ).andReturn()
+                .response
 
         assertEquals(400, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
@@ -78,11 +88,10 @@ class LoginControllerTest {
         verify(exactly = 0) { context.useCase.login(any()) }
     }
 
-    private fun createSut(
-        useCase: LoginUseCase = mockk(),
-    ): TestContext {
-        val builder: StandaloneMockMvcBuilder = MockMvcBuilders
-            .standaloneSetup(LoginController(LoginRequestValidator(), useCase))
+    private fun createSut(useCase: LoginUseCase = mockk()): TestContext {
+        val builder: StandaloneMockMvcBuilder =
+            MockMvcBuilders
+                .standaloneSetup(LoginController(LoginRequestValidator(), useCase))
         builder.setControllerAdvice(GlobalExceptionHandler())
         return TestContext(
             mvc = builder.build(),

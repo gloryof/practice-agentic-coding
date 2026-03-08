@@ -24,17 +24,19 @@ class LibraryUserCommandRepositoryImpl(
                     id = event.libraryUserId.value,
                     email = event.email.value,
                     registeredAt = event.occurredAt,
-                )
+                ),
             )
         }
     }
 
     override fun existsByEmail(email: Email): EmailExistence {
-        val exists = database.runQuery {
-            QueryDsl.from(table)
-                .where { table.email eq email.value }
-                .firstOrNull()
-        } != null
+        val exists =
+            database.runQuery {
+                QueryDsl
+                    .from(table)
+                    .where { table.email eq email.value }
+                    .firstOrNull()
+            } != null
         return EmailExistence(exists)
     }
 }

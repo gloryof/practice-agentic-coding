@@ -9,21 +9,25 @@ open class ApiException(
     val details: List<ApiErrorDetail> = emptyList(),
 ) : RuntimeException(message)
 
-class ValidationApiException(details: List<ApiErrorDetail>) : ApiException(
-    code = "VALIDATION_ERROR",
-    message = "入力値に誤りがあります。",
-    status = HttpStatus.BAD_REQUEST,
-    details = details,
-)
+class ValidationApiException(
+    details: List<ApiErrorDetail>,
+) : ApiException(
+        code = "VALIDATION_ERROR",
+        message = "入力値に誤りがあります。",
+        status = HttpStatus.BAD_REQUEST,
+        details = details,
+    )
 
-class DuplicateEmailApiException : ApiException(
-    code = "DUPLICATE_EMAIL",
-    message = "既に使用されているメールアドレスです。",
-    status = HttpStatus.BAD_REQUEST,
-)
+class DuplicateEmailApiException :
+    ApiException(
+        code = "DUPLICATE_EMAIL",
+        message = "既に使用されているメールアドレスです。",
+        status = HttpStatus.BAD_REQUEST,
+    )
 
-class UnauthorizedApiException : ApiException(
-    code = "UNAUTHORIZED",
-    message = "認証に失敗しました。",
-    status = HttpStatus.UNAUTHORIZED,
-)
+class UnauthorizedApiException :
+    ApiException(
+        code = "UNAUTHORIZED",
+        message = "認証に失敗しました。",
+        status = HttpStatus.UNAUTHORIZED,
+    )

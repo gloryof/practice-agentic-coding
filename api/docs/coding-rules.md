@@ -83,6 +83,12 @@
 - `MUST` 想定外の技術障害（DB障害、ライブラリ障害など）は業務エラーへ偽装せず、例外伝播させる。
 - `SHOULD` レイヤごとのエラー型は単一の共通型（例: `DomainError`, `UsecaseError`）へ集約する。
 
+### 4.5 インポート整形規約
+- `MUST` Kotlin の `import` は ktlint 標準順序に従う。
+- `MUST NOT` Kotlin の `import` で `*`（ワイルドカード）を使用しない。
+- `MUST` `./gradlew ktlintCheck` を機械検査として実行し、違反は `./gradlew check` の失敗条件として扱う。
+- `SHOULD` Kotlin 変更時は `./gradlew ktlintFormat` を実行し、自動整形を先に適用する。
+
 ## 5. Command規約
 
 ### 5.1 コマンドアーキテクチャ
@@ -220,6 +226,7 @@
 
 #### フェーズ2（自動検査追加）
 - `SHOULD` Detektルールへ反映可能な項目を順次追加する。
+- `SHOULD` ktlint で自動整形可能な項目を `ktlintFormat` で継続的に適用する。
 - `SHOULD` テストテンプレートを整備し、契約テスト観点を標準化する。
 
 #### フェーズ3（CIゲート化）

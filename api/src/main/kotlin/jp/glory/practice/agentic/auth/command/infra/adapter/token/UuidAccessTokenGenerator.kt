@@ -6,7 +6,5 @@ import java.util.UUID
 
 @Component
 class UuidAccessTokenGenerator : AccessTokenGenerator {
-    override fun generate(): String {
-        return UUID.randomUUID().toString()
-    }
+    override fun generate(): String = UUID.randomUUID().toString()
 }
