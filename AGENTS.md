@@ -34,6 +34,11 @@ A skill is a set of local instructions to follow that is stored in a `SKILL.md` 
 - `MUST` use environment variables for external paths only when unavoidable (for example: `$CODEX_HOME/skills/...`), and explain why.
 - `MUST` run `./scripts/check-no-local-paths.sh` before finalizing documentation changes.
 
+## AI TODO起票ルール
+- `MUST` AIが作業指示を受けた際、未解決のリスク/対応事項が発生した場合は `task/todo` に起票する。
+- `MUST` 起票は `task/todo/TEMPLATE.md` に従い、`Status: Proposed` で作成する。
+- `MUST` 起票した場合は作業報告に起票ファイル名を記載する。
+
 ## Test Double Rules
 - `MUST` use MockK for test doubles when replacing dependencies across architectural layers in unit tests.
 - `SHOULD` verify invocations for side-effect methods that return `Unit` (for example: `save`, `publish`, `send`).

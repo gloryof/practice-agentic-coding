@@ -1,7 +1,7 @@
 # Auth Registration/Login API Spec (v1)
 
 ## Related Story
-- `user-stories/US-0001-library-user-registration-login.md`
+- `task/user-stories/US-0001-library-user-registration-login.md`
 
 ## Registration API
 - Endpoint: `POST /api/v1/library-users/registrations`
