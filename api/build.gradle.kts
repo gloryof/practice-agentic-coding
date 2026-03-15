@@ -13,6 +13,7 @@ plugins {
     kotlin("plugin.spring") version "2.2.20"
     id("org.springframework.boot") version "4.0.2"
     id("io.spring.dependency-management") version "1.1.7"
+    jacoco
     id("org.flywaydb.flyway") version "11.15.0"
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
     id("dev.detekt") version "2.0.0-alpha.1"
@@ -89,6 +90,47 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = "BUNDLE"
+            includes = listOf("**/domain/**")
+            limit {
+                counter = "INSTRUCTION"
+                value = "COVEREDRATIO"
+                minimum = "1.0".toBigDecimal()
+            }
+        }
+        rule {
+            element = "BUNDLE"
+            includes = listOf("**/usecase/**")
+            limit {
+                counter = "INSTRUCTION"
+                value = "COVEREDRATIO"
+                minimum = "1.0".toBigDecimal()
+            }
+        }
+        rule {
+            element = "BUNDLE"
+            excludes = listOf("**/domain/**", "**/usecase/**")
+            limit {
+                counter = "INSTRUCTION"
+                value = "COVEREDRATIO"
+                minimum = "0.8".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(false)
+    }
+}
+
 detekt {
     buildUponDefaultConfig = true
     config.setFrom("config/detekt/detekt.yml")
@@ -127,7 +169,7 @@ tasks.named<org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask>("runKtlintForm
 }
 
 tasks.named("check") {
-    dependsOn("detekt", "ktlintCheck")
+    dependsOn("detekt", "ktlintCheck", "jacocoTestCoverageVerification", "jacocoTestReport")
 }
 
 flyway {
