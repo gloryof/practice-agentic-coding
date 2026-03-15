@@ -65,6 +65,8 @@ class LoginControllerTest {
 
         assertEquals(401, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"UNAUTHORIZED\""))
+        assertTrue(response.contentAsString.contains("\"message\":\"認証に失敗しました。\""))
+        assertTrue(response.contentAsString.contains("\"details\":[]"))
         assertTrue(response.contentAsString.contains("\"trace_id\":\""))
     }
 
@@ -83,6 +85,7 @@ class LoginControllerTest {
 
         assertEquals(400, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
+        assertTrue(response.contentAsString.contains("\"message\":\"入力値に誤りがあります。\""))
         assertTrue(response.contentAsString.contains("\"details\":["))
         assertTrue(response.contentAsString.contains("\"trace_id\":\""))
         verify(exactly = 0) { context.useCase.login(any()) }

@@ -62,6 +62,35 @@ class LoginUseCaseTest {
     }
 
     @Test
+    fun `returns err when account does not exist`() {
+        val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
+        every { context.authAccountRepository.findByEmail(any()) } returns null
+
+        val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
+
+        assertEquals(Err(UsecaseError.AuthenticationFailed), result)
+        verify(exactly = 0) { context.authCredentialRepository.findByLibraryUserId(any()) }
+        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+    }
+
+    @Test
+    fun `returns err when credential does not exist`() {
+        val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
+        val email =
+            Email.create("user@example.com").fold(
+                success = { it },
+                failure = { error("expected valid email") },
+            )
+        every { context.authAccountRepository.findByEmail(any()) } returns AuthAccount(LibraryUserId("user-id"), email)
+        every { context.authCredentialRepository.findByLibraryUserId(any()) } returns null
+
+        val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
+
+        assertEquals(Err(UsecaseError.AuthenticationFailed), result)
+        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+    }
+
+    @Test
     fun `returns validation error on invalid email`() {
         val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
 

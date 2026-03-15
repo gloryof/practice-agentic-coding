@@ -1,6 +1,9 @@
 package jp.glory.practice.agentic.shared.testinfra
 
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -10,6 +13,8 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.MountableFile
 
 @SpringBootTest
+@Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock("postgres")
 abstract class PostgreSqlTestBase {
     @Autowired
     protected lateinit var jdbcTemplate: JdbcTemplate

@@ -66,6 +66,7 @@ class RegistrationControllerTest {
 
         assertEquals(400, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
+        assertTrue(response.contentAsString.contains("\"message\":\"入力値に誤りがあります。\""))
         assertTrue(response.contentAsString.contains("\"trace_id\":\""))
         verify(exactly = 0) { context.useCase.register(any()) }
     }
@@ -86,6 +87,8 @@ class RegistrationControllerTest {
 
         assertEquals(400, response.status)
         assertTrue(response.contentAsString.contains("\"code\":\"DUPLICATE_EMAIL\""))
+        assertTrue(response.contentAsString.contains("\"message\":\"既に使用されているメールアドレスです。\""))
+        assertTrue(response.contentAsString.contains("\"details\":[]"))
     }
 
     private fun createSut(useCase: RegisterLibraryUserUseCase = mockk()): TestContext {
