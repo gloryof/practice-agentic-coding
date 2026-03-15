@@ -5,6 +5,7 @@ Codexを使ってAgentic Codingの連取をする場所。
 ## Docs
 - APIコーディングルール: `api/docs/coding-rules.md`
 - Auth Registration/Login API仕様: `api/docs/specs/auth-registration-login-v1.md`
+- APIローカルセットアップ（Testcontainers/Rancher Desktop）: `api/README.md`
 
 ## OpenAPI UI
 - デフォルトではOpenAPI UI/JSONは無効。
