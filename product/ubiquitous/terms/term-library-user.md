@@ -3,9 +3,8 @@
 ## Term
 - 図書館利用者
 
-## English Name
-- Library user
-  - 実装時のクラス名、Markdownなどのファイル名にのみ適用する。
+## English Name（実装時のクラス名、Markdownなどのファイル名にのみ適用する。）
+Library user
 
 ## Definition
 - 地域コミュニティで図書館サービスを利用し、本を借りる・予約する・探すといった行動を行う主体。

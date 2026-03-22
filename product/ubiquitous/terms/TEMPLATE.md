@@ -3,9 +3,8 @@
 ## Term
 - <正式語>
 
-## English Name
-- <英語名>
-- 実装時のクラス名、Markdownなどのファイル名にのみ適用する。
+## English Name（実装時のクラス名、Markdownなどのファイル名にのみ適用する。）
+<英語名>
 
 ## Definition
 - <業務上の意味>
