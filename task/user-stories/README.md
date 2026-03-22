@@ -28,7 +28,7 @@
 - Move to `Done` only when:
 - Acceptance criteria are covered by tests or explicit verification notes.
 - Any implementation details (API/data/test design) are handled outside user stories.
-- API specifications must be managed under `api/docs/specs/` as separate documents.
+- API specifications must be managed as OpenAPI specifications and treated as the single source of truth.
 
 ## Routing
 - Use `po-story` for writing and refining stories.
