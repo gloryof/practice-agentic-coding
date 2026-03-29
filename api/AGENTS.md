@@ -23,6 +23,7 @@
 ## Review Expectations
 - `MUST` include a brief compliance note in API implementation/review output, stating which rules were checked.
 - `MUST` flag dependency-direction violations and HTTP method misuse as blocking issues.
+- `MUST` ensure UnitTest changes are reviewed with the QA Test Reviewer perspective (`qa-test-reviewer`) before finalizing API work.
 - `SHOULD` run `rg -n "throw " api/src/main/kotlin` and verify throws are only in Web layer for business control.
 - `SHOULD` verify domain packages use `model/event/service/repository` classification in command contexts.
 

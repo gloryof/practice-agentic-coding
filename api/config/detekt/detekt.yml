@@ -12,6 +12,12 @@ complexity:
     allowedDepth: 3
 
 style:
+  BracesOnIfStatements:
+    active: true
+    singleLine: always
+    multiLine: always
+  MandatoryBracesLoops:
+    active: true
   MagicNumber:
     active: false
   ReturnCount:

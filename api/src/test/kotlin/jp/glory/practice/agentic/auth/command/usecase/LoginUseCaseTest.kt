@@ -14,7 +14,12 @@ import jp.glory.practice.agentic.auth.command.domain.service.AccessTokenGenerato
 import jp.glory.practice.agentic.auth.command.domain.service.PasswordVerifier
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
+import jp.glory.practice.agentic.shared.auth.AccessTokenSession
+import jp.glory.practice.agentic.shared.auth.AccessTokenStore
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,6 +28,7 @@ class LoginUseCaseTest {
         val sut: LoginUseCase,
         val authAccountRepository: AuthAccountRepository,
         val authCredentialRepository: AuthCredentialRepository,
+        val accessTokenStore: AccessTokenStore,
     )
 
     private fun hashed(value: String): PasswordHash =
@@ -48,6 +54,15 @@ class LoginUseCaseTest {
             },
             failure = { error("expected success") },
         )
+        verify(exactly = 1) {
+            context.accessTokenStore.save(
+                AccessTokenSession(
+                    token = "token-123",
+                    libraryUserId = LibraryUserId("user-id"),
+                    expiresAt = Instant.parse("2026-02-22T12:34:56Z").plusSeconds(86400),
+                ),
+            )
+        }
         verify(exactly = 0) { context.authCredentialRepository.save(any()) }
     }
 
@@ -104,6 +119,8 @@ class LoginUseCaseTest {
         authCredentialRepository: AuthCredentialRepository = mockk(),
         passwordVerifier: PasswordVerifier,
         accessTokenGenerator: AccessTokenGenerator = AccessTokenGenerator { "token-123" },
+        accessTokenStore: AccessTokenStore = mockk(relaxed = true),
+        clock: Clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
         expirationSeconds: Long = 86400,
     ): TestContext {
         val sut =
@@ -112,12 +129,15 @@ class LoginUseCaseTest {
                 authCredentialRepository = authCredentialRepository,
                 passwordVerifier = passwordVerifier,
                 accessTokenGenerator = accessTokenGenerator,
+                accessTokenStore = accessTokenStore,
+                clock = clock,
                 expirationSeconds = expirationSeconds,
             )
         return TestContext(
             sut = sut,
             authAccountRepository = authAccountRepository,
             authCredentialRepository = authCredentialRepository,
+            accessTokenStore = accessTokenStore,
         )
     }
 

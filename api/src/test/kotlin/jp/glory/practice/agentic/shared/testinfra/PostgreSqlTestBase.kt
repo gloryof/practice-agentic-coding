@@ -21,6 +21,10 @@ abstract class PostgreSqlTestBase {
 
     @BeforeEach
     fun clearTables() {
+        jdbcTemplate.update("DELETE FROM book_item_authors")
+        jdbcTemplate.update("DELETE FROM book_items")
+        jdbcTemplate.update("DELETE FROM authors")
+        jdbcTemplate.update("DELETE FROM publishers")
         jdbcTemplate.update("DELETE FROM auth_credentials")
         jdbcTemplate.update("DELETE FROM library_users")
     }

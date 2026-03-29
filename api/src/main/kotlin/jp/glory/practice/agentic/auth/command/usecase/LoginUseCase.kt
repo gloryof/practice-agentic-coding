@@ -12,9 +12,12 @@ import jp.glory.practice.agentic.auth.command.domain.service.AccessTokenGenerato
 import jp.glory.practice.agentic.auth.command.domain.service.PasswordVerifier
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
 import jp.glory.practice.agentic.libraryuser.command.domain.model.RawPassword
+import jp.glory.practice.agentic.shared.auth.AccessTokenSession
+import jp.glory.practice.agentic.shared.auth.AccessTokenStore
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.Clock
 
 @Service
 class LoginUseCase(
@@ -22,6 +25,8 @@ class LoginUseCase(
     private val authCredentialRepository: AuthCredentialRepository,
     private val passwordVerifier: PasswordVerifier,
     private val accessTokenGenerator: AccessTokenGenerator,
+    private val accessTokenStore: AccessTokenStore,
+    private val clock: Clock,
     @Value("\${auth.token.expiration-seconds}") private val expirationSeconds: Long,
 ) {
     private data class ValidatedInput(
@@ -46,9 +51,18 @@ class LoginUseCase(
         if (!passwordVerifier.matches(input.rawPassword.value, credential.passwordHash)) {
             return Err(UsecaseError.AuthenticationFailed)
         }
+        val token = accessTokenGenerator.generate()
+        val expiresAt = clock.instant().plusSeconds(expirationSeconds)
+        accessTokenStore.save(
+            AccessTokenSession(
+                token = token,
+                libraryUserId = user.libraryUserId,
+                expiresAt = expiresAt,
+            ),
+        )
         return Ok(
             LoginResult(
-                accessToken = accessTokenGenerator.generate(),
+                accessToken = token,
                 tokenType = "Bearer",
                 expiresInSeconds = expirationSeconds,
             ),

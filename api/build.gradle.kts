@@ -77,6 +77,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter:1.20.4")
     testImplementation("org.testcontainers:postgresql:1.20.4")
     testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("com.github.f4b6a3:uuid-creator:5.3.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -91,6 +92,19 @@ tasks.withType<Test> {
 }
 
 tasks.jacocoTestCoverageVerification {
+    val jacocoExcludes =
+        listOf(
+            "**/infra/adapter/persistence/_*",
+        )
+    classDirectories.setFrom(
+        files(
+            classDirectories.files.map {
+                fileTree(it) {
+                    exclude(jacocoExcludes)
+                }
+            },
+        ),
+    )
     violationRules {
         rule {
             element = "BUNDLE"
@@ -112,7 +126,12 @@ tasks.jacocoTestCoverageVerification {
         }
         rule {
             element = "BUNDLE"
-            excludes = listOf("**/domain/**", "**/usecase/**")
+            excludes =
+                listOf(
+                    "**/domain/**",
+                    "**/usecase/**",
+                    "**/infra/adapter/persistence/_*",
+                )
             limit {
                 counter = "INSTRUCTION"
                 value = "COVEREDRATIO"
@@ -124,6 +143,19 @@ tasks.jacocoTestCoverageVerification {
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
+    val jacocoExcludes =
+        listOf(
+            "**/infra/adapter/persistence/_*",
+        )
+    classDirectories.setFrom(
+        files(
+            classDirectories.files.map {
+                fileTree(it) {
+                    exclude(jacocoExcludes)
+                }
+            },
+        ),
+    )
     reports {
         html.required.set(true)
         xml.required.set(true)

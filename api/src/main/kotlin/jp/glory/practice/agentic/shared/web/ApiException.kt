@@ -31,3 +31,10 @@ class UnauthorizedApiException :
         message = "認証に失敗しました。",
         status = HttpStatus.UNAUTHORIZED,
     )
+
+class LoginRequiredApiException :
+    ApiException(
+        code = "LOGIN_REQUIRED",
+        message = "ログインが必要です。",
+        status = HttpStatus.UNAUTHORIZED,
+    )
