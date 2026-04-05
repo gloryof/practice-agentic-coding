@@ -1,0 +1,11 @@
+from setuptools import find_packages, setup
+
+setup(
+    name="agentic-sqlfluff-rules",
+    version="0.1.0",
+    packages=find_packages(),
+    python_requires=">=3.9",
+    entry_points={
+        "sqlfluff": ["rules = agentic_sqlfluff_rules:get_rules"],
+    },
+)

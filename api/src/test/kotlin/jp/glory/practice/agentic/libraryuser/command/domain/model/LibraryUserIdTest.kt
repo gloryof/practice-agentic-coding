@@ -8,6 +8,6 @@ class LibraryUserIdTest {
     fun `issues id with fixed length`() {
         val id = LibraryUserId.issue()
 
-        assertEquals(26, id.value.length)
+        assertEquals(36, id.value.length)
     }
 }

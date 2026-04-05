@@ -93,6 +93,29 @@
 - `MUST` Infra レイヤのDBアクセスは Komapper を使用する。
 - `MAY` 例外が必要な場合は 8.1 の規約例外に従う。
 
+### 4.7 DBテーブル設計規約
+- `MUST` テーブル名は `snake_case` の複数形に統一する（例: `library_users`, `book_items`）。
+- `MUST` カラム名は `snake_case` に統一する。
+- `MUST` エンティティ主キーは `id` を使用する。
+- `MUST` 外部キーは `{参照先}_id` 形式で命名する。
+- `MUST` アプリケーション側で UUIDv4 を発行し、DB には `VARCHAR(36)` で保存する。
+- `MUST` 参照整合性が必要な関係は外部キー制約を定義し、制約名は `fk_{table}_{ref_table}` 形式に統一する。
+- `MUST` すべてのカラムは原則 `NOT NULL` とし、業務上 `NULL` が必要な場合のみ例外を認める。
+- `MUST` 時刻カラムは `TIMESTAMPTZ` を使用する。
+- `SHOULD` 多対多の中間テーブルは複合主キーを持ち、片側検索を想定する列に追加インデックスを付与する。
+- `SHOULD` インデックス名は `idx_{table}_{column}` に統一する。
+- `SHOULD` 文字列長は業務要件に基づく上限を設け、未確定の場合でも仮の上限を設定する（例: 255）。
+
+### 4.8 DB設計の機械チェック（SQLFluff）
+- `MUST` AIがDBテーブル設計やFlywayマイグレーションを変更した場合、作業完了後にSQLFluffチェックを実行する（`api` ディレクトリで実行）。
+- `MUST` SQLFluffのルール指定は番号ではなくエイリアス（`agentic.*`）で管理する。
+
+```sh
+python3 -m venv .venv
+.venv/bin/pip install -r requirements/sqlfluff.txt
+.venv/bin/sqlfluff lint --config .sqlfluff src/main/resources/db/migration
+```
+
 ## 5. Command規約
 
 ### 5.1 コマンドアーキテクチャ

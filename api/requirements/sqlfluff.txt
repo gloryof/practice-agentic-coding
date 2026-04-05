@@ -1,0 +1,2 @@
+sqlfluff==3.0.7
+-e ./sqlfluff-rules

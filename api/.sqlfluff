@@ -1,0 +1,7 @@
+[sqlfluff]
+dialect = postgres
+templater = raw
+rules = agentic.table_name_plural_snake_case,agentic.column_name_snake_case,agentic.primary_key_id,agentic.foreign_key_column_naming,agentic.foreign_key_constraint_naming,agentic.id_type_varchar36,agentic.columns_not_null,agentic.timestamp_type
+
+[sqlfluff:rules]
+max_line_length = 120

@@ -11,9 +11,7 @@ value class LibraryUserId(
             LibraryUserId(
                 UUID
                     .randomUUID()
-                    .toString()
-                    .replace("-", "")
-                    .take(26),
+                    .toString(),
             )
     }
 }
