@@ -3,7 +3,7 @@ Codexを使ってAgentic Codingの連取をする場所。
 ある程度の複雑性を持ったシステムを対象に色々練習してみる。
 
 ## Docs
-- APIコーディングルール: `api/docs/coding-rules.md`
+- APIバックエンドガイドライン: `api/docs/backend-guidelines.md`
 - APIローカルセットアップ（Testcontainers/Rancher Desktop）: `api/README.md`
 
 ## OpenAPI UI

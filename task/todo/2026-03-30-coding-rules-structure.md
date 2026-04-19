@@ -1,11 +1,11 @@
 # APIコーディングルールの情報構造整理と読込ガイド整備
 
 ## ステータス
-- Status: Proposed
-- Updated: 2026-03-29 - 起票
+- Status: Done
+- Updated: 2026-04-19 - 完了
 
 ## 背景
-`api/docs/coding-rules.md` の情報構造が整理されておらず、
+`api/docs/backend-guidelines.md` の情報構造が整理されておらず、
 どの作業でどのセクションを読むべきかが明確になっていない。
 
 ## 影響

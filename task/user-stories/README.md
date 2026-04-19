@@ -37,7 +37,7 @@
 - `qa-test-reviewer`
 - `security-engineer-reviewer`
 - `server-architecture-reviewer`
-- For any work under `api/`, follow `api/AGENTS.md` and `api/docs/coding-rules.md`.
+- For any work under `api/`, follow `api/AGENTS.md` and `api/docs/backend-guidelines.md`.
 - For terminology decisions and wording checks, refer to:
 - `product/ubiquitous/terms.md`
 - `product/ubiquitous/governance.md`

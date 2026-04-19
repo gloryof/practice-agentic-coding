@@ -1,7 +1,7 @@
 CREATE TABLE library_users (
     id VARCHAR(36) PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
-    registered_at TIMESTAMPTZ NOT NULL
+    registered_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE auth_credentials (

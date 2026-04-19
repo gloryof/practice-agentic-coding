@@ -36,10 +36,20 @@ abstract class PostgreSqlTestBase {
         @JvmStatic
         @DynamicPropertySource
         fun registerDataSourceProperties(registry: DynamicPropertyRegistry) {
-            registry.add("spring.datasource.url", postgres::getJdbcUrl)
+            registry.add("spring.datasource.url") { postgres.jdbcUrl.withUtcTimezoneOption() }
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.flyway.enabled") { "false" }
+        }
+
+        private fun String.withUtcTimezoneOption(): String {
+            val timezoneOption = "options=-c%20TimeZone=UTC"
+            if (contains("TimeZone=UTC")) return this
+            return if (contains("?")) {
+                "$this&$timezoneOption"
+            } else {
+                "$this?$timezoneOption"
+            }
         }
     }
 }

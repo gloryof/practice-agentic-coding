@@ -5,6 +5,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/agentic
     username: agentic
     password: agentic
+    hikari:
+      connection-init-sql: SET TIME ZONE 'UTC'
   flyway:
     enabled: false
 
