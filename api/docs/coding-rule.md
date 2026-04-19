@@ -1,14 +1,16 @@
 # コーディング規約
 
 ## 目的
-- 本規約はバックエンド実装におけるコードの書き方を統一し、可読性・保守性を高めるための標準である。
-- 本文中のキーワードは以下の意味で扱う。
-  - `MUST`: 必須。満たさない変更は受け入れない。
-  - `SHOULD`: 強く推奨。満たさない場合は理由を説明する。
-  - `MAY`: 任意。文脈に応じて選択できる。
+- `MUST` 本規約はバックエンド実装におけるコードの書き方を統一し、可読性・保守性を高める。
+
+## 規範語
+- `MUST`: 必須。満たさない変更は受け入れない。
+- `MUST NOT`: 禁止。いかなる理由でも実施しない。
+- `SHOULD`: 強く推奨。満たさない場合は理由を説明する。
+- `MAY`: 任意。文脈に応じて選択できる。
 
 ## 適用範囲と基本方針
-- `MUST` 本規約は `api` 配下へ適用する。
+- `MUST` 本規約を `api` 配下へ適用する。
 - `SHOULD` 新規コードだけでなく、既存コード変更時にも可能な範囲で本規約へ寄せる。
 
 ## コーディング規約
@@ -43,6 +45,5 @@
 - `MUST` `./gradlew ktlintCheck` を機械検査として実行し、違反は `./gradlew check` の失敗条件として扱う。
 - `SHOULD` Kotlin 変更時は `./gradlew ktlintFormat` を実行し、自動整形を先に適用する。
 
-
 ### Railway Oriented Programming
-- `MUST`: `com.michael-bull.kotlin-result`を使いRailway Oriented Programmingを行う
+- `MUST` `com.michael-bull.kotlin-result` を使い Railway Oriented Programming を行う。
