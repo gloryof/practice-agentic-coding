@@ -1,0 +1,8 @@
+approval_policy = "on-request"
+approvals_reviewer = "user"
+sandbox_mode = "workspace-write"
+plan_mode_reasoning_effort = "high"
+project_doc_max_bytes = 32768
+
+[sandbox_workspace_write]
+network_access = false
