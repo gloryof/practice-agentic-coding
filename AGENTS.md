@@ -1,44 +1,50 @@
 # AGENTS.md
 
-## Project Overview
-- This project builds a community library discovery service.
-- See /product/product-foundation.md for detailed product goals.
+## プロジェクト概要
+- このプロジェクトはコミュニティ図書館向けの発見サービスを構築する。
+- 詳細なプロダクト目標は `product/product-foundation.md` を参照する。
 
-## Agents Priority
-- When working inside a subdirectory, prioritize and follow that subdirectory's `AGENTS.md` over the root `AGENTS.md`.
-- Apply the root `AGENTS.md` as default guidance only when no closer `AGENTS.md` exists.
+## AGENTS適用優先順位
+- サブディレクトリで作業する場合は、ルート `AGENTS.md` よりも、そのサブディレクトリの `AGENTS.md` を優先して従う。
+- より近い `AGENTS.md` がない場合のみ、ルート `AGENTS.md` をデフォルトガイダンスとして適用する。
 
-## PO Skills Routing
-- Use `po-story` when the task is to create a user story.
-- Use `po-spec` when the task is to evaluate, create, or update a specification.
-- Use `po-spec` for specification Q&A about product intent, requirements, acceptance criteria, and constraints.
-- For implementation-level questions, keep PO scope boundary clear and escalate to engineering roles.
-- Use `server-architecture-reviewer` for backend architecture design and reviews, including cost, operability, and observability tradeoffs.
-- Use `security-engineer-reviewer` for security-focused design and coding reviews, including threat surfaces, access control, data protection, and remediation priorities.
-- Use `qa-test-reviewer` for QA-focused test code reviews, especially unit-test reliability, maintainability, flaky-risk analysis, and CI feedback quality.
-- Use `dba-reviewer` for database-focused design and change reviews, including schema integrity, migration safety, query/index performance, and operational recovery readiness.
+## フロー入口
+- `MUST` スキルやレビュー担当を選択する前に、依頼を `agents/flows` でルーティングする。
+- ユーザーストーリー/仕様関連の依頼は `agents/flows/user-story-creation-flow.md` から開始する。
+- 実装レベルの依頼は `agents/flows/implementation-task-flow.md` を使用する。
+- 実装中に設計方針レビューが必要な場合は `agents/flows/design-policy-review-checks.md` を適用する。
 
-## Skills
-A skill is a set of local instructions to follow that is stored in a `SKILL.md` file. Below is the list of skills that can be used. Each entry includes a name, description, and file path so you can open the source for full instructions when using a specific skill.
-### Available skills
-- po-spec: Evaluate, create, and update specifications based on user value, and answer specification questions within PO scope. (file: `.codex/skills/po-spec/SKILL.md`)
-- po-story: Create user stories with clear user value and testable acceptance criteria for the community library discovery service. (file: `.codex/skills/po-story/SKILL.md`)
-- server-architecture-reviewer: Design and review backend architecture with explicit tradeoffs across operability, observability, and cost. Use when evaluating service boundaries, dependencies, deployment safety, incident readiness, scaling strategy, and architecture alternatives for server-side systems. (file: `.codex/skills/server-architecture-reviewer/SKILL.md`)
-- security-engineer-reviewer: Review security in both system design and implementation with explicit risk tradeoffs and actionable remediation. Use when evaluating threat surfaces, trust boundaries, authentication/authorization, data protection, dependency risk, and secure coding issues for backend or full-stack systems. (file: `.codex/skills/security-engineer-reviewer/SKILL.md`)
-- qa-test-reviewer: Review test code quality from a QA perspective, focused on unit-test reliability, maintainability, and execution efficiency. Use when evaluating test correctness, flaky risk, assertion quality, fixture/mocking strategy, and CI stability impact. (file: `.codex/skills/qa-test-reviewer/SKILL.md`)
-- dba-reviewer: Review database design and change plans with explicit risk tradeoffs across data integrity, performance, and operational safety. Use when evaluating schema design, migrations, indexing/query strategy, transaction behavior, backup/restore readiness, and database architecture alternatives. (file: `.codex/skills/dba-reviewer/SKILL.md`)
+## POスキルのルーティング
+- ユーザーストーリー作成タスクでは `po-story` を使用する。
+- 仕様の評価・作成・更新タスクでは `po-spec` を使用する。
+- 仕様に関するQ&A（意図、要件、受け入れ条件、制約）では `po-spec` を使用する。
+- 実装レベルの質問は PO スコープ境界を明確にし、エンジニアリングロールへエスカレーションする。
+- バックエンドアーキテクチャ設計/レビュー（コスト、運用性、可観測性のトレードオフを含む）では `server-architecture-reviewer` を使用する。
+- セキュリティ観点の設計/コードレビュー（脅威面、アクセス制御、データ保護、修正優先度を含む）では `security-engineer-reviewer` を使用する。
+- QA観点のテストコードレビュー（単体テストの信頼性、保守性、フレーキーリスク、CI フィードバック品質を含む）では `qa-test-reviewer` を使用する。
+- DB観点の設計/変更レビュー（スキーマ整合性、マイグレーション安全性、クエリ/インデックス性能、運用復旧性を含む）では `dba-reviewer` を使用する。
 
-## Documentation Path Policy
-- AI-generated and human-authored documents `MUST NOT` include machine-local absolute paths (for example: `/Users/...`, `/home/...`, `C:\Users\...`, `file:///...`).
-- `MUST` use repository-relative paths for files in this repository (for example: `.codex/skills/po-spec/SKILL.md`).
-- `MUST` use environment variables for external paths only when unavoidable (for example: `$CODEX_HOME/skills/...`), and explain why.
-- `MUST` run `./scripts/check-no-local-paths.sh` before finalizing documentation changes.
+## スキル
+スキルは `SKILL.md` に記載されたローカル指示セットである。以下に利用可能なスキルを示す。各エントリには名称、説明、参照先ファイルパスを記載する。
+### 利用可能なスキル
+- po-spec: ユーザー価値に基づいて仕様を評価・作成・更新し、PO スコープ内で仕様関連の質問に回答する。（file: `.codex/skills/po-spec/SKILL.md`）
+- po-story: コミュニティ図書館向け発見サービスのために、ユーザー価値が明確で検証可能な受け入れ条件を持つユーザーストーリーを作成する。（file: `.codex/skills/po-story/SKILL.md`）
+- server-architecture-reviewer: 運用性・可観測性・コストの明確なトレードオフを伴ってバックエンドアーキテクチャを設計/レビューする。サービス境界、依存関係、デプロイ安全性、インシデント対応、スケーリング戦略、代替案評価で使用する。（file: `.codex/skills/server-architecture-reviewer/SKILL.md`）
+- security-engineer-reviewer: 明確なリスクトレードオフと実行可能な対策を伴って、システム設計と実装の両面をセキュリティレビューする。脅威面、信頼境界、認証/認可、データ保護、依存関係リスク、セキュアコーディング評価で使用する。（file: `.codex/skills/security-engineer-reviewer/SKILL.md`）
+- qa-test-reviewer: QA 観点でテストコード品質をレビューし、単体テストの信頼性、保守性、実行効率を重視する。テスト正確性、フレーキーリスク、アサーション品質、フィクスチャ/モック戦略、CI 安定性影響の評価で使用する。（file: `.codex/skills/qa-test-reviewer/SKILL.md`）
+- dba-reviewer: データ整合性・性能・運用安全性の明確なトレードオフを伴って DB 設計/変更計画をレビューする。スキーマ設計、マイグレーション、インデックス/クエリ戦略、トランザクション挙動、バックアップ/リストア準備、DB アーキテクチャ代替案の評価で使用する。（file: `.codex/skills/dba-reviewer/SKILL.md`）
+
+## ドキュメントのパス方針
+- AI生成文書および人手作成文書には、マシンローカルな絶対パス（例: `/Users/...`, `/home/...`, `C:\Users\...`, `file:///...`）を `MUST NOT` で含めない。
+- このリポジトリ内のファイル参照は、`.codex/skills/po-spec/SKILL.md` のようなリポジトリ相対パスを `MUST` で使用する。
+- 外部パスが不可避な場合のみ、`$CODEX_HOME/skills/...` のような環境変数を `MUST` で使用し、その理由を説明する。
+- ドキュメント変更を確定する前に `./scripts/check-no-local-paths.sh` を `MUST` で実行する。
 
 ## AI TODO起票ルール
-- `MUST` AIが作業指示を受けた際、未解決のリスク/対応事項が発生した場合は `task/todo` に起票する。
+- `MUST` AI が作業指示を受けた際、未解決のリスク/対応事項が発生した場合は `task/todo` に起票する。
 - `MUST` 起票は `task/todo/TEMPLATE.md` に従い、`Status: Proposed` で作成する。
 - `MUST` 起票した場合は作業報告に起票ファイル名を記載する。
 
-## Test Double Rules
-- `MUST` use MockK for test doubles when replacing dependencies across architectural layers in unit tests.
-- `SHOULD` verify invocations for side-effect methods that return `Unit` (for example: `save`, `publish`, `send`).
+## テストダブルルール
+- アーキテクチャレイヤーをまたぐ依存差し替えを単体テストで行う場合、テストダブルは `MUST` で MockK を使用する。
+- `Unit` を返す副作用メソッド（例: `save`, `publish`, `send`）は呼び出し検証を `SHOULD` で実施する。
