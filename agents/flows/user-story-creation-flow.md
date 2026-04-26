@@ -9,7 +9,7 @@
 - 非対象: 実装タスクの設計/実装判断。実装依頼は `agents/flows/implementation-task-flow.md` を参照する。
 
 ## 前提
-- 参照ロール: `agents-roles/po.md`
+- 参照ロール: `agents/roles/po.md`
 - 参照スキル:
   - `.codex/skills/po-story/SKILL.md`
   - `.codex/skills/po-spec/SKILL.md`

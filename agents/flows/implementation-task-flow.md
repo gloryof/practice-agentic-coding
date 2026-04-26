@@ -14,10 +14,10 @@
 
 ## 前提
 - 参照ロール:
-  - `agents-roles/server-architecture-reviewer.md`
-  - `agents-roles/security-engineer-reviewer.md`
-  - `agents-roles/qa-test-reviewer.md`
-  - `agents-roles/dba-reviewer.md`
+  - `agents/roles/server-architecture-reviewer.md`
+  - `agents/roles/security-engineer-reviewer.md`
+  - `agents/roles/qa-test-reviewer.md`
+  - `agents/roles/dba-reviewer.md`
 - 参照スキル:
   - `.codex/skills/server-architecture-reviewer/SKILL.md`
   - `.codex/skills/security-engineer-reviewer/SKILL.md`

@@ -15,7 +15,7 @@ Use this skill to evaluate or design server-side architecture with clear tradeof
 - Current telemetry and operations model (logs, metrics, traces, alerts)
 
 ## Workflow
-1. Read `/agents-roles/server-architecture-reviewer.md` and align decisions to its mission and rules.
+1. Read `agents/roles/server-architecture-reviewer.md` and align decisions to its mission and rules.
 2. Classify the task as one of: architecture design, architecture review, or re-evaluation after incidents.
 3. Map service boundaries, data flows, ownership boundaries, and failure domains.
 4. Evaluate the proposal using `references/review-checklist.md`.

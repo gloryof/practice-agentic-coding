@@ -15,7 +15,7 @@ Use this skill to perform database-focused design and implementation reviews wit
 - Operational constraints (backup/restore targets, maintenance windows, ownership)
 
 ## Workflow
-1. Read `/agents-roles/dba-reviewer.md` and align with its mission and decision rules.
+1. Read `agents/roles/dba-reviewer.md` and align with its mission and decision rules.
 2. Classify the task as one of: schema design review, migration safety review, or database risk re-evaluation.
 3. Evaluate findings using `references/review-checklist.md`.
 4. Structure output using `references/proposal-template.md`.

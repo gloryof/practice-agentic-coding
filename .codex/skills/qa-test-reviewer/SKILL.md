@@ -15,7 +15,7 @@ Use this skill to review test code quality with actionable findings that improve
 - Known flaky incidents or regression history (if available)
 
 ## Workflow
-1. Read `/agents-roles/qa-test-reviewer.md` and apply its decision rules.
+1. Read `agents/roles/qa-test-reviewer.md` and apply its decision rules.
 2. Classify scope with unit tests as primary, and include integration/E2E linkage checks only when needed.
 3. Evaluate findings using `references/review-checklist.md`.
 4. Structure results using `references/proposal-template.md`.

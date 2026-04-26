@@ -15,7 +15,7 @@ Use this skill to perform security-focused design and implementation reviews wit
 - Known incidents, threat assumptions, or abuse scenarios
 
 ## Workflow
-1. Read `/agents-roles/security-engineer-reviewer.md` and align with its mission and decision rules.
+1. Read `agents/roles/security-engineer-reviewer.md` and align with its mission and decision rules.
 2. Classify the task as one of: security design review, secure coding review, or combined review.
 3. Evaluate findings using `references/review-checklist.md`.
 4. Structure output using `references/proposal-template.md`.

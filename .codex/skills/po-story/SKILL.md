@@ -14,7 +14,7 @@ Use this skill to create high-quality user stories from feature requests.
 - Relevant context about target users
 
 ## Workflow
-1. Read `/agents-roles/po.md` before producing output.
+1. Read `agents/roles/po.md` before producing output.
 2. Identify target users, their need, and expected user value.
 3. Draft one or more candidate user stories.
 4. Select the strongest story using PO decision rules.

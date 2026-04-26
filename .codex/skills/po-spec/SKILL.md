@@ -14,7 +14,7 @@ Use this skill for specification decisions and updates, and for answering specif
 - Product constraints and user context
 
 ## Workflow
-1. Read `/agents-roles/po.md` before producing output.
+1. Read `agents/roles/po.md` before producing output.
 2. Classify input as one of: new spec, spec update, specification question.
 3. Evaluate with PO decision rules and prioritize user benefit.
 4. Produce recommendation or updated specification.
