@@ -1,43 +1,44 @@
-# User Stories Operating Guide
+# ユーザーストーリー運用ガイド
 
-## Purpose
-- This directory manages product tasks as one story per file.
-- It is designed for agentic delivery from specification to implementation.
+## 目的
+- このディレクトリでは、プロダクトタスクを1ストーリー1ファイルで管理する。
+- 仕様策定から実装までをエージェント型で進めるために設計されている。
 
-## File Unit and Naming
-- Use one file per story.
-- File name format: `US-XXXX-<short-title>.md`.
-- Start from `US-0001` and keep the ID stable after creation.
-- If a story is deprecated, keep the file and set `Status` to `Done` with a short reason.
+## ファイル単位と命名
+- 1ストーリーにつき1ファイルを使用する。
+- ファイル名の形式は `US-XXXX-<short-title>.md`。
+- `US-0001` から開始し、作成後はIDを変更しない。
+- ストーリーが廃止された場合もファイルは残し、`Status` を `Done` にして短い理由を記載する。
 
-## Status Model
-- `Todo`: drafted and not started.
-- `InProgress`: accepted for implementation.
-- `Done`: accepted criteria and checks are completed.
+## ステータスモデル
+- `Todo`: 下書き済みで未着手。
+- `InProgress`: 実装に着手可能として受け入れ済み。
+- `Done`: 受け入れ条件とチェックが完了済み。
 
-## Required Sections in Each Story
+## 各ストーリーの必須セクション
 - `Status`
 - `User Story`
 - `User Benefit`
 - `Acceptance Criteria`
 
-## Gate Rules
-- Move to `InProgress` only when:
-- Acceptance criteria are testable and complete.
-- Ubiquitous language alignment is confirmed with `product/ubiquitous/terms.md`.
-- Move to `Done` only when:
-- Acceptance criteria are covered by tests or explicit verification notes.
-- Any implementation details (API/data/test design) are handled outside user stories.
-- API specifications must be managed as OpenAPI specifications and treated as the single source of truth.
+## ゲートルール
+- `InProgress` へ移行できるのは、次の条件を満たす場合のみ。
+- 受け入れ条件がテスト可能で、かつ過不足なく定義されていること。
+- `product/ubiquitous/terms.md` と照らしてユビキタス言語の整合が確認されていること。
+- プロダクト全体の制約（例: 対象図書館数）が、唯一の正本である `product/product-foundation.md` と整合していること。
+- `Done` へ移行できるのは、次の条件を満たす場合のみ。
+- 受け入れ条件がテスト、または明示的な検証メモで担保されていること。
+- 実装詳細（API/データ/テスト設計）はユーザーストーリー外で扱われていること。
+- API仕様は OpenAPI 仕様として管理し、単一の正本として扱うこと。
 
-## Routing
-- Use `po-story` for writing and refining stories.
-- Use `po-spec` for product intent, requirements, and acceptance criteria decisions.
-- Use engineering review skills as needed:
+## ルーティング
+- ストーリーの作成・改善には `po-story` を使用する。
+- プロダクト意図、要件、受け入れ条件の判断には `po-spec` を使用する。
+- 必要に応じて、以下のエンジニアリングレビュー系スキルを使用する。
 - `qa-test-reviewer`
 - `security-engineer-reviewer`
 - `server-architecture-reviewer`
-- For any work under `api/`, follow `api/AGENTS.md` and `api/docs/backend-guidelines.md`.
-- For terminology decisions and wording checks, refer to:
+- `api/` 配下での作業は `api/AGENTS.md` と `api/docs/backend-guidelines.md` に従う。
+- 用語の判断や文言チェックは次を参照する。
 - `product/ubiquitous/terms.md`
 - `product/ubiquitous/governance.md`

@@ -1,7 +1,7 @@
 # US-0002: 図書館利用者が蔵書を検索できる
 
 ## Status
-Todo
+Done
 
 ## User Story
 As a 図書館利用者,  

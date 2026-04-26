@@ -1,7 +1,7 @@
 # US-0001: 図書館利用者として登録しログインを開始できる
 
 ## Status
-Todo
+Done
 
 ## User Story
 As a 図書館利用者,  
