@@ -1,9 +1,20 @@
 package jp.glory.practice.agentic.shared.testinfra
 
+import jp.glory.practice.agentic.auth.command.infra.adapter.persistence.authCredentialTable
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.authorTable
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookItemStockTable
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookItemTable
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookProductAuthorTable
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookProductTable
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.publisherTable
+import jp.glory.practice.agentic.libraryuser.command.infra.adapter.persistence.libraryUserTable
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.komapper.core.dsl.Meta
+import org.komapper.core.dsl.QueryDsl
+import org.komapper.jdbc.JdbcDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -17,16 +28,30 @@ import org.testcontainers.utility.MountableFile
 @ResourceLock("postgres")
 abstract class PostgreSqlTestBase {
     @Autowired
+    protected lateinit var komapperDatabase: JdbcDatabase
+
+    @Autowired
     protected lateinit var jdbcTemplate: JdbcTemplate
+
+    private val bookItemStocks = Meta.bookItemStockTable.clone(table = "book_item_stocks")
+    private val bookItems = Meta.bookItemTable.clone(table = "book_items")
+    private val bookProductAuthors = Meta.bookProductAuthorTable.clone(table = "book_product_authors")
+    private val bookProducts = Meta.bookProductTable.clone(table = "book_products")
+    private val authors = Meta.authorTable.clone(table = "authors")
+    private val publishers = Meta.publisherTable.clone(table = "publishers")
+    private val credentials = Meta.authCredentialTable.clone(table = "auth_credentials")
+    private val libraryUsers = Meta.libraryUserTable.clone(table = "library_users")
 
     @BeforeEach
     fun clearTables() {
-        jdbcTemplate.update("DELETE FROM book_item_authors")
-        jdbcTemplate.update("DELETE FROM book_items")
-        jdbcTemplate.update("DELETE FROM authors")
-        jdbcTemplate.update("DELETE FROM publishers")
-        jdbcTemplate.update("DELETE FROM auth_credentials")
-        jdbcTemplate.update("DELETE FROM library_users")
+        komapperDatabase.runQuery { QueryDsl.delete(bookItemStocks).all() }
+        komapperDatabase.runQuery { QueryDsl.delete(bookItems).all() }
+        komapperDatabase.runQuery { QueryDsl.delete(bookProductAuthors).all() }
+        komapperDatabase.runQuery { QueryDsl.delete(bookProducts).all() }
+        komapperDatabase.runQuery { QueryDsl.delete(authors).all() }
+        komapperDatabase.runQuery { QueryDsl.delete(publishers).all() }
+        komapperDatabase.runQuery { QueryDsl.delete(credentials).all() }
+        komapperDatabase.runQuery { QueryDsl.delete(libraryUsers).all() }
     }
 
     companion object {

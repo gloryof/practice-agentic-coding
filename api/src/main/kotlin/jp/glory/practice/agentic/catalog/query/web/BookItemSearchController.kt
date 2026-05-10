@@ -94,6 +94,8 @@ class BookItemSearchController(
                 publisher = it.publisher,
                 authorNames = it.authorNames,
                 isbn = it.isbn,
+                availableCount = it.availableCount,
+                totalCount = it.totalCount,
             )
         }
 }
@@ -109,4 +111,8 @@ data class BookItemSearchItem(
     @JsonProperty("author_names")
     val authorNames: List<String>,
     val isbn: String,
+    @JsonProperty("available_count")
+    val availableCount: Int,
+    @JsonProperty("total_count")
+    val totalCount: Int,
 )

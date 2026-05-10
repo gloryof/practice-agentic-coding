@@ -1,8 +1,11 @@
 package jp.glory.practice.agentic.catalog.query.infra
 
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.BookItemStockStatus
 import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.authorTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookItemAuthorTable
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookItemStockTable
 import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookItemTable
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookProductAuthorTable
+import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookProductTable
 import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.publisherTable
 import jp.glory.practice.agentic.catalog.query.usecase.BookItemSearchInput
 import jp.glory.practice.agentic.catalog.query.usecase.BookItemSearchQuery
@@ -20,57 +23,63 @@ class BookItemSearchQueryImpl(
     private val database: JdbcDatabase,
 ) : BookItemSearchQuery {
     private val bookItems = Meta.bookItemTable.clone(table = "book_items")
+    private val bookProducts = Meta.bookProductTable.clone(table = "book_products")
     private val publishers = Meta.publisherTable.clone(table = "publishers")
     private val authors = Meta.authorTable.clone(table = "authors")
-    private val bookItemAuthors = Meta.bookItemAuthorTable.clone(table = "book_item_authors")
+    private val bookProductAuthors = Meta.bookProductAuthorTable.clone(table = "book_product_authors")
+    private val stocks = Meta.bookItemStockTable.clone(table = "book_item_stocks")
 
     override fun search(input: BookItemSearchInput): List<BookItemSearchResult> {
-        val bookItemRows = queryBookItems(input)
-        if (bookItemRows.isEmpty()) {
+        val bookProductRows = queryBookProducts(input)
+        if (bookProductRows.isEmpty()) {
             return emptyList()
         }
 
-        val authorMap = loadAuthors(bookItemRows.map { it.id })
+        val bookProductIds = bookProductRows.map { it.id }
+        val authorMap = loadAuthors(bookProductIds)
+        val stockCountMap = loadStockCountMap(bookProductIds)
 
-        return bookItemRows.map { row ->
+        return bookProductRows.map { row ->
+            val stockCount = stockCountMap[row.id] ?: StockCount(availableCount = 0, totalCount = 0)
             BookItemSearchResult(
-                bookItemId = row.id,
                 title = row.title,
                 publisher = row.publisher,
                 authorNames = authorMap[row.id] ?: emptyList(),
                 isbn = row.isbn,
+                availableCount = stockCount.availableCount,
+                totalCount = stockCount.totalCount,
             )
         }
     }
 
-    private fun queryBookItems(input: BookItemSearchInput): List<BookItemRow> {
+    private fun queryBookProducts(input: BookItemSearchInput): List<BookProductRow> {
         val records =
             database.runQuery {
                 QueryDsl
-                    .from(bookItems)
-                    .innerJoin(publishers) { bookItems.publisherId eq publishers.id }
+                    .from(bookProducts)
+                    .innerJoin(publishers) { bookProducts.publisherId eq publishers.id }
                     .where { applySearchConditions(input) }
                     .selectAsRecord(
-                        bookItems.id,
-                        bookItems.title,
-                        bookItems.isbn,
+                        bookProducts.id,
+                        bookProducts.title,
+                        bookProducts.isbn,
                         publishers.name,
                     )
             }
 
         return records.map { record ->
-            BookItemRow(
-                id = requireNotNull(record[bookItems.id]),
-                title = requireNotNull(record[bookItems.title]),
-                isbn = requireNotNull(record[bookItems.isbn]),
+            BookProductRow(
+                id = requireNotNull(record[bookProducts.id]),
+                title = requireNotNull(record[bookProducts.title]),
+                isbn = requireNotNull(record[bookProducts.isbn]),
                 publisher = requireNotNull(record[publishers.name]),
             )
         }
     }
 
     private fun WhereScope.applySearchConditions(input: BookItemSearchInput) {
-        addMatchCondition(input.title, input.titleExact, bookItems.title)
-        addMatchCondition(input.titleKana, input.titleKanaExact, bookItems.titleKana)
+        addMatchCondition(input.title, input.titleExact, bookProducts.title)
+        addMatchCondition(input.titleKana, input.titleKanaExact, bookProducts.titleKana)
         addMatchCondition(input.publisher, input.publisherExact, publishers.name)
         addMatchCondition(input.publisherKana, input.publisherKanaExact, publishers.nameKana)
         addAuthorConditions(input)
@@ -86,20 +95,20 @@ class BookItemSearchQueryImpl(
 
         exists(
             QueryDsl
-                .from(bookItemAuthors)
-                .innerJoin(authors) { bookItemAuthors.authorId eq authors.id }
+                .from(bookProductAuthors)
+                .innerJoin(authors) { bookProductAuthors.authorId eq authors.id }
                 .where {
-                    bookItemAuthors.bookItemId eq bookItems.id
+                    bookProductAuthors.bookProductId eq bookProducts.id
                     addMatchCondition(input.authorName, input.authorExact, authors.name)
                     addMatchCondition(input.authorNameKana, input.authorKanaExact, authors.nameKana)
-                }.select(bookItemAuthors.bookItemId),
+                }.select(bookProductAuthors.bookProductId),
         )
     }
 
     private fun WhereScope.addIsbnCondition(isbn: String?) {
         val trimmed = isbn?.trim()
         if (!trimmed.isNullOrBlank()) {
-            bookItems.isbn eq trimmed
+            bookProducts.isbn eq trimmed
         }
     }
 
@@ -120,30 +129,55 @@ class BookItemSearchQueryImpl(
         }
     }
 
-    private fun loadAuthors(bookItemIds: List<String>): Map<String, List<String>> {
+    private fun loadAuthors(bookProductIds: List<String>): Map<String, List<String>> {
         val records =
             database.runQuery {
                 QueryDsl
-                    .from(bookItemAuthors)
-                    .innerJoin(authors) { bookItemAuthors.authorId eq authors.id }
-                    .where { bookItemAuthors.bookItemId inList bookItemIds }
-                    .selectAsRecord(bookItemAuthors.bookItemId, authors.name)
+                    .from(bookProductAuthors)
+                    .innerJoin(authors) { bookProductAuthors.authorId eq authors.id }
+                    .where { bookProductAuthors.bookProductId inList bookProductIds }
+                    .selectAsRecord(bookProductAuthors.bookProductId, authors.name)
             }
 
         return records
             .map { record ->
-                requireNotNull(record[bookItemAuthors.bookItemId]) to requireNotNull(record[authors.name])
+                requireNotNull(record[bookProductAuthors.bookProductId]) to requireNotNull(record[authors.name])
             }.sortedBy { it.second }
             .groupBy(
                 { it.first },
                 { it.second },
             )
     }
+
+    private fun loadStockCountMap(bookProductIds: List<String>): Map<String, StockCount> {
+        val records =
+            database.runQuery {
+                QueryDsl
+                    .from(bookItems)
+                    .innerJoin(stocks) { bookItems.id eq stocks.bookItemId }
+                    .where {
+                        bookItems.bookProductId inList bookProductIds
+                    }.selectAsRecord(bookItems.bookProductId, stocks.status)
+            }
+
+        return records
+            .groupBy { requireNotNull(it[bookItems.bookProductId]) }
+            .mapValues { (_, grouped) ->
+                val availableCount =
+                    grouped.count { requireNotNull(it[stocks.status]) == BookItemStockStatus.AVAILABLE }
+                StockCount(availableCount = availableCount, totalCount = grouped.size)
+            }
+    }
 }
 
-private data class BookItemRow(
+private data class BookProductRow(
     val id: String,
     val title: String,
     val isbn: String,
     val publisher: String,
+)
+
+private data class StockCount(
+    val availableCount: Int,
+    val totalCount: Int,
 )

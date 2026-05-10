@@ -53,6 +53,8 @@ class BookItemSearchControllerTest {
                     publisher = "技術書房",
                     authorNames = listOf("山田太郎"),
                     isbn = "9780000000001",
+                    availableCount = 1,
+                    totalCount = 2,
                 ),
             )
 
@@ -64,6 +66,8 @@ class BookItemSearchControllerTest {
                     .accept(MediaType.APPLICATION_JSON),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.book_items[0].author_names[0]").value("山田太郎"))
+            .andExpect(jsonPath("$.book_items[0].available_count").value(1))
+            .andExpect(jsonPath("$.book_items[0].total_count").value(2))
         verify(exactly = 1) { context.authenticator.requireValidToken("Bearer token-123") }
     }
 
@@ -125,12 +129,16 @@ class BookItemSearchControllerTest {
                     publisher = "技術書房",
                     authorNames = listOf("山田太郎"),
                     isbn = "9780000000001",
+                    availableCount = 0,
+                    totalCount = 2,
                 ),
                 BookItemSearchResults(
                     title = "Kotlin実践",
                     publisher = "技術書房",
                     authorNames = listOf("佐藤花子"),
                     isbn = "9780000000002",
+                    availableCount = 1,
+                    totalCount = 1,
                 ),
             )
 
@@ -144,6 +152,30 @@ class BookItemSearchControllerTest {
             .andExpect(jsonPath("$.book_items.length()").value(2))
             .andExpect(jsonPath("$.book_items[0].title").value("Kotlin入門"))
             .andExpect(jsonPath("$.book_items[1].title").value("Kotlin実践"))
+            .andExpect(jsonPath("$.book_items[0].available_count").value(0))
+            .andExpect(jsonPath("$.book_items[0].total_count").value(2))
+            .andExpect(jsonPath("$.book_items[1].available_count").value(1))
+            .andExpect(jsonPath("$.book_items[1].total_count").value(1))
+        verify(exactly = 1) { context.authenticator.requireValidToken("Bearer token-123") }
+    }
+
+    @Test
+    fun `returns 500 when use case throws unexpected exception`() {
+        val context = createSut()
+        every { context.useCase.search(any()) } throws RuntimeException("db error")
+
+        val response =
+            context.mvc
+                .perform(
+                    get("/api/v1/book-items")
+                        .param("title", "Kotlin")
+                        .header("Authorization", "Bearer token-123")
+                        .accept(MediaType.APPLICATION_JSON),
+                ).andReturn()
+                .response
+
+        assertEquals(500, response.status)
+        assertTrue(response.contentAsString.contains("\"code\":\"INTERNAL_SERVER_ERROR\""))
         verify(exactly = 1) { context.authenticator.requireValidToken("Bearer token-123") }
     }
 

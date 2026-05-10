@@ -4,8 +4,14 @@ import org.komapper.annotation.KomapperEntity
 import org.komapper.annotation.KomapperId
 
 @KomapperEntity
-data class BookItemTable(
+data class BookItemStockTable(
     @KomapperId
     val id: String,
-    val bookProductId: String,
+    val bookItemId: String,
+    val status: BookItemStockStatus,
 )
+
+enum class BookItemStockStatus {
+    AVAILABLE,
+    CHECKED_OUT,
+}

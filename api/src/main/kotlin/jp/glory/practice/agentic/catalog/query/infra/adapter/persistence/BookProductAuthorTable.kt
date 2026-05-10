@@ -4,8 +4,9 @@ import org.komapper.annotation.KomapperEntity
 import org.komapper.annotation.KomapperId
 
 @KomapperEntity
-data class BookItemTable(
+data class BookProductAuthorTable(
     @KomapperId
-    val id: String,
     val bookProductId: String,
+    @KomapperId
+    val authorId: String,
 )

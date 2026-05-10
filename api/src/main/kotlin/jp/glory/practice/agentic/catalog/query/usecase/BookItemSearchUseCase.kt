@@ -6,17 +6,19 @@ import org.springframework.stereotype.Service
 class BookItemSearchUseCase(
     private val query: BookItemSearchQuery,
 ) {
-    fun search(input: BookItemSearchInput): List<BookItemSearchResults> =
-        query
-            .search(input)
-            .map {
-                BookItemSearchResults(
-                    title = it.title,
-                    publisher = it.publisher,
-                    authorNames = it.authorNames,
-                    isbn = it.isbn,
-                )
-            }
+    fun search(input: BookItemSearchInput): List<BookItemSearchResults> = mapResults(query.search(input))
+
+    private fun mapResults(results: List<BookItemSearchResult>) = results.map { it.toSearchResults() }
+
+    private fun BookItemSearchResult.toSearchResults(): BookItemSearchResults =
+        BookItemSearchResults(
+            title = title,
+            publisher = publisher,
+            authorNames = authorNames,
+            isbn = isbn,
+            availableCount = availableCount,
+            totalCount = totalCount,
+        )
 }
 
 data class BookItemSearchInput(
@@ -40,14 +42,17 @@ data class BookItemSearchResults(
     val publisher: String,
     val authorNames: List<String>,
     val isbn: String,
+    val availableCount: Int,
+    val totalCount: Int,
 )
 
 data class BookItemSearchResult(
-    val bookItemId: String,
     val title: String,
     val publisher: String,
     val authorNames: List<String>,
     val isbn: String,
+    val availableCount: Int,
+    val totalCount: Int,
 )
 
 interface BookItemSearchQuery {
