@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository
 class AuthCredentialDao(
     private val database: JdbcDatabase,
 ) {
-    private val table = Meta.authCredentialTable.clone(table = "auth_credentials")
+    private val table = Meta.authCredentialTable
 
     fun insert(record: AuthCredentialTable) {
         database.runQuery {

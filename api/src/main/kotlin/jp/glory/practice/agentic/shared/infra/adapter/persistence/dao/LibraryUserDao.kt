@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository
 class LibraryUserDao(
     private val database: JdbcDatabase,
 ) {
-    private val table = Meta.libraryUserTable.clone(table = "library_users")
+    private val table = Meta.libraryUserTable
 
     fun insert(record: LibraryUserTable) {
         database.runQuery {

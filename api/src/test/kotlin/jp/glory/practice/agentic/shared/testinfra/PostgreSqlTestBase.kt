@@ -33,14 +33,14 @@ abstract class PostgreSqlTestBase {
     @Autowired
     protected lateinit var jdbcTemplate: JdbcTemplate
 
-    private val bookItemStocks = Meta.bookItemStockTable.clone(table = "book_item_stocks")
-    private val bookItems = Meta.bookItemTable.clone(table = "book_items")
-    private val bookProductAuthors = Meta.bookProductAuthorTable.clone(table = "book_product_authors")
-    private val bookProducts = Meta.bookProductTable.clone(table = "book_products")
-    private val authors = Meta.authorTable.clone(table = "authors")
-    private val publishers = Meta.publisherTable.clone(table = "publishers")
-    private val credentials = Meta.authCredentialTable.clone(table = "auth_credentials")
-    private val libraryUsers = Meta.libraryUserTable.clone(table = "library_users")
+    private val bookItemStocks = Meta.bookItemStockTable
+    private val bookItems = Meta.bookItemTable
+    private val bookProductAuthors = Meta.bookProductAuthorTable
+    private val bookProducts = Meta.bookProductTable
+    private val authors = Meta.authorTable
+    private val publishers = Meta.publisherTable
+    private val credentials = Meta.authCredentialTable
+    private val libraryUsers = Meta.libraryUserTable
 
     @BeforeEach
     fun clearTables() {

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository
 class BookItemStockDao(
     private val database: JdbcDatabase,
 ) {
-    private val bookItems = Meta.bookItemTable.clone(table = "book_items")
-    private val stocks = Meta.bookItemStockTable.clone(table = "book_item_stocks")
+    private val bookItems = Meta.bookItemTable
+    private val stocks = Meta.bookItemStockTable
 
     fun countByBookProductIds(bookProductIds: List<String>): Map<String, StockCount> {
         if (bookProductIds.isEmpty()) {

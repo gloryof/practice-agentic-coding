@@ -19,9 +19,9 @@ class BookItemStockDaoTest : PostgreSqlTestBase() {
     @Autowired
     private lateinit var sut: BookItemStockDao
 
-    private val bookItems = Meta.bookItemTable.clone(table = "book_items")
-    private val bookProducts = Meta.bookProductTable.clone(table = "book_products")
-    private val publishers = Meta.publisherTable.clone(table = "publishers")
+    private val bookItems = Meta.bookItemTable
+    private val bookProducts = Meta.bookProductTable
+    private val publishers = Meta.publisherTable
 
     @Test
     fun `countByBookProductIds counts available and total`() {

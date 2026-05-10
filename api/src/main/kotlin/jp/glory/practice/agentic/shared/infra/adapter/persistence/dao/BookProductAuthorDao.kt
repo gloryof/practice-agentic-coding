@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository
 class BookProductAuthorDao(
     private val database: JdbcDatabase,
 ) {
-    private val authors = Meta.authorTable.clone(table = "authors")
-    private val bookProductAuthors = Meta.bookProductAuthorTable.clone(table = "book_product_authors")
+    private val authors = Meta.authorTable
+    private val bookProductAuthors = Meta.bookProductAuthorTable
 
     fun findAuthorNamesByBookProductIds(bookProductIds: List<String>): Map<String, List<String>> {
         if (bookProductIds.isEmpty()) {

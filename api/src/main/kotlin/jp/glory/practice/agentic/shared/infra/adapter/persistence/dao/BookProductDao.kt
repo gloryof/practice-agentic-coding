@@ -17,10 +17,10 @@ import org.springframework.stereotype.Repository
 class BookProductDao(
     private val database: JdbcDatabase,
 ) {
-    private val bookProducts = Meta.bookProductTable.clone(table = "book_products")
-    private val publishers = Meta.publisherTable.clone(table = "publishers")
-    private val authors = Meta.authorTable.clone(table = "authors")
-    private val bookProductAuthors = Meta.bookProductAuthorTable.clone(table = "book_product_authors")
+    private val bookProducts = Meta.bookProductTable
+    private val publishers = Meta.publisherTable
+    private val authors = Meta.authorTable
+    private val bookProductAuthors = Meta.bookProductAuthorTable
 
     fun findBySearchInput(input: BookItemSearchInput): List<BookProductRow> {
         val records =
