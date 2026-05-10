@@ -1,8 +1,9 @@
 # Daoクラスを追加する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
 - Updated: 2026-05-03 - 起票
+- Updated: 2026-05-10 - 完了
 
 ## 背景
 - 現在のクエリ実装では、Komapperのテーブルメタを直接利用したデータ取得ロジックがInfra実装クラス内に集約されている。

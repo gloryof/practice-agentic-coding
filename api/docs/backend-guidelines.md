@@ -54,6 +54,15 @@
 #### 参照条件
 - `MUST` テストコードの追加・修正・レビューを行う場合は参照する。
 
+### 永続化クラス配置方針
+テーブルクラスとDAOクラスの配置方針を定義する。
+
+#### 方針
+- `MUST` Komapperのテーブルクラス（Entity + Meta）は `jp.glory.practice.agentic.shared.infra.adapter.persistence.table` に配置する。
+- `MUST` DAOクラスは `jp.glory.practice.agentic.shared.infra.adapter.persistence.dao` に配置し、`QueryDsl` をカプセル化する。
+- `MUST` Query/CommandのInfra実装クラス（`*RepositoryImpl` / `*QueryImpl`）は、DBアクセス処理をDAOへ委譲する。
+- `MUST` Query/Command配下で同一テーブルや同一クエリを重複定義しない。
+
 ## 実行チェック
 - `MUST` Kotlin変更時は `./gradlew ktlintFormat` を実行する。
 - `MUST` 最終確認として `./gradlew check` を実行する。

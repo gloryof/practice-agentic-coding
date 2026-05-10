@@ -1,8 +1,9 @@
 # テーブルクラスとDAOクラスの配置を再検討する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
 - Updated: 2026-05-03 - 起票
+- Updated: 2026-05-10 - 完了
 
 ## 背景
 現状は query/command ともに infra レイヤに格納している。

@@ -1,38 +1,29 @@
 package jp.glory.practice.agentic.libraryuser.command.infra.adapter.persistence
 
 import com.github.michaelbull.result.fold
+import io.mockk.every
+import io.mockk.mockk
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
-import jp.glory.practice.agentic.shared.testinfra.PostgreSqlTestBase
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.LibraryUserDao
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.LibraryUserTable
 import org.junit.jupiter.api.Test
-import org.komapper.core.dsl.Meta
-import org.komapper.core.dsl.QueryDsl
-import org.komapper.jdbc.JdbcDatabase
-import org.springframework.beans.factory.annotation.Autowired
 import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-class AuthAccountRepositoryImplTest : PostgreSqlTestBase() {
-    @Autowired
-    private lateinit var sut: AuthAccountRepositoryImpl
-
-    @Autowired
-    private lateinit var database: JdbcDatabase
-
-    private val table = Meta.libraryUserTable.clone(table = "library_users")
-
+class AuthAccountRepositoryImplTest {
     @Test
     fun `findByEmail returns account when email exists`() {
-        database.runQuery {
-            QueryDsl.Companion.insert(table).single(
-                LibraryUserTable(
-                    id = "user0000000000000000000011",
-                    email = "user11@example.com",
-                    registeredAt = Instant.parse("2026-03-08T00:00:00Z"),
-                ),
+        val dao = mockk<LibraryUserDao>()
+        val sut = AuthAccountRepositoryImpl(dao)
+        every { dao.findByEmail("user11@example.com") } returns
+            LibraryUserTable(
+                id = "user0000000000000000000011",
+                email = "user11@example.com",
+                registeredAt = Instant.parse("2026-03-08T00:00:00Z"),
             )
-        }
 
         val account = sut.findByEmail(email("user11@example.com"))
 
@@ -43,13 +34,33 @@ class AuthAccountRepositoryImplTest : PostgreSqlTestBase() {
 
     @Test
     fun `findByEmail returns null when email does not exist`() {
+        val dao = mockk<LibraryUserDao>()
+        val sut = AuthAccountRepositoryImpl(dao)
+        every { dao.findByEmail("none@example.com") } returns null
+
         val account = sut.findByEmail(email("none@example.com"))
 
         assertNull(account)
     }
 
+    @Test
+    fun `findByEmail throws when stored email is invalid`() {
+        val dao = mockk<LibraryUserDao>()
+        val sut = AuthAccountRepositoryImpl(dao)
+        every { dao.findByEmail("bad@example.com") } returns
+            LibraryUserTable(
+                id = "user0000000000000000000012",
+                email = "",
+                registeredAt = Instant.parse("2026-03-08T00:00:00Z"),
+            )
+
+        assertFailsWith<IllegalStateException> {
+            sut.findByEmail(email("bad@example.com"))
+        }
+    }
+
     private fun email(raw: String): Email =
-        Email.Companion.create(raw).fold(
+        Email.create(raw).fold(
             success = { it },
             failure = { error("expected valid email") },
         )

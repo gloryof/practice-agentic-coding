@@ -5,26 +5,15 @@ import jp.glory.practice.agentic.auth.command.domain.model.AuthAccount
 import jp.glory.practice.agentic.auth.command.domain.repository.AuthAccountRepository
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
-import org.komapper.core.dsl.Meta
-import org.komapper.core.dsl.QueryDsl
-import org.komapper.core.dsl.query.firstOrNull
-import org.komapper.jdbc.JdbcDatabase
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.LibraryUserDao
 import org.springframework.stereotype.Repository
 
 @Repository
 class AuthAccountRepositoryImpl(
-    private val database: JdbcDatabase,
+    private val libraryUserDao: LibraryUserDao,
 ) : AuthAccountRepository {
-    private val table = Meta.libraryUserTable.clone(table = "library_users")
-
     override fun findByEmail(email: Email): AuthAccount? {
-        val user =
-            database.runQuery {
-                QueryDsl
-                    .from(table)
-                    .where { table.email eq email.value }
-                    .firstOrNull()
-            } ?: return null
+        val user = libraryUserDao.findByEmail(email.value) ?: return null
 
         val storedEmail =
             Email.create(user.email).fold(

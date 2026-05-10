@@ -1,219 +1,92 @@
 package jp.glory.practice.agentic.catalog.query.infra
 
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.AuthorTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.BookItemStockStatus
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.BookItemTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.BookProductAuthorTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.BookProductTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.PublisherTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.authorTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookItemTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookProductAuthorTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookProductTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.publisherTable
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import jp.glory.practice.agentic.catalog.query.usecase.BookItemSearchInput
-import jp.glory.practice.agentic.shared.testinfra.PostgreSqlTestBase
-import jp.glory.practice.agentic.shared.testinfra.UuidGenerator
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.BookItemStockDao
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.BookProductAuthorDao
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.BookProductDao
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.BookProductRow
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.StockCount
 import org.junit.jupiter.api.Test
-import org.komapper.core.dsl.Meta
-import org.komapper.core.dsl.QueryDsl
-import org.springframework.beans.factory.annotation.Autowired
 import kotlin.test.assertEquals
 
-class BookItemSearchQueryImplTest : PostgreSqlTestBase() {
-    @Autowired
-    private lateinit var sut: BookItemSearchQueryImpl
-
-    private val bookItems = Meta.bookItemTable.clone(table = "book_items")
-    private val bookProducts = Meta.bookProductTable.clone(table = "book_products")
-    private val publishers = Meta.publisherTable.clone(table = "publishers")
-    private val authors = Meta.authorTable.clone(table = "authors")
-    private val bookProductAuthors = Meta.bookProductAuthorTable.clone(table = "book_product_authors")
-
+class BookItemSearchQueryImplTest {
     @Test
-    fun `filters by title and resolves available when one stock is available`() {
-        val kotlin =
-            insertBookProductWithItems(
-                title = "Kotlin入門",
-                titleKana = "ことりんにゅうもん",
-                publisherName = "技術書房",
-                publisherKana = "ぎじゅつしょぼう",
-                authorName = "山田太郎",
-                authorKana = "やまだたろう",
-                isbn = "9780000000001",
-                stockStatuses = listOf(BookItemStockStatus.CHECKED_OUT, BookItemStockStatus.AVAILABLE),
-            )
-        insertBookProductWithItems(
-            title = "Java実践",
-            titleKana = "じゃばじっせん",
-            publisherName = "技術書房",
-            publisherKana = "ぎじゅつしょぼう",
-            authorName = "佐藤花子",
-            authorKana = "さとうはなこ",
-            isbn = "9780000000002",
-            stockStatuses = listOf(BookItemStockStatus.CHECKED_OUT),
-        )
+    fun `returns empty when dao returns no book products`() {
+        val bookProductDao = mockk<BookProductDao>()
+        val bookProductAuthorDao = mockk<BookProductAuthorDao>()
+        val bookItemStockDao = mockk<BookItemStockDao>()
+        val sut = BookItemSearchQueryImpl(bookProductDao, bookProductAuthorDao, bookItemStockDao)
+        val input = input(title = "Kotlin")
 
-        val result = sut.search(input(title = "Kotlin"))
+        every { bookProductDao.findBySearchInput(input) } returns emptyList()
 
-        assertEquals(1, result.size)
-        val item = result.first()
-        assertEquals("Kotlin入門", item.title)
-        assertEquals("9780000000001", item.isbn)
-        assertEquals(listOf("山田太郎"), item.authorNames)
-        assertEquals(1, item.availableCount)
-        assertEquals(2, item.totalCount)
-        assertEquals(kotlin.bookProductId, findBookProductIdByIsbn(item.isbn))
+        val result = sut.search(input)
+
+        assertEquals(emptyList(), result)
+        verify(exactly = 1) { bookProductDao.findBySearchInput(input) }
+        verify(exactly = 0) { bookProductAuthorDao.findAuthorNamesByBookProductIds(any()) }
+        verify(exactly = 0) { bookItemStockDao.countByBookProductIds(any()) }
     }
 
     @Test
-    fun `returns zero available count when all item stocks are checked out`() {
-        val inserted =
-            insertBookProductWithItems(
-                title = "Kotlin実践",
-                titleKana = "ことりんじっせん",
-                publisherName = "技術書房",
-                publisherKana = "ぎじゅつしょぼう",
-                authorName = "山田太郎",
-                authorKana = "やまだたろう",
-                isbn = "9780000000003",
-                stockStatuses = listOf(BookItemStockStatus.CHECKED_OUT, BookItemStockStatus.CHECKED_OUT),
+    fun `maps dao results to query result`() {
+        val bookProductDao = mockk<BookProductDao>()
+        val bookProductAuthorDao = mockk<BookProductAuthorDao>()
+        val bookItemStockDao = mockk<BookItemStockDao>()
+        val sut = BookItemSearchQueryImpl(bookProductDao, bookProductAuthorDao, bookItemStockDao)
+        val input = input(authorNameKana = "やまだ")
+
+        val rows =
+            listOf(
+                BookProductRow(id = "book-1", title = "Kotlin入門", isbn = "9780000000001", publisher = "技術書房"),
+                BookProductRow(id = "book-2", title = "Java実践", isbn = "9780000000002", publisher = "技術書房"),
+            )
+        every { bookProductDao.findBySearchInput(input) } returns rows
+        every { bookProductAuthorDao.findAuthorNamesByBookProductIds(listOf("book-1", "book-2")) } returns
+            mapOf("book-1" to listOf("山田太郎"), "book-2" to listOf("佐藤花子"))
+        every { bookItemStockDao.countByBookProductIds(listOf("book-1", "book-2")) } returns
+            mapOf(
+                "book-1" to StockCount(availableCount = 1, totalCount = 2),
+                "book-2" to StockCount(availableCount = 0, totalCount = 1),
             )
 
-        val result = sut.search(input(title = "Kotlin実践", titleExact = true))
+        val result = sut.search(input)
 
-        assertEquals(1, result.size)
-        val item = result.first()
-        assertEquals("Kotlin実践", item.title)
-        assertEquals("技術書房", item.publisher)
-        assertEquals(listOf("山田太郎"), item.authorNames)
-        assertEquals(inserted.isbn, item.isbn)
-        assertEquals(0, item.availableCount)
-        assertEquals(2, item.totalCount)
+        assertEquals(2, result.size)
+        assertEquals("Kotlin入門", result[0].title)
+        assertEquals("技術書房", result[0].publisher)
+        assertEquals(listOf("山田太郎"), result[0].authorNames)
+        assertEquals("9780000000001", result[0].isbn)
+        assertEquals(1, result[0].availableCount)
+        assertEquals(2, result[0].totalCount)
+
+        assertEquals("Java実践", result[1].title)
+        assertEquals(listOf("佐藤花子"), result[1].authorNames)
+        assertEquals(0, result[1].availableCount)
+        assertEquals(1, result[1].totalCount)
     }
 
     @Test
-    fun `filters by author name kana`() {
-        val kotlin =
-            insertBookProductWithItems(
-                title = "Kotlin入門",
-                titleKana = "ことりんにゅうもん",
-                publisherName = "技術書房",
-                publisherKana = "ぎじゅつしょぼう",
-                authorName = "山田太郎",
-                authorKana = "やまだたろう",
-                isbn = "9780000000001",
-                stockStatuses = listOf(BookItemStockStatus.AVAILABLE),
-            )
-        insertBookProductWithItems(
-            title = "Java実践",
-            titleKana = "じゃばじっせん",
-            publisherName = "技術書房",
-            publisherKana = "ぎじゅつしょぼう",
-            authorName = "佐藤花子",
-            authorKana = "さとうはなこ",
-            isbn = "9780000000002",
-            stockStatuses = listOf(BookItemStockStatus.AVAILABLE),
-        )
+    fun `uses default stock count when stock is not found`() {
+        val bookProductDao = mockk<BookProductDao>()
+        val bookProductAuthorDao = mockk<BookProductAuthorDao>()
+        val bookItemStockDao = mockk<BookItemStockDao>()
+        val sut = BookItemSearchQueryImpl(bookProductDao, bookProductAuthorDao, bookItemStockDao)
+        val input = input(isbn = "9780000000003")
 
-        val result = sut.search(input(authorNameKana = "やまだ"))
+        every { bookProductDao.findBySearchInput(input) } returns
+            listOf(BookProductRow(id = "book-3", title = "DDD", isbn = "9780000000003", publisher = "青空社"))
+        every { bookProductAuthorDao.findAuthorNamesByBookProductIds(listOf("book-3")) } returns emptyMap()
+        every { bookItemStockDao.countByBookProductIds(listOf("book-3")) } returns emptyMap()
+
+        val result = sut.search(input)
 
         assertEquals(1, result.size)
-        val item = result.first()
-        assertEquals("Kotlin入門", item.title)
-        assertEquals("技術書房", item.publisher)
-        assertEquals(listOf("山田太郎"), item.authorNames)
-        assertEquals(kotlin.isbn, item.isbn)
-        assertEquals(1, item.availableCount)
-        assertEquals(1, item.totalCount)
-    }
-
-    private fun insertBookProductWithItems(
-        title: String,
-        titleKana: String,
-        publisherName: String,
-        publisherKana: String,
-        authorName: String,
-        authorKana: String,
-        isbn: String,
-        stockStatuses: List<BookItemStockStatus>,
-    ): InsertedBookProduct {
-        val publisherId = insertPublisher(publisherName, publisherKana)
-        val authorId = insertAuthor(authorName, authorKana)
-        val bookProductId = UuidGenerator.v7()
-
-        komapperDatabase.runQuery {
-            QueryDsl.insert(bookProducts).single(
-                BookProductTable(
-                    id = bookProductId,
-                    title = title,
-                    titleKana = titleKana,
-                    publisherId = publisherId,
-                    isbn = isbn,
-                ),
-            )
-        }
-        komapperDatabase.runQuery {
-            QueryDsl.insert(bookProductAuthors).single(
-                BookProductAuthorTable(bookProductId = bookProductId, authorId = authorId),
-            )
-        }
-
-        stockStatuses.forEach { status ->
-            val bookItemId = UuidGenerator.v7()
-            komapperDatabase.runQuery {
-                QueryDsl.insert(bookItems).single(BookItemTable(id = bookItemId, bookProductId = bookProductId))
-            }
-            insertBookItemStock(bookItemId, status)
-        }
-
-        return InsertedBookProduct(bookProductId = bookProductId, isbn = isbn)
-    }
-
-    private fun insertPublisher(
-        name: String,
-        nameKana: String,
-    ): String {
-        val publisherId = UuidGenerator.v7()
-        komapperDatabase.runQuery {
-            QueryDsl.insert(publishers).single(PublisherTable(id = publisherId, name = name, nameKana = nameKana))
-        }
-        return publisherId
-    }
-
-    private fun insertAuthor(
-        name: String,
-        nameKana: String,
-    ): String {
-        val authorId = UuidGenerator.v7()
-        komapperDatabase.runQuery {
-            QueryDsl.insert(authors).single(AuthorTable(id = authorId, name = name, nameKana = nameKana))
-        }
-        return authorId
-    }
-
-    private fun insertBookItemStock(
-        bookItemId: String,
-        status: BookItemStockStatus,
-    ) {
-        val stockId = UuidGenerator.v7()
-        komapperDatabase.runQuery {
-            QueryDsl.executeScript(
-                """
-                INSERT INTO book_item_stocks (id, book_item_id, status)
-                VALUES ('$stockId', '$bookItemId', '${status.name}'::book_item_stock_status)
-                """.trimIndent(),
-            )
-        }
-    }
-
-    private fun findBookProductIdByIsbn(isbn: String): String {
-        val row =
-            jdbcTemplate.queryForMap(
-                "SELECT id FROM book_products WHERE isbn = ?",
-                isbn,
-            )
-        return row["id"] as String
+        assertEquals(0, result[0].availableCount)
+        assertEquals(0, result[0].totalCount)
     }
 
     private fun input(
@@ -247,8 +120,3 @@ class BookItemSearchQueryImplTest : PostgreSqlTestBase() {
             isbn = isbn,
         )
 }
-
-private data class InsertedBookProduct(
-    val bookProductId: String,
-    val isbn: String,
-)

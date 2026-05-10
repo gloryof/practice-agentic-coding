@@ -1,67 +1,52 @@
 package jp.glory.practice.agentic.auth.command.infra.adapter.persistence
 
 import com.github.michaelbull.result.fold
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
 import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
-import jp.glory.practice.agentic.shared.testinfra.PostgreSqlTestBase
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.AuthCredentialDao
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.AuthCredentialTable
 import org.junit.jupiter.api.Test
-import org.komapper.core.dsl.Meta
-import org.komapper.core.dsl.QueryDsl
-import org.komapper.core.dsl.query.firstOrNull
-import org.komapper.core.dsl.query.single
-import org.komapper.jdbc.JdbcDatabase
-import org.springframework.beans.factory.annotation.Autowired
-import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-class AuthCredentialRepositoryImplTest : PostgreSqlTestBase() {
-    @Autowired
-    private lateinit var sut: AuthCredentialRepositoryImpl
-
-    @Autowired
-    private lateinit var database: JdbcDatabase
-
-    private val credentialTable = Meta.authCredentialTable.clone(table = "auth_credentials")
-
+class AuthCredentialRepositoryImplTest {
     @Test
-    fun `save stores record in auth_credentials`() {
-        val userId = LibraryUserId("user0000000000000000000021")
-        insertLibraryUser(userId)
-
-        sut.save(
+    fun `save delegates insert to dao`() {
+        val dao = mockk<AuthCredentialDao>(relaxed = true)
+        val sut = AuthCredentialRepositoryImpl(dao)
+        val captured = slot<AuthCredentialTable>()
+        val credential =
             AuthCredential(
-                libraryUserId = userId,
+                libraryUserId = LibraryUserId("user0000000000000000000021"),
                 passwordHash = passwordHash("hashed-value-21"),
-            ),
-        )
+            )
 
-        val stored =
-            database.runQuery {
-                QueryDsl
-                    .from(credentialTable)
-                    .where { credentialTable.libraryUserId eq userId.value }
-                    .firstOrNull()
-            }
-        assertNotNull(stored)
-        assertEquals(userId.value, stored.libraryUserId)
-        assertEquals("hashed-value-21", stored.passwordHash)
+        every { dao.insert(capture(captured)) } returns Unit
+
+        sut.save(credential)
+
+        verify(exactly = 1) { dao.insert(any()) }
+        assertEquals(credential.libraryUserId.value, captured.captured.libraryUserId)
+        assertEquals(credential.passwordHash.value, captured.captured.passwordHash)
     }
 
     @Test
     fun `findByLibraryUserId returns credential when record exists`() {
+        val dao = mockk<AuthCredentialDao>()
+        val sut = AuthCredentialRepositoryImpl(dao)
         val userId = LibraryUserId("user0000000000000000000022")
-        insertLibraryUser(userId)
-        database.runQuery {
-            QueryDsl.insert(credentialTable).single(
-                AuthCredentialTable(
-                    libraryUserId = userId.value,
-                    passwordHash = "hashed-value-22",
-                ),
+        every { dao.findByLibraryUserId(userId.value) } returns
+            AuthCredentialTable(
+                libraryUserId = userId.value,
+                passwordHash = "hashed-value-22",
             )
-        }
 
         val credential = sut.findByLibraryUserId(userId)
 
@@ -72,18 +57,28 @@ class AuthCredentialRepositoryImplTest : PostgreSqlTestBase() {
 
     @Test
     fun `findByLibraryUserId returns null when record does not exist`() {
+        val dao = mockk<AuthCredentialDao>()
+        val sut = AuthCredentialRepositoryImpl(dao)
+        every { dao.findByLibraryUserId("user0000000000000000000023") } returns null
+
         val credential = sut.findByLibraryUserId(LibraryUserId("user0000000000000000000023"))
 
         assertNull(credential)
     }
 
-    private fun insertLibraryUser(userId: LibraryUserId) {
-        jdbcTemplate.update(
-            "INSERT INTO library_users (id, email, registered_at) VALUES (?, ?, ?::timestamptz)",
-            userId.value,
-            "${userId.value}@example.com",
-            Instant.parse("2026-03-08T00:00:00Z").toString(),
-        )
+    @Test
+    fun `findByLibraryUserId throws when stored password hash is invalid`() {
+        val dao = mockk<AuthCredentialDao>()
+        val sut = AuthCredentialRepositoryImpl(dao)
+        every { dao.findByLibraryUserId("user0000000000000000000024") } returns
+            AuthCredentialTable(
+                libraryUserId = "user0000000000000000000024",
+                passwordHash = "",
+            )
+
+        assertFailsWith<IllegalStateException> {
+            sut.findByLibraryUserId(LibraryUserId("user0000000000000000000024"))
+        }
     }
 
     private fun passwordHash(raw: String): PasswordHash =

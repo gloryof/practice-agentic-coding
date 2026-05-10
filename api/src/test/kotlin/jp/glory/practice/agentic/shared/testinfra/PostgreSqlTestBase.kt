@@ -1,13 +1,13 @@
 package jp.glory.practice.agentic.shared.testinfra
 
-import jp.glory.practice.agentic.auth.command.infra.adapter.persistence.authCredentialTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.authorTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookItemStockTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookItemTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookProductAuthorTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.bookProductTable
-import jp.glory.practice.agentic.catalog.query.infra.adapter.persistence.publisherTable
-import jp.glory.practice.agentic.libraryuser.command.infra.adapter.persistence.libraryUserTable
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.authCredentialTable
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.authorTable
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.bookItemStockTable
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.bookItemTable
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.bookProductAuthorTable
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.bookProductTable
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.libraryUserTable
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.publisherTable
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
