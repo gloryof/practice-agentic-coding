@@ -1,6 +1,7 @@
 # TODO運用ルール
 
 AI側で検知したリスクや対応すべき事案は、`task/todo` 配下に1事案1ファイルで記載する。
+完了したTODOは、`task/todo/done` へ移動して保管する。
 
 ## 起票基準
 - `MUST` 未解決のリスク/対応事項のみ起票する。
@@ -8,6 +9,11 @@ AI側で検知したリスクや対応すべき事案は、`task/todo` 配下に
 
 ## 命名規則
 - `YYYY-MM-DD-<short-title>.md`
+
+## 配置ルール
+- `MUST` 未完了（`Proposed` / `Dropped`）は `task/todo` に置く。
+- `MUST` 完了（`Done`）は `task/todo/done` に移動する。
+- `MUST` 完了報告では、移動後のTODOファイルパスを記載する。
 
 ## ステータス
 - `Proposed`: 新規起票。対応方針が未確定。
