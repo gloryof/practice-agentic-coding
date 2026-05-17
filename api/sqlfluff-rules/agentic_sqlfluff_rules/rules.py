@@ -202,9 +202,12 @@ def _normalize_fk_expected(ref_table: str) -> str:
 
 
 class Rule_L901(BaseRule):
+    """Enforce snake_case plural naming for table names."""
+
     name = "agentic.table_name_plural_snake_case"
     code = "L901"
     description = "Table names must be snake_case and plural."
+    groups = ("all", "agentic")
     crawl_behaviour = SegmentSeekerCrawler({"create_table_statement"})
 
     def _eval(self, context: RuleContext):
@@ -220,9 +223,12 @@ class Rule_L901(BaseRule):
 
 
 class Rule_L902(BaseRule):
+    """Enforce snake_case naming for column names."""
+
     name = "agentic.column_name_snake_case"
     code = "L902"
     description = "Column names must be snake_case."
+    groups = ("all", "agentic")
     crawl_behaviour = SegmentSeekerCrawler({"create_table_statement"})
 
     def _eval(self, context: RuleContext):
@@ -239,9 +245,12 @@ class Rule_L902(BaseRule):
 
 
 class Rule_L903(BaseRule):
+    """Enforce `id` naming for single-column primary keys."""
+
     name = "agentic.primary_key_id"
     code = "L903"
     description = "Single primary key columns must be named `id`."
+    groups = ("all", "agentic")
     crawl_behaviour = SegmentSeekerCrawler({"create_table_statement"})
 
     def _eval(self, context: RuleContext):
@@ -259,9 +268,12 @@ class Rule_L903(BaseRule):
 
 
 class Rule_L904(BaseRule):
+    """Enforce foreign key column naming with _id suffix."""
+
     name = "agentic.foreign_key_column_naming"
     code = "L904"
-    description = "Foreign key columns must be named `{ref}_id`."
+    description = "Foreign key columns must be named with the *_id suffix."
+    groups = ("all", "agentic")
     crawl_behaviour = SegmentSeekerCrawler({"create_table_statement"})
 
     def _eval(self, context: RuleContext):
@@ -282,9 +294,12 @@ class Rule_L904(BaseRule):
 
 
 class Rule_L905(BaseRule):
+    """Enforce foreign key constraint naming as fk_<table>_<ref_table>."""
+
     name = "agentic.foreign_key_constraint_naming"
     code = "L905"
-    description = "Foreign key constraint names must be fk_{table}_{ref_table}."
+    description = "Foreign key constraint names must be fk_<table>_<ref_table>."
+    groups = ("all", "agentic")
     crawl_behaviour = SegmentSeekerCrawler({"create_table_statement"})
 
     def _eval(self, context: RuleContext):
@@ -304,9 +319,12 @@ class Rule_L905(BaseRule):
 
 
 class Rule_L906(BaseRule):
+    """Enforce VARCHAR(36) for id and *_id columns."""
+
     name = "agentic.id_type_varchar36"
     code = "L906"
     description = "id and *_id columns must use VARCHAR(36)."
+    groups = ("all", "agentic")
     crawl_behaviour = SegmentSeekerCrawler({"create_table_statement"})
 
     def _eval(self, context: RuleContext):
@@ -326,9 +344,12 @@ class Rule_L906(BaseRule):
 
 
 class Rule_L907(BaseRule):
+    """Enforce NOT NULL on non-primary-key columns."""
+
     name = "agentic.columns_not_null"
     code = "L907"
     description = "Columns must be NOT NULL unless part of PRIMARY KEY."
+    groups = ("all", "agentic")
     crawl_behaviour = SegmentSeekerCrawler({"create_table_statement"})
 
     def _eval(self, context: RuleContext):
@@ -349,9 +370,12 @@ class Rule_L907(BaseRule):
 
 
 class Rule_L908(BaseRule):
+    """Enforce TIMESTAMP WITHOUT TIME ZONE for *_at columns."""
+
     name = "agentic.timestamp_type"
     code = "L908"
-    description = "*_at columns must use TIMESTAMPTZ."
+    description = "*_at columns must use TIMESTAMP WITHOUT TIME ZONE."
+    groups = ("all", "agentic")
     crawl_behaviour = SegmentSeekerCrawler({"create_table_statement"})
 
     def _eval(self, context: RuleContext):
@@ -360,11 +384,12 @@ class Rule_L908(BaseRule):
             return None
         for column in definition.columns:
             if column.name.endswith("_at"):
-                if _normalize_type(column.raw_type) != "TIMESTAMPTZ":
+                normalized = _normalize_type(column.raw_type)
+                if normalized not in {"TIMESTAMP", "TIMESTAMPWITHOUTTIMEZONE"}:
                     return LintResult(
                         anchor=context.segment,
                         description=(
-                            "Column `{}` must use TIMESTAMPTZ."
+                            "Column `{}` must use TIMESTAMP WITHOUT TIME ZONE."
                         ).format(column.name),
                     )
         return None

@@ -6,6 +6,6 @@ setup(
     packages=find_packages(),
     python_requires=">=3.9",
     entry_points={
-        "sqlfluff": ["rules = agentic_sqlfluff_rules:get_rules"],
+        "sqlfluff": ["agentic_sqlfluff_rules = agentic_sqlfluff_rules"],
     },
 )

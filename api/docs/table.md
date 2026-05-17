@@ -51,5 +51,7 @@
 ```sh
 python3 -m venv .venv
 .venv/bin/pip install -r requirements/sqlfluff.txt
-.venv/bin/sqlfluff lint --config .sqlfluff src/main/resources/db/migration
+./scripts/db/lint-migration-sql.sh
 ```
+
+- `MUST` SQLFluffプラグイン読み込みエラー（例: `Failed to load SQLFluff plugin rules`）は、lint結果を失敗として扱う。

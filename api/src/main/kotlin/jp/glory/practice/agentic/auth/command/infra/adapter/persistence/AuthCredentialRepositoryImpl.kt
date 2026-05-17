@@ -16,6 +16,7 @@ class AuthCredentialRepositoryImpl(
     override fun save(credential: AuthCredential) {
         authCredentialDao.insert(
             AuthCredentialTable(
+                id = credential.libraryUserId.value,
                 libraryUserId = credential.libraryUserId.value,
                 passwordHash = credential.passwordHash.value,
             ),

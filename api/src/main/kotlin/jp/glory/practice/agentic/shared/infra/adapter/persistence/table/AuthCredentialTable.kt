@@ -8,6 +8,7 @@ import org.komapper.annotation.KomapperTable
 @KomapperTable(name = "auth_credentials")
 data class AuthCredentialTable(
     @KomapperId
+    val id: String,
     val libraryUserId: String,
     val passwordHash: String,
 )

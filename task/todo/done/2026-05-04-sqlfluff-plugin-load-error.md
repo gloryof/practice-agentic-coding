@@ -1,8 +1,9 @@
 # SQLFluffプラグイン読み込みエラーの解消
 
 ## ステータス
-- Status: Proposed
+- Status: Done
 - Updated: 2026-04-26 - 起票
+- Updated: 2026-05-17 - 完了（Rule_L901含むカスタムルールにdocstring追加、lintラッパー追加）
 
 ## 背景
 - `api` 配下で SQLFluff 実行時に `agentic-sqlfluff-rules` の読み込みで `Rule_L901` のdocstring不足エラーが発生した。

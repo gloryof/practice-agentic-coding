@@ -1,11 +1,12 @@
 CREATE TABLE library_users (
     id VARCHAR(36) PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
-    registered_at TIMESTAMP NOT NULL
+    registered_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 CREATE TABLE auth_credentials (
-    library_user_id VARCHAR(36) PRIMARY KEY,
+    id VARCHAR(36) PRIMARY KEY,
+    library_user_id VARCHAR(36) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     CONSTRAINT fk_auth_credentials_library_users
         FOREIGN KEY (library_user_id) REFERENCES library_users (id)

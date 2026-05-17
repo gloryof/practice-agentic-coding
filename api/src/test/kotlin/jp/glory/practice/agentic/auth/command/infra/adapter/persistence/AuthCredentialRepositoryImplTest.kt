@@ -33,6 +33,7 @@ class AuthCredentialRepositoryImplTest {
         sut.save(credential)
 
         verify(exactly = 1) { dao.insert(any()) }
+        assertEquals(credential.libraryUserId.value, captured.captured.id)
         assertEquals(credential.libraryUserId.value, captured.captured.libraryUserId)
         assertEquals(credential.passwordHash.value, captured.captured.passwordHash)
     }
@@ -44,6 +45,7 @@ class AuthCredentialRepositoryImplTest {
         val userId = LibraryUserId("user0000000000000000000022")
         every { dao.findByLibraryUserId(userId.value) } returns
             AuthCredentialTable(
+                id = userId.value,
                 libraryUserId = userId.value,
                 passwordHash = "hashed-value-22",
             )
@@ -72,6 +74,7 @@ class AuthCredentialRepositoryImplTest {
         val sut = AuthCredentialRepositoryImpl(dao)
         every { dao.findByLibraryUserId("user0000000000000000000024") } returns
             AuthCredentialTable(
+                id = "user0000000000000000000024",
                 libraryUserId = "user0000000000000000000024",
                 passwordHash = "",
             )

@@ -28,6 +28,7 @@ class AuthCredentialDaoTest : PostgreSqlTestBase() {
         )
         val record =
             AuthCredentialTable(
+                id = "credential00000000000000000201",
                 libraryUserId = "user0000000000000000000201",
                 passwordHash = "hashed-value-201",
             )
