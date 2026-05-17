@@ -58,6 +58,7 @@
   - `次アクション`
 - 設計方針見直し（`architecture_design_focus`）を含む場合は、`agents/flows/design-policy-review-checks.md` の判定出力（`Findings` / `Decision` / `Required Actions` / `Verification Plan`）を完了報告に含める。
 - 未解決のリスク/対応事項が残る場合は、`task/todo/TEMPLATE.md` 準拠で `Status: Proposed` の TODO を起票する。
+- TODO の移動先はステータスに従う（`Deferred` は `task/todo/deferred`、`Done` / `Dropped` は `task/todo/done`）。
 - TODO を起票した場合は、完了報告に起票ファイル名を記載する。
 
 ## 例示シナリオ

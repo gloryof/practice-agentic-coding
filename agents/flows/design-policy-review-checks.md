@@ -48,3 +48,4 @@
 - 必須レビュアーおよび条件付きレビュアーが適用される。
 - 判定出力契約の4項目が満たされる。
 - 未解決リスクがある場合、`task/todo/TEMPLATE.md` 準拠で `Status: Proposed` の TODO が起票される。
+- 起票後にステータス遷移した TODO は配置ルールに従って移動する（`Deferred` は `task/todo/deferred`、`Done` / `Dropped` は `task/todo/done`）。
