@@ -9,6 +9,9 @@
 - `MUST` run `./gradlew ktlintFormat` before finalizing Kotlin changes.
 - `MUST` run `./gradlew check` before sharing implementation or review results.
 - `MUST` stop and propose a rules update first if implementation needs to violate the coding rules.
+- `MUST` stage only files changed by AI in the current request before reporting completion.
+- `MUST NOT` use `git add -A` by default; allow it only on explicit user instruction.
+- `MUST` run `git status --short` after staging and include staged file results in the work report.
 
 ## Priority Checkpoints (from coding rules)
 - `MUST` verify Command/Query architecture and API rules per `api/docs/architecture.md`.
