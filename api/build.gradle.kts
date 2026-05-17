@@ -95,6 +95,7 @@ tasks.jacocoTestCoverageVerification {
     val jacocoExcludes =
         listOf(
             "**/infra/adapter/persistence/_*",
+            "**/infra/adapter/persistence/table/_*",
         )
     classDirectories.setFrom(
         files(
@@ -131,6 +132,7 @@ tasks.jacocoTestCoverageVerification {
                     "**/domain/**",
                     "**/usecase/**",
                     "**/infra/adapter/persistence/_*",
+                    "**/infra/adapter/persistence/table/_*",
                 )
             limit {
                 counter = "INSTRUCTION"
@@ -146,6 +148,7 @@ tasks.jacocoTestReport {
     val jacocoExcludes =
         listOf(
             "**/infra/adapter/persistence/_*",
+            "**/infra/adapter/persistence/table/_*",
         )
     classDirectories.setFrom(
         files(

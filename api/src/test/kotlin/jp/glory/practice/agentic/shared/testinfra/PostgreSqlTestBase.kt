@@ -22,6 +22,8 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.MountableFile
+import java.sql.DriverManager
+import java.time.Duration
 
 @SpringBootTest
 @Execution(ExecutionMode.SAME_THREAD)
@@ -64,6 +66,7 @@ abstract class PostgreSqlTestBase {
             registry.add("spring.datasource.url") { postgres.jdbcUrl.withUtcTimezoneOption() }
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
+            registry.add("spring.datasource.hikari.initialization-fail-timeout") { "0" }
             registry.add("spring.flyway.enabled") { "false" }
         }
 
@@ -80,6 +83,9 @@ abstract class PostgreSqlTestBase {
 }
 
 private object SharedPostgres {
+    private const val maxWarmupWaitMillis = 10_000L
+    private const val warmupRetryIntervalMillis = 200L
+
     val container: PostgreSQLContainer<*> =
         PostgreSQLContainer("postgres:16")
             .withDatabaseName("agentic")
@@ -90,6 +96,7 @@ private object SharedPostgres {
                 "/docker-entrypoint-initdb.d",
             ).also { postgres ->
                 postgres.start()
+                waitUntilDatabaseReady(postgres)
                 Runtime.getRuntime().addShutdownHook(
                     Thread {
                         if (postgres.isRunning) {
@@ -98,4 +105,26 @@ private object SharedPostgres {
                     },
                 )
             }
+
+    private fun waitUntilDatabaseReady(postgres: PostgreSQLContainer<*>) {
+        val deadline = System.currentTimeMillis() + maxWarmupWaitMillis
+        var lastError: Exception? = null
+        while (System.currentTimeMillis() < deadline) {
+            try {
+                DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password).use { connection ->
+                    connection.createStatement().use { statement ->
+                        statement.execute("SELECT 1")
+                    }
+                }
+                return
+            } catch (ex: Exception) {
+                lastError = ex
+                Thread.sleep(warmupRetryIntervalMillis)
+            }
+        }
+        throw IllegalStateException(
+            "PostgreSQL test container did not accept JDBC connections within ${Duration.ofMillis(maxWarmupWaitMillis).seconds}s.",
+            lastError,
+        )
+    }
 }
