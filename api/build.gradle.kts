@@ -24,6 +24,8 @@ group = "jp.glory.practice.agentic"
 version = "0.0.1-SNAPSHOT"
 description = "Demo project for Spring Boot"
 
+val e2eTestSourceSet = sourceSets.create("e2eTest")
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(24)
@@ -79,6 +81,11 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.12")
     testImplementation("com.github.f4b6a3:uuid-creator:5.3.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    add("e2eTestImplementation", "org.springframework.boot:spring-boot-starter-actuator-test")
+    add("e2eTestImplementation", "org.jetbrains.kotlin:kotlin-test-junit5")
+    add("e2eTestImplementation", "io.rest-assured:rest-assured:6.0.0")
+    add("e2eTestRuntimeOnly", "org.junit.platform:junit-platform-launcher")
 }
 
 kotlin {
@@ -88,6 +95,23 @@ kotlin {
 }
 
 tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+configurations.named("e2eTestImplementation") {
+    extendsFrom(configurations.testImplementation.get())
+}
+
+configurations.named("e2eTestRuntimeOnly") {
+    extendsFrom(configurations.testRuntimeOnly.get())
+}
+
+tasks.register<Test>("e2eTest") {
+    group = "verification"
+    description = "Runs end-to-end tests against a running API."
+    testClassesDirs = e2eTestSourceSet.output.classesDirs
+    classpath = e2eTestSourceSet.runtimeClasspath
+    shouldRunAfter(tasks.test)
     useJUnitPlatform()
 }
 
