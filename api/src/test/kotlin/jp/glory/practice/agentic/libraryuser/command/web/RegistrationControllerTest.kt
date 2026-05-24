@@ -9,6 +9,7 @@ import jp.glory.practice.agentic.libraryuser.command.usecase.RegisterLibraryUser
 import jp.glory.practice.agentic.libraryuser.command.usecase.RegisterLibraryUserUseCase
 import jp.glory.practice.agentic.shared.spring.GlobalExceptionHandler
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
+import org.junit.jupiter.api.Nested
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -25,70 +26,73 @@ class RegistrationControllerTest {
         val useCase: RegisterLibraryUserUseCase,
     )
 
-    @Test
-    fun `returns 201 on success`() {
-        val context = createSut()
-        every { context.useCase.register(any()) } returns
-            Ok(
-                RegisterLibraryUserResult(
-                    libraryUserId = "user-id-1",
-                    email = "user@example.com",
-                    registeredAt = Instant.parse("2026-02-22T12:34:56Z"),
-                    eventName = "LibraryUserRegisteredEvent",
-                ),
-            )
+    @Nested
+    inner class Register {
+        @Test
+        fun `given valid request when post registration then returns 201`() {
+            val context = createSut()
+            every { context.useCase.register(any()) } returns
+                Ok(
+                    RegisterLibraryUserResult(
+                        libraryUserId = "user-id-1",
+                        email = "user@example.com",
+                        registeredAt = Instant.parse("2026-02-22T12:34:56Z"),
+                        eventName = "LibraryUserRegisteredEvent",
+                    ),
+                )
 
-        val response =
-            context.mvc
-                .perform(
-                    post("/api/v1/library-users/registrations")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}"""),
-                ).andReturn()
-                .response
+            val response =
+                context.mvc
+                    .perform(
+                        post("/api/v1/library-users/registrations")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}"""),
+                    ).andReturn()
+                    .response
 
-        assertEquals(201, response.status)
-        assertTrue(response.contentAsString.contains("library_user_id"))
-    }
+            assertEquals(201, response.status)
+            assertTrue(response.contentAsString.contains("library_user_id"))
+        }
 
-    @Test
-    fun `returns 400 on validation error`() {
-        val context = createSut()
+        @Test
+        fun `given invalid request when post registration then returns 400`() {
+            val context = createSut()
 
-        val response =
-            context.mvc
-                .perform(
-                    post("/api/v1/library-users/registrations")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""{"email":"","password":"short"}"""),
-                ).andReturn()
-                .response
+            val response =
+                context.mvc
+                    .perform(
+                        post("/api/v1/library-users/registrations")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""{"email":"","password":"short"}"""),
+                    ).andReturn()
+                    .response
 
-        assertEquals(400, response.status)
-        assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
-        assertTrue(response.contentAsString.contains("\"message\":\"入力値に誤りがあります。\""))
-        assertTrue(response.contentAsString.contains("\"trace_id\":\""))
-        verify(exactly = 0) { context.useCase.register(any()) }
-    }
+            assertEquals(400, response.status)
+            assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
+            assertTrue(response.contentAsString.contains("\"message\":\"入力値に誤りがあります。\""))
+            assertTrue(response.contentAsString.contains("\"trace_id\":\""))
+            verify(exactly = 0) { context.useCase.register(any()) }
+        }
 
-    @Test
-    fun `returns 400 on duplicate email`() {
-        val context = createSut()
-        every { context.useCase.register(any()) } returns Err(UsecaseError.DuplicateEmail)
+        @Test
+        fun `given duplicate email when post registration then returns 400`() {
+            val context = createSut()
+            every { context.useCase.register(any()) } returns Err(UsecaseError.DuplicateEmail)
 
-        val response =
-            context.mvc
-                .perform(
-                    post("/api/v1/library-users/registrations")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}"""),
-                ).andReturn()
-                .response
+            val response =
+                context.mvc
+                    .perform(
+                        post("/api/v1/library-users/registrations")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}"""),
+                    ).andReturn()
+                    .response
 
-        assertEquals(400, response.status)
-        assertTrue(response.contentAsString.contains("\"code\":\"DUPLICATE_EMAIL\""))
-        assertTrue(response.contentAsString.contains("\"message\":\"既に使用されているメールアドレスです。\""))
-        assertTrue(response.contentAsString.contains("\"details\":[]"))
+            assertEquals(400, response.status)
+            assertTrue(response.contentAsString.contains("\"code\":\"DUPLICATE_EMAIL\""))
+            assertTrue(response.contentAsString.contains("\"message\":\"既に使用されているメールアドレスです。\""))
+            assertTrue(response.contentAsString.contains("\"details\":[]"))
+        }
     }
 
     private fun createSut(useCase: RegisterLibraryUserUseCase = mockk()): TestContext {

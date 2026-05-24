@@ -13,7 +13,7 @@ class BookItemSearchRequestValidatorTest {
     @Nested
     inner class Title {
         @Test
-        fun `accepts title and trims`() {
+        fun `given value with spaces when validate title then trims value`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -25,7 +25,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects blank title`() {
+        fun `given blank title when validate then returns validation error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(title = " "))
@@ -35,7 +35,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `accepts title exact flag when true`() {
+        fun `given title and exact flag true when validate then sets exact flag`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -48,7 +48,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects title exact when missing value`() {
+        fun `given exact flag without title when validate then returns requires value error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(titleExact = "true"))
@@ -58,7 +58,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects title exact when not true`() {
+        fun `given title and exact flag false when validate then returns must be true error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(
@@ -76,7 +76,7 @@ class BookItemSearchRequestValidatorTest {
     @Nested
     inner class TitleKana {
         @Test
-        fun `accepts title kana and trims`() {
+        fun `given value with spaces when validate title kana then trims value`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -88,7 +88,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects blank title kana`() {
+        fun `given blank title kana when validate then returns validation error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(titleKana = " "))
@@ -98,7 +98,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `accepts title kana exact flag when true`() {
+        fun `given title kana and exact flag true when validate then sets exact flag`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -111,7 +111,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects title kana exact when missing value`() {
+        fun `given exact flag without title kana when validate then returns requires value error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(titleKanaExact = "true"))
@@ -121,7 +121,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects title kana exact when not true`() {
+        fun `given title kana and exact flag false when validate then returns must be true error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(
@@ -139,7 +139,7 @@ class BookItemSearchRequestValidatorTest {
     @Nested
     inner class Publisher {
         @Test
-        fun `accepts publisher and trims`() {
+        fun `given value with spaces when validate publisher then trims value`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -151,7 +151,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects blank publisher`() {
+        fun `given blank publisher when validate then returns validation error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(publisher = " "))
@@ -161,7 +161,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `accepts publisher exact flag when true`() {
+        fun `given publisher and exact flag true when validate then sets exact flag`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -174,7 +174,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects publisher exact when missing value`() {
+        fun `given exact flag without publisher when validate then returns requires value error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(publisherExact = "true"))
@@ -184,7 +184,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects publisher exact when not true`() {
+        fun `given publisher and exact flag false when validate then returns must be true error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(
@@ -202,7 +202,7 @@ class BookItemSearchRequestValidatorTest {
     @Nested
     inner class PublisherKana {
         @Test
-        fun `accepts publisher kana and trims`() {
+        fun `given value with spaces when validate publisher kana then trims value`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -214,7 +214,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects blank publisher kana`() {
+        fun `given blank publisher kana when validate then returns validation error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(publisherKana = " "))
@@ -224,7 +224,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `accepts publisher kana exact flag when true`() {
+        fun `given publisher kana and exact flag true when validate then sets exact flag`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -237,7 +237,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects publisher kana exact when missing value`() {
+        fun `given exact flag without publisher kana when validate then returns requires value error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(publisherKanaExact = "true"))
@@ -247,7 +247,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects publisher kana exact when not true`() {
+        fun `given publisher kana and exact flag false when validate then returns must be true error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(
@@ -265,7 +265,7 @@ class BookItemSearchRequestValidatorTest {
     @Nested
     inner class AuthorName {
         @Test
-        fun `accepts author name and trims`() {
+        fun `given value with spaces when validate author name then trims value`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -277,7 +277,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects blank author name`() {
+        fun `given blank author name when validate then returns validation error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(authorName = " "))
@@ -287,7 +287,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `accepts author exact flag when true`() {
+        fun `given author and exact flag true when validate then sets exact flag`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -300,7 +300,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects author exact when missing value`() {
+        fun `given exact flag without author when validate then returns requires value error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(authorExact = "true"))
@@ -310,7 +310,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects author exact when not true`() {
+        fun `given author and exact flag false when validate then returns must be true error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(
@@ -328,7 +328,7 @@ class BookItemSearchRequestValidatorTest {
     @Nested
     inner class AuthorNameKana {
         @Test
-        fun `accepts author name kana and trims`() {
+        fun `given value with spaces when validate author name kana then trims value`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -340,7 +340,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects blank author name kana`() {
+        fun `given blank author name kana when validate then returns validation error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(authorNameKana = " "))
@@ -350,7 +350,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `accepts author kana exact flag when true`() {
+        fun `given author kana and exact flag true when validate then sets exact flag`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -363,7 +363,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects author kana exact when missing value`() {
+        fun `given exact flag without author kana when validate then returns requires value error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(authorKanaExact = "true"))
@@ -373,7 +373,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects author kana exact when not true`() {
+        fun `given author kana and exact flag false when validate then returns must be true error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(
@@ -391,7 +391,7 @@ class BookItemSearchRequestValidatorTest {
     @Nested
     inner class Isbn {
         @Test
-        fun `accepts isbn and trims`() {
+        fun `given value with spaces when validate isbn then trims value`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -403,7 +403,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `rejects blank isbn`() {
+        fun `given blank isbn when validate then returns validation error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest(isbn = " "))
@@ -416,7 +416,7 @@ class BookItemSearchRequestValidatorTest {
     @Nested
     inner class Criteria {
         @Test
-        fun `rejects when all criteria missing`() {
+        fun `given missing all criteria when validate then returns validation error`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(BookItemSearchRequest())
@@ -426,7 +426,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `accepts when one criteria provided`() {
+        fun `given one criteria when validate then returns input`() {
             val input =
                 validate(
                     BookItemSearchRequest(
@@ -438,7 +438,7 @@ class BookItemSearchRequestValidatorTest {
         }
 
         @Test
-        fun `returns multiple details when errors overlap`() {
+        fun `given overlapped invalid criteria when validate then returns multiple details`() {
             val exception =
                 assertFailsWith<ValidationApiException> {
                     validate(

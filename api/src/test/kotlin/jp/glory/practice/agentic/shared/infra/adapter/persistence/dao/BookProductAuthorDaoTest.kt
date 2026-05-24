@@ -10,6 +10,7 @@ import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.bookProd
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.publisherTable
 import jp.glory.practice.agentic.shared.testinfra.PostgreSqlTestBase
 import jp.glory.practice.agentic.shared.testinfra.UuidGenerator
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
@@ -25,27 +26,30 @@ class BookProductAuthorDaoTest : PostgreSqlTestBase() {
     private val authors = Meta.authorTable
     private val bookProductAuthors = Meta.bookProductAuthorTable
 
-    @Test
-    fun `findAuthorNamesByBookProductIds groups and sorts author names`() {
-        val publisherId = insertPublisher()
-        val bookProductId = insertBookProduct(publisherId, "9780000000011")
-        val authorA = insertAuthor("佐藤花子")
-        val authorB = insertAuthor("山田太郎")
-        komapperDatabase.runQuery {
-            QueryDsl.insert(bookProductAuthors).single(BookProductAuthorTable(bookProductId = bookProductId, authorId = authorB))
+    @Nested
+    inner class FindAuthorNamesByBookProductIds {
+        @Test
+        fun `given linked authors when find author names by product ids then groups and sorts names`() {
+            val publisherId = insertPublisher()
+            val bookProductId = insertBookProduct(publisherId, "9780000000011")
+            val authorA = insertAuthor("佐藤花子")
+            val authorB = insertAuthor("山田太郎")
+            komapperDatabase.runQuery {
+                QueryDsl.insert(bookProductAuthors).single(BookProductAuthorTable(bookProductId = bookProductId, authorId = authorB))
+            }
+            komapperDatabase.runQuery {
+                QueryDsl.insert(bookProductAuthors).single(BookProductAuthorTable(bookProductId = bookProductId, authorId = authorA))
+            }
+
+            val result = sut.findAuthorNamesByBookProductIds(listOf(bookProductId))
+
+            assertEquals(listOf("佐藤花子", "山田太郎"), result[bookProductId])
         }
-        komapperDatabase.runQuery {
-            QueryDsl.insert(bookProductAuthors).single(BookProductAuthorTable(bookProductId = bookProductId, authorId = authorA))
+
+        @Test
+        fun `given empty ids when find author names by product ids then returns empty map`() {
+            assertEquals(emptyMap(), sut.findAuthorNamesByBookProductIds(emptyList()))
         }
-
-        val result = sut.findAuthorNamesByBookProductIds(listOf(bookProductId))
-
-        assertEquals(listOf("佐藤花子", "山田太郎"), result[bookProductId])
-    }
-
-    @Test
-    fun `findAuthorNamesByBookProductIds returns empty map for empty ids`() {
-        assertEquals(emptyMap(), sut.findAuthorNamesByBookProductIds(emptyList()))
     }
 
     private fun insertPublisher(): String {

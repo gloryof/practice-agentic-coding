@@ -11,6 +11,7 @@ import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.bookProd
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.publisherTable
 import jp.glory.practice.agentic.shared.testinfra.PostgreSqlTestBase
 import jp.glory.practice.agentic.shared.testinfra.UuidGenerator
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
@@ -26,37 +27,40 @@ class BookProductDaoTest : PostgreSqlTestBase() {
     private val authors = Meta.authorTable
     private val bookProductAuthors = Meta.bookProductAuthorTable
 
-    @Test
-    fun `findBySearchInput filters by title partial match`() {
-        insertBookData("Kotlin入門", "ことりんにゅうもん", "技術書房", "ぎじゅつしょぼう", "山田太郎", "やまだたろう", "9780000000001")
-        insertBookData("Java実践", "じゃばじっせん", "技術書房", "ぎじゅつしょぼう", "佐藤花子", "さとうはなこ", "9780000000002")
+    @Nested
+    inner class FindBySearchInput {
+        @Test
+        fun `given partial title query when find by search input then filters by partial match`() {
+            insertBookData("Kotlin入門", "ことりんにゅうもん", "技術書房", "ぎじゅつしょぼう", "山田太郎", "やまだたろう", "9780000000001")
+            insertBookData("Java実践", "じゃばじっせん", "技術書房", "ぎじゅつしょぼう", "佐藤花子", "さとうはなこ", "9780000000002")
 
-        val result = sut.findBySearchInput(input(title = "kotlin"))
+            val result = sut.findBySearchInput(input(title = "kotlin"))
 
-        assertEquals(1, result.size)
-        assertEquals("Kotlin入門", result.first().title)
-    }
+            assertEquals(1, result.size)
+            assertEquals("Kotlin入門", result.first().title)
+        }
 
-    @Test
-    fun `findBySearchInput filters by author kana`() {
-        insertBookData("Kotlin入門", "ことりんにゅうもん", "技術書房", "ぎじゅつしょぼう", "山田太郎", "やまだたろう", "9780000000003")
-        insertBookData("Java実践", "じゃばじっせん", "技術書房", "ぎじゅつしょぼう", "佐藤花子", "さとうはなこ", "9780000000004")
+        @Test
+        fun `given author kana query when find by search input then filters by author kana`() {
+            insertBookData("Kotlin入門", "ことりんにゅうもん", "技術書房", "ぎじゅつしょぼう", "山田太郎", "やまだたろう", "9780000000003")
+            insertBookData("Java実践", "じゃばじっせん", "技術書房", "ぎじゅつしょぼう", "佐藤花子", "さとうはなこ", "9780000000004")
 
-        val result = sut.findBySearchInput(input(authorNameKana = "やまだ"))
+            val result = sut.findBySearchInput(input(authorNameKana = "やまだ"))
 
-        assertEquals(1, result.size)
-        assertEquals("9780000000003", result.first().isbn)
-    }
+            assertEquals(1, result.size)
+            assertEquals("9780000000003", result.first().isbn)
+        }
 
-    @Test
-    fun `findBySearchInput filters by exact title`() {
-        insertBookData("Kotlin実践", "ことりんじっせん", "技術書房", "ぎじゅつしょぼう", "山田太郎", "やまだたろう", "9780000000005")
-        insertBookData("Kotlin実践ガイド", "ことりんじっせんがいど", "技術書房", "ぎじゅつしょぼう", "山田太郎", "やまだたろう", "9780000000006")
+        @Test
+        fun `given exact title query when find by search input then filters by exact title`() {
+            insertBookData("Kotlin実践", "ことりんじっせん", "技術書房", "ぎじゅつしょぼう", "山田太郎", "やまだたろう", "9780000000005")
+            insertBookData("Kotlin実践ガイド", "ことりんじっせんがいど", "技術書房", "ぎじゅつしょぼう", "山田太郎", "やまだたろう", "9780000000006")
 
-        val result = sut.findBySearchInput(input(title = "Kotlin実践", titleExact = true))
+            val result = sut.findBySearchInput(input(title = "Kotlin実践", titleExact = true))
 
-        assertEquals(1, result.size)
-        assertEquals("9780000000005", result.first().isbn)
+            assertEquals(1, result.size)
+            assertEquals("9780000000005", result.first().isbn)
+        }
     }
 
     private fun insertBookData(

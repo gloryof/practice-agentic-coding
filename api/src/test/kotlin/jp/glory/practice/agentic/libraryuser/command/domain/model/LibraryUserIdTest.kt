@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 
 class LibraryUserIdTest {
     @Test
-    fun `issues id with fixed length`() {
+    fun `given id issuance when issue then returns fixed length id`() {
         val id = LibraryUserId.issue()
 
         assertEquals(36, id.value.length)

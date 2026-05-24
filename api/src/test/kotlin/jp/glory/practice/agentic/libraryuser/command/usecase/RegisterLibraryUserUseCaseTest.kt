@@ -20,6 +20,7 @@ import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUs
 import jp.glory.practice.agentic.libraryuser.command.domain.service.LibraryUserRegistrationService
 import jp.glory.practice.agentic.shared.domain.DomainError
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
+import org.junit.jupiter.api.Nested
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -34,62 +35,65 @@ class RegisterLibraryUserUseCaseTest {
         val authCredentialRepository: AuthCredentialRepository,
     )
 
-    @Test
-    fun `registers user and credential`() {
-        val email = Email.create("user@example.com").getOrThrow { throw IllegalArgumentException("invalid param") }
-        val input = RegisterLibraryUserInput(email.value, "Str0ng!Passw0rd")
+    @Nested
+    inner class Register {
+        @Test
+        fun `given valid input when register then saves user and credential`() {
+            val email = Email.create("user@example.com").getOrThrow { throw IllegalArgumentException("invalid param") }
+            val input = RegisterLibraryUserInput(email.value, "Str0ng!Passw0rd")
 
-        val eventSlot = slot<LibraryUserRegisteredEvent>()
-        val credentialSlot = slot<AuthCredential>()
+            val eventSlot = slot<LibraryUserRegisteredEvent>()
+            val credentialSlot = slot<AuthCredential>()
 
-        val context =
-            createSut(
-                passwordHasher = PasswordHasher { hashed("hashed-$it") },
-                clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
+            val context =
+                createSut(
+                    passwordHasher = PasswordHasher { hashed("hashed-$it") },
+                    clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
+                )
+            every { context.registrationService.verify(email) } returns Ok(Unit)
+            every { context.libraryUserRepository.save(any()) } just Runs
+            every { context.authCredentialRepository.save(any()) } just Runs
+
+            val result = context.sut.register(input)
+            result.fold(
+                success = {
+                    assertEquals("user@example.com", it.email)
+                    assertEquals("LibraryUserRegisteredEvent", it.eventName)
+                },
+                failure = { error("expected success") },
             )
-        every { context.registrationService.verify(email) } returns Ok(Unit)
-        every { context.libraryUserRepository.save(any()) } just Runs
-        every { context.authCredentialRepository.save(any()) } just Runs
 
-        val result = context.sut.register(input)
-        result.fold(
-            success = {
-                assertEquals("user@example.com", it.email)
-                assertEquals("LibraryUserRegisteredEvent", it.eventName)
-            },
-            failure = { error("expected success") },
-        )
+            verify(exactly = 1) { context.libraryUserRepository.save(capture(eventSlot)) }
+            verify(exactly = 1) { context.authCredentialRepository.save(capture(credentialSlot)) }
+            assertEquals("user@example.com", eventSlot.captured.email.value)
+            assertEquals(eventSlot.captured.libraryUserId, credentialSlot.captured.libraryUserId)
+            assertEquals(hashed("hashed-Str0ng!Passw0rd"), credentialSlot.captured.passwordHash)
+        }
 
-        verify(exactly = 1) { context.libraryUserRepository.save(capture(eventSlot)) }
-        verify(exactly = 1) { context.authCredentialRepository.save(capture(credentialSlot)) }
-        assertEquals("user@example.com", eventSlot.captured.email.value)
-        assertEquals(eventSlot.captured.libraryUserId, credentialSlot.captured.libraryUserId)
-        assertEquals(hashed("hashed-Str0ng!Passw0rd"), credentialSlot.captured.passwordHash)
-    }
+        @Test
+        fun `given duplicate email when register then returns duplicate email error`() {
+            val context = createSut()
+            every { context.registrationService.verify(any()) } returns Err(DomainError.DuplicateEmail)
 
-    @Test
-    fun `returns err on duplicate email`() {
-        val context = createSut()
-        every { context.registrationService.verify(any()) } returns Err(DomainError.DuplicateEmail)
+            val result = context.sut.register(RegisterLibraryUserInput("user@example.com", "Str0ng!Passw0rd"))
+            assertEquals(Err(UsecaseError.DuplicateEmail), result)
+            verify(exactly = 0) { context.libraryUserRepository.save(any()) }
+            verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+        }
 
-        val result = context.sut.register(RegisterLibraryUserInput("user@example.com", "Str0ng!Passw0rd"))
-        assertEquals(Err(UsecaseError.DuplicateEmail), result)
-        verify(exactly = 0) { context.libraryUserRepository.save(any()) }
-        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
-    }
+        @Test
+        fun `given invalid password when register then returns validation error`() {
+            val context = createSut()
 
-    @Test
-    fun `returns validation error on invalid password`() {
-        val context = createSut()
-
-        val result = context.sut.register(RegisterLibraryUserInput("user@example.com", "short"))
-        assertEquals(
-            Err(UsecaseError.Validation(field = "password", reason = "must_meet_password_policy")),
-            result,
-        )
-        verify(exactly = 0) { context.libraryUserRepository.existsByEmail(any()) }
-        verify(exactly = 0) { context.libraryUserRepository.save(any()) }
-        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+            val result = context.sut.register(RegisterLibraryUserInput("user@example.com", "short"))
+            assertEquals(
+                Err(UsecaseError.Validation(field = "password", reason = "must_meet_password_policy")),
+                result,
+            )
+            verify(exactly = 0) { context.libraryUserRepository.existsByEmail(any()) }
+            verify(exactly = 0) { context.libraryUserRepository.save(any()) }
+            verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+        }
     }
 
     private fun createSut(

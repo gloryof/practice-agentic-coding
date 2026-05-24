@@ -9,6 +9,7 @@ import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.bookProd
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.publisherTable
 import jp.glory.practice.agentic.shared.testinfra.PostgreSqlTestBase
 import jp.glory.practice.agentic.shared.testinfra.UuidGenerator
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
@@ -23,21 +24,24 @@ class BookItemStockDaoTest : PostgreSqlTestBase() {
     private val bookProducts = Meta.bookProductTable
     private val publishers = Meta.publisherTable
 
-    @Test
-    fun `countByBookProductIds counts available and total`() {
-        val bookProductId = insertBookProduct("9780000000021")
-        insertBookItemWithStock(bookProductId, BookItemStockStatus.AVAILABLE)
-        insertBookItemWithStock(bookProductId, BookItemStockStatus.CHECKED_OUT)
+    @Nested
+    inner class CountByBookProductIds {
+        @Test
+        fun `given available and checked out stocks when count by product ids then returns available and total`() {
+            val bookProductId = insertBookProduct("9780000000021")
+            insertBookItemWithStock(bookProductId, BookItemStockStatus.AVAILABLE)
+            insertBookItemWithStock(bookProductId, BookItemStockStatus.CHECKED_OUT)
 
-        val result = sut.countByBookProductIds(listOf(bookProductId))
+            val result = sut.countByBookProductIds(listOf(bookProductId))
 
-        assertEquals(1, result[bookProductId]?.availableCount)
-        assertEquals(2, result[bookProductId]?.totalCount)
-    }
+            assertEquals(1, result[bookProductId]?.availableCount)
+            assertEquals(2, result[bookProductId]?.totalCount)
+        }
 
-    @Test
-    fun `countByBookProductIds returns empty map for empty ids`() {
-        assertEquals(emptyMap(), sut.countByBookProductIds(emptyList()))
+        @Test
+        fun `given empty ids when count by product ids then returns empty map`() {
+            assertEquals(emptyMap(), sut.countByBookProductIds(emptyList()))
+        }
     }
 
     private fun insertBookProduct(isbn: String): String {

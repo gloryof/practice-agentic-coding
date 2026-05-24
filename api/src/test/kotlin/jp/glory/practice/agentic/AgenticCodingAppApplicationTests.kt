@@ -4,6 +4,6 @@ import org.junit.jupiter.api.Test
 
 class AgenticCodingAppApplicationTests {
     @Test
-    fun contextLoads() {
+    fun `given application context when start then loads successfully`() {
     }
 }

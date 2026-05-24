@@ -9,6 +9,7 @@ import jp.glory.practice.agentic.auth.command.usecase.LoginResult
 import jp.glory.practice.agentic.auth.command.usecase.LoginUseCase
 import jp.glory.practice.agentic.shared.spring.GlobalExceptionHandler
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
+import org.junit.jupiter.api.Nested
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -24,71 +25,74 @@ class LoginControllerTest {
         val useCase: LoginUseCase,
     )
 
-    @Test
-    fun `returns 200 on success`() {
-        val context = createSut()
-        every { context.useCase.login(any()) } returns
-            Ok(
-                LoginResult(
-                    accessToken = "token-123",
-                    tokenType = "Bearer",
-                    expiresInSeconds = 86400,
-                ),
-            )
+    @Nested
+    inner class Login {
+        @Test
+        fun `given valid request when post login then returns 200`() {
+            val context = createSut()
+            every { context.useCase.login(any()) } returns
+                Ok(
+                    LoginResult(
+                        accessToken = "token-123",
+                        tokenType = "Bearer",
+                        expiresInSeconds = 86400,
+                    ),
+                )
 
-        val response =
-            context.mvc
-                .perform(
-                    post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}"""),
-                ).andReturn()
-                .response
+            val response =
+                context.mvc
+                    .perform(
+                        post("/api/v1/auth/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""{"email":"user@example.com","password":"Str0ng!Passw0rd"}"""),
+                    ).andReturn()
+                    .response
 
-        assertEquals(200, response.status)
-        assertTrue(response.contentAsString.contains("access_token"))
-    }
+            assertEquals(200, response.status)
+            assertTrue(response.contentAsString.contains("access_token"))
+        }
 
-    @Test
-    fun `returns 401 on auth failure`() {
-        val context = createSut()
-        every { context.useCase.login(any()) } returns Err(UsecaseError.AuthenticationFailed)
+        @Test
+        fun `given authentication failure when post login then returns 401`() {
+            val context = createSut()
+            every { context.useCase.login(any()) } returns Err(UsecaseError.AuthenticationFailed)
 
-        val response =
-            context.mvc
-                .perform(
-                    post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""{"email":"user@example.com","password":"Str0ng!Wrong12"}"""),
-                ).andReturn()
-                .response
+            val response =
+                context.mvc
+                    .perform(
+                        post("/api/v1/auth/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""{"email":"user@example.com","password":"Str0ng!Wrong12"}"""),
+                    ).andReturn()
+                    .response
 
-        assertEquals(401, response.status)
-        assertTrue(response.contentAsString.contains("\"code\":\"UNAUTHORIZED\""))
-        assertTrue(response.contentAsString.contains("\"message\":\"認証に失敗しました。\""))
-        assertTrue(response.contentAsString.contains("\"details\":[]"))
-        assertTrue(response.contentAsString.contains("\"trace_id\":\""))
-    }
+            assertEquals(401, response.status)
+            assertTrue(response.contentAsString.contains("\"code\":\"UNAUTHORIZED\""))
+            assertTrue(response.contentAsString.contains("\"message\":\"認証に失敗しました。\""))
+            assertTrue(response.contentAsString.contains("\"details\":[]"))
+            assertTrue(response.contentAsString.contains("\"trace_id\":\""))
+        }
 
-    @Test
-    fun `returns 400 on validation error`() {
-        val context = createSut()
+        @Test
+        fun `given invalid request when post login then returns 400`() {
+            val context = createSut()
 
-        val response =
-            context.mvc
-                .perform(
-                    post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""{"email":"","password":"short"}"""),
-                ).andReturn()
-                .response
+            val response =
+                context.mvc
+                    .perform(
+                        post("/api/v1/auth/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""{"email":"","password":"short"}"""),
+                    ).andReturn()
+                    .response
 
-        assertEquals(400, response.status)
-        assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
-        assertTrue(response.contentAsString.contains("\"message\":\"入力値に誤りがあります。\""))
-        assertTrue(response.contentAsString.contains("\"details\":["))
-        assertTrue(response.contentAsString.contains("\"trace_id\":\""))
-        verify(exactly = 0) { context.useCase.login(any()) }
+            assertEquals(400, response.status)
+            assertTrue(response.contentAsString.contains("\"code\":\"VALIDATION_ERROR\""))
+            assertTrue(response.contentAsString.contains("\"message\":\"入力値に誤りがあります。\""))
+            assertTrue(response.contentAsString.contains("\"details\":["))
+            assertTrue(response.contentAsString.contains("\"trace_id\":\""))
+            verify(exactly = 0) { context.useCase.login(any()) }
+        }
     }
 
     private fun createSut(useCase: LoginUseCase = mockk()): TestContext {

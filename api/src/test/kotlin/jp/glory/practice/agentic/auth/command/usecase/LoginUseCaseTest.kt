@@ -17,6 +17,7 @@ import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.shared.auth.AccessTokenSession
 import jp.glory.practice.agentic.shared.auth.AccessTokenStore
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
+import org.junit.jupiter.api.Nested
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -37,81 +38,84 @@ class LoginUseCaseTest {
             failure = { error("expected valid password hash") },
         )
 
-    @Test
-    fun `returns token on valid credentials`() {
-        val context =
-            createSut(
-                passwordVerifier = PasswordVerifier { raw, hash -> raw == "Str0ng!Passw0rd" && hash.value == "hashed" },
-            )
-        stubUserLookup(context)
+    @Nested
+    inner class Login {
+        @Test
+        fun `given valid credentials when login then returns token`() {
+            val context =
+                createSut(
+                    passwordVerifier = PasswordVerifier { raw, hash -> raw == "Str0ng!Passw0rd" && hash.value == "hashed" },
+                )
+            stubUserLookup(context)
 
-        val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
-        result.fold(
-            success = {
-                assertEquals("token-123", it.accessToken)
-                assertEquals("Bearer", it.tokenType)
-                assertEquals(86400, it.expiresInSeconds)
-            },
-            failure = { error("expected success") },
-        )
-        verify(exactly = 1) {
-            context.accessTokenStore.save(
-                AccessTokenSession(
-                    token = "token-123",
-                    libraryUserId = LibraryUserId("user-id"),
-                    expiresAt = Instant.parse("2026-02-22T12:34:56Z").plusSeconds(86400),
-                ),
+            val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
+            result.fold(
+                success = {
+                    assertEquals("token-123", it.accessToken)
+                    assertEquals("Bearer", it.tokenType)
+                    assertEquals(86400, it.expiresInSeconds)
+                },
+                failure = { error("expected success") },
             )
+            verify(exactly = 1) {
+                context.accessTokenStore.save(
+                    AccessTokenSession(
+                        token = "token-123",
+                        libraryUserId = LibraryUserId("user-id"),
+                        expiresAt = Instant.parse("2026-02-22T12:34:56Z").plusSeconds(86400),
+                    ),
+                )
+            }
+            verify(exactly = 0) { context.authCredentialRepository.save(any()) }
         }
-        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
-    }
 
-    @Test
-    fun `returns err on invalid credentials`() {
-        val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> false })
-        stubUserLookup(context)
+        @Test
+        fun `given invalid credentials when login then returns authentication failed`() {
+            val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> false })
+            stubUserLookup(context)
 
-        val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Wrong12"))
-        assertEquals(Err(UsecaseError.AuthenticationFailed), result)
-        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
-    }
+            val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Wrong12"))
+            assertEquals(Err(UsecaseError.AuthenticationFailed), result)
+            verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+        }
 
-    @Test
-    fun `returns err when account does not exist`() {
-        val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
-        every { context.authAccountRepository.findByEmail(any()) } returns null
+        @Test
+        fun `given missing account when login then returns authentication failed`() {
+            val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
+            every { context.authAccountRepository.findByEmail(any()) } returns null
 
-        val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
+            val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
 
-        assertEquals(Err(UsecaseError.AuthenticationFailed), result)
-        verify(exactly = 0) { context.authCredentialRepository.findByLibraryUserId(any()) }
-        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
-    }
+            assertEquals(Err(UsecaseError.AuthenticationFailed), result)
+            verify(exactly = 0) { context.authCredentialRepository.findByLibraryUserId(any()) }
+            verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+        }
 
-    @Test
-    fun `returns err when credential does not exist`() {
-        val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
-        val email =
-            Email.create("user@example.com").fold(
-                success = { it },
-                failure = { error("expected valid email") },
-            )
-        every { context.authAccountRepository.findByEmail(any()) } returns AuthAccount(LibraryUserId("user-id"), email)
-        every { context.authCredentialRepository.findByLibraryUserId(any()) } returns null
+        @Test
+        fun `given missing credential when login then returns authentication failed`() {
+            val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
+            val email =
+                Email.create("user@example.com").fold(
+                    success = { it },
+                    failure = { error("expected valid email") },
+                )
+            every { context.authAccountRepository.findByEmail(any()) } returns AuthAccount(LibraryUserId("user-id"), email)
+            every { context.authCredentialRepository.findByLibraryUserId(any()) } returns null
 
-        val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
+            val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
 
-        assertEquals(Err(UsecaseError.AuthenticationFailed), result)
-        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
-    }
+            assertEquals(Err(UsecaseError.AuthenticationFailed), result)
+            verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+        }
 
-    @Test
-    fun `returns validation error on invalid email`() {
-        val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
+        @Test
+        fun `given invalid email when login then returns validation error`() {
+            val context = createSut(passwordVerifier = PasswordVerifier { _, _ -> true })
 
-        val result = context.sut.login(LoginInput("", "Str0ng!Passw0rd"))
-        assertEquals(Err(UsecaseError.Validation(field = "email", reason = "required")), result)
-        verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+            val result = context.sut.login(LoginInput("", "Str0ng!Passw0rd"))
+            assertEquals(Err(UsecaseError.Validation(field = "email", reason = "required")), result)
+            verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+        }
     }
 
     private fun createSut(

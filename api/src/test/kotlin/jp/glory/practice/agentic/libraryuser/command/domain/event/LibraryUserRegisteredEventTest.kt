@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 
 class LibraryUserRegisteredEventTest {
     @Test
-    fun `keeps domain model values`() {
+    fun `given constructor values when create event then keeps domain model values`() {
         val email =
             Email.create("user@example.com").fold(
                 success = { it },
