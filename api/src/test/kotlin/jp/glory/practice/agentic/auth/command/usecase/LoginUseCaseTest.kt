@@ -4,7 +4,10 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.fold
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
+import jp.glory.practice.agentic.auth.command.domain.event.AuthLoggedInEvent
+import jp.glory.practice.agentic.auth.command.domain.event.AuthLoggedInEventHandler
 import jp.glory.practice.agentic.auth.command.domain.model.AuthAccount
 import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
 import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
@@ -14,8 +17,6 @@ import jp.glory.practice.agentic.auth.command.domain.service.AccessTokenGenerato
 import jp.glory.practice.agentic.auth.command.domain.service.PasswordVerifier
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
-import jp.glory.practice.agentic.shared.auth.AccessTokenSession
-import jp.glory.practice.agentic.shared.auth.AccessTokenStore
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
 import org.junit.jupiter.api.Nested
 import java.time.Clock
@@ -29,7 +30,7 @@ class LoginUseCaseTest {
         val sut: LoginUseCase,
         val authAccountRepository: AuthAccountRepository,
         val authCredentialRepository: AuthCredentialRepository,
-        val accessTokenStore: AccessTokenStore,
+        val authLoggedInEventHandler: AuthLoggedInEventHandler,
     )
 
     private fun hashed(value: String): PasswordHash =
@@ -47,6 +48,8 @@ class LoginUseCaseTest {
                     passwordVerifier = PasswordVerifier { raw, hash -> raw == "Str0ng!Passw0rd" && hash.value == "hashed" },
                 )
             stubUserLookup(context)
+            val eventSlot = slot<AuthLoggedInEvent>()
+            every { context.authLoggedInEventHandler.handle(capture(eventSlot)) } returns Unit
 
             val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
             result.fold(
@@ -58,14 +61,12 @@ class LoginUseCaseTest {
                 failure = { error("expected success") },
             )
             verify(exactly = 1) {
-                context.accessTokenStore.save(
-                    AccessTokenSession(
-                        token = "token-123",
-                        libraryUserId = LibraryUserId("user-id"),
-                        expiresAt = Instant.parse("2026-02-22T12:34:56Z").plusSeconds(86400),
-                    ),
-                )
+                context.authLoggedInEventHandler.handle(any())
             }
+            assertEquals(LibraryUserId("user-id"), eventSlot.captured.account.libraryUserId)
+            assertEquals("token-123", eventSlot.captured.accessToken)
+            assertEquals(Instant.parse("2026-02-23T12:34:56Z"), eventSlot.captured.expiresAt)
+            assertEquals(Instant.parse("2026-02-22T12:34:56Z"), eventSlot.captured.occurredAt)
             verify(exactly = 0) { context.authCredentialRepository.save(any()) }
         }
 
@@ -76,6 +77,7 @@ class LoginUseCaseTest {
 
             val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Wrong12"))
             assertEquals(Err(UsecaseError.AuthenticationFailed), result)
+            verify(exactly = 0) { context.authLoggedInEventHandler.handle(any()) }
             verify(exactly = 0) { context.authCredentialRepository.save(any()) }
         }
 
@@ -88,6 +90,7 @@ class LoginUseCaseTest {
 
             assertEquals(Err(UsecaseError.AuthenticationFailed), result)
             verify(exactly = 0) { context.authCredentialRepository.findByLibraryUserId(any()) }
+            verify(exactly = 0) { context.authLoggedInEventHandler.handle(any()) }
             verify(exactly = 0) { context.authCredentialRepository.save(any()) }
         }
 
@@ -105,6 +108,7 @@ class LoginUseCaseTest {
             val result = context.sut.login(LoginInput("user@example.com", "Str0ng!Passw0rd"))
 
             assertEquals(Err(UsecaseError.AuthenticationFailed), result)
+            verify(exactly = 0) { context.authLoggedInEventHandler.handle(any()) }
             verify(exactly = 0) { context.authCredentialRepository.save(any()) }
         }
 
@@ -114,6 +118,7 @@ class LoginUseCaseTest {
 
             val result = context.sut.login(LoginInput("", "Str0ng!Passw0rd"))
             assertEquals(Err(UsecaseError.Validation(field = "email", reason = "required")), result)
+            verify(exactly = 0) { context.authLoggedInEventHandler.handle(any()) }
             verify(exactly = 0) { context.authCredentialRepository.save(any()) }
         }
     }
@@ -123,7 +128,7 @@ class LoginUseCaseTest {
         authCredentialRepository: AuthCredentialRepository = mockk(),
         passwordVerifier: PasswordVerifier,
         accessTokenGenerator: AccessTokenGenerator = AccessTokenGenerator { "token-123" },
-        accessTokenStore: AccessTokenStore = mockk(relaxed = true),
+        authLoggedInEventHandler: AuthLoggedInEventHandler = mockk(relaxed = true),
         clock: Clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
         expirationSeconds: Long = 86400,
     ): TestContext {
@@ -133,7 +138,7 @@ class LoginUseCaseTest {
                 authCredentialRepository = authCredentialRepository,
                 passwordVerifier = passwordVerifier,
                 accessTokenGenerator = accessTokenGenerator,
-                accessTokenStore = accessTokenStore,
+                authLoggedInEventHandler = authLoggedInEventHandler,
                 clock = clock,
                 expirationSeconds = expirationSeconds,
             )
@@ -141,7 +146,7 @@ class LoginUseCaseTest {
             sut = sut,
             authAccountRepository = authAccountRepository,
             authCredentialRepository = authCredentialRepository,
-            accessTokenStore = accessTokenStore,
+            authLoggedInEventHandler = authLoggedInEventHandler,
         )
     }
 

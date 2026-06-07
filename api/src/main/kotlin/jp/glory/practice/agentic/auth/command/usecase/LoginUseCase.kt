@@ -6,18 +6,20 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.zip
+import jp.glory.practice.agentic.auth.command.domain.event.AuthLoggedInEvent
+import jp.glory.practice.agentic.auth.command.domain.event.AuthLoggedInEventHandler
+import jp.glory.practice.agentic.auth.command.domain.model.AuthAccount
 import jp.glory.practice.agentic.auth.command.domain.repository.AuthAccountRepository
 import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
 import jp.glory.practice.agentic.auth.command.domain.service.AccessTokenGenerator
 import jp.glory.practice.agentic.auth.command.domain.service.PasswordVerifier
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
 import jp.glory.practice.agentic.libraryuser.command.domain.model.RawPassword
-import jp.glory.practice.agentic.shared.auth.AccessTokenSession
-import jp.glory.practice.agentic.shared.auth.AccessTokenStore
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Clock
+import java.time.Instant
 
 @Service
 class LoginUseCase(
@@ -25,13 +27,20 @@ class LoginUseCase(
     private val authCredentialRepository: AuthCredentialRepository,
     private val passwordVerifier: PasswordVerifier,
     private val accessTokenGenerator: AccessTokenGenerator,
-    private val accessTokenStore: AccessTokenStore,
+    private val authLoggedInEventHandler: AuthLoggedInEventHandler,
     private val clock: Clock,
     @Value("\${auth.token.expiration-seconds}") private val expirationSeconds: Long,
 ) {
     private data class ValidatedInput(
         val email: Email,
         val rawPassword: RawPassword,
+    )
+
+    private data class LoginContext(
+        val account: AuthAccount,
+        val accessToken: String,
+        val occurredAt: Instant,
+        val expiresAt: Instant,
     )
 
     fun login(input: LoginInput): Result<LoginResult, UsecaseError> =
@@ -51,23 +60,35 @@ class LoginUseCase(
         if (!passwordVerifier.matches(input.rawPassword.value, credential.passwordHash)) {
             return Err(UsecaseError.AuthenticationFailed)
         }
-        val token = accessTokenGenerator.generate()
-        val expiresAt = clock.instant().plusSeconds(expirationSeconds)
-        accessTokenStore.save(
-            AccessTokenSession(
-                token = token,
-                libraryUserId = user.libraryUserId,
-                expiresAt = expiresAt,
-            ),
-        )
-        return Ok(
-            LoginResult(
-                accessToken = token,
-                tokenType = "Bearer",
-                expiresInSeconds = expirationSeconds,
-            ),
+        val context = createLoginContext(user)
+        authLoggedInEventHandler.handle(buildAuthLoggedInEvent(context))
+        return Ok(buildLoginResult(context))
+    }
+
+    private fun createLoginContext(account: AuthAccount): LoginContext {
+        val occurredAt = Instant.now(clock)
+        return LoginContext(
+            account = account,
+            accessToken = accessTokenGenerator.generate(),
+            occurredAt = occurredAt,
+            expiresAt = occurredAt.plusSeconds(expirationSeconds),
         )
     }
+
+    private fun buildAuthLoggedInEvent(context: LoginContext): AuthLoggedInEvent =
+        AuthLoggedInEvent(
+            account = context.account,
+            accessToken = context.accessToken,
+            expiresAt = context.expiresAt,
+            occurredAt = context.occurredAt,
+        )
+
+    private fun buildLoginResult(context: LoginContext): LoginResult =
+        LoginResult(
+            accessToken = context.accessToken,
+            tokenType = "Bearer",
+            expiresInSeconds = expirationSeconds,
+        )
 }
 
 data class LoginInput(

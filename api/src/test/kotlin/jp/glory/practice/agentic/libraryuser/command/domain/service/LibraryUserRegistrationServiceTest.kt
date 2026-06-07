@@ -34,7 +34,7 @@ class LibraryUserRegistrationServiceTest {
 
             val result = context.sut.verify(email)
             assertEquals(Ok(Unit), result)
-            verify(exactly = 0) { context.repository.save(any()) }
+            verify(exactly = 0) { context.repository.save(any(), any()) }
         }
 
         @Test
@@ -49,7 +49,7 @@ class LibraryUserRegistrationServiceTest {
 
             val result = context.sut.verify(email)
             assertEquals(Err(DomainError.DuplicateEmail), result)
-            verify(exactly = 0) { context.repository.save(any()) }
+            verify(exactly = 0) { context.repository.save(any(), any()) }
         }
     }
 

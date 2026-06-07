@@ -5,8 +5,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
+import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUser
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.LibraryUserDao
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.LibraryUserTable
@@ -21,25 +21,25 @@ class LibraryUserCommandRepositoryImplTest {
     @Nested
     inner class Save {
         @Test
-        fun `given registered event when save then delegates insert to dao`() {
+        fun `given library user when save then delegates insert to dao`() {
             val dao = mockk<LibraryUserDao>(relaxed = true)
             val sut = LibraryUserCommandRepositoryImpl(dao)
             val captured = slot<LibraryUserTable>()
-            val event =
-                LibraryUserRegisteredEvent(
-                    libraryUserId = LibraryUserId("user0000000000000000000001"),
+            val libraryUser =
+                LibraryUser(
+                    id = LibraryUserId("user0000000000000000000001"),
                     email = email("user1@example.com"),
-                    occurredAt = Instant.parse("2026-03-08T00:00:00Z"),
                 )
+            val registeredAt = Instant.parse("2026-03-08T00:00:00Z")
 
             every { dao.insert(capture(captured)) } returns Unit
 
-            sut.save(event)
+            sut.save(libraryUser, registeredAt)
 
             verify(exactly = 1) { dao.insert(any()) }
-            assertEquals(event.libraryUserId.value, captured.captured.id)
-            assertEquals(event.email.value, captured.captured.email)
-            assertEquals(event.occurredAt, captured.captured.registeredAt)
+            assertEquals(libraryUser.id.value, captured.captured.id)
+            assertEquals(libraryUser.email.value, captured.captured.email)
+            assertEquals(registeredAt, captured.captured.registeredAt)
         }
     }
 

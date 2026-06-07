@@ -5,14 +5,11 @@ import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.zip
-import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
-import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
-import jp.glory.practice.agentic.auth.command.domain.service.PasswordHasher
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
+import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEventHandler
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.libraryuser.command.domain.model.RawPassword
-import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUserCommandRepository
 import jp.glory.practice.agentic.libraryuser.command.domain.service.LibraryUserRegistrationService
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
 import org.springframework.stereotype.Service
@@ -23,9 +20,7 @@ import java.time.Instant
 @Service
 class RegisterLibraryUserUseCase(
     private val registrationService: LibraryUserRegistrationService,
-    private val libraryUserRepository: LibraryUserCommandRepository,
-    private val authCredentialRepository: AuthCredentialRepository,
-    private val passwordHasher: PasswordHasher,
+    private val libraryUserRegisteredEventHandler: LibraryUserRegisteredEventHandler,
     private val clock: Clock,
 ) {
     private data class ValidatedInput(
@@ -37,7 +32,6 @@ class RegisterLibraryUserUseCase(
         val libraryUserId: LibraryUserId,
         val registeredAt: Instant,
         val event: LibraryUserRegisteredEvent,
-        val rawPassword: RawPassword,
     )
 
     @Transactional
@@ -69,6 +63,7 @@ class RegisterLibraryUserUseCase(
             LibraryUserRegisteredEvent(
                 libraryUserId = libraryUserId,
                 email = validated.email,
+                rawPassword = validated.rawPassword,
                 occurredAt = registeredAt,
             )
 
@@ -76,18 +71,11 @@ class RegisterLibraryUserUseCase(
             libraryUserId = libraryUserId,
             registeredAt = registeredAt,
             event = event,
-            rawPassword = validated.rawPassword,
         )
     }
 
     private fun persistRegistration(context: RegistrationContext): RegistrationContext {
-        libraryUserRepository.save(context.event)
-        authCredentialRepository.save(
-            AuthCredential(
-                libraryUserId = context.libraryUserId,
-                passwordHash = passwordHasher.hash(context.rawPassword.value),
-            ),
-        )
+        libraryUserRegisteredEventHandler.handle(context.event)
         return context
     }
 

@@ -1,23 +1,27 @@
 package jp.glory.practice.agentic.libraryuser.command.infra.adapter.persistence
 
-import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
 import jp.glory.practice.agentic.libraryuser.command.domain.model.EmailExistence
+import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUser
 import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUserCommandRepository
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.LibraryUserDao
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.LibraryUserTable
 import org.springframework.stereotype.Repository
+import java.time.Instant
 
 @Repository
 class LibraryUserCommandRepositoryImpl(
     private val libraryUserDao: LibraryUserDao,
 ) : LibraryUserCommandRepository {
-    override fun save(event: LibraryUserRegisteredEvent) {
+    override fun save(
+        libraryUser: LibraryUser,
+        registeredAt: Instant,
+    ) {
         libraryUserDao.insert(
             LibraryUserTable(
-                id = event.libraryUserId.value,
-                email = event.email.value,
-                registeredAt = event.occurredAt,
+                id = libraryUser.id.value,
+                email = libraryUser.email.value,
+                registeredAt = registeredAt,
             ),
         )
     }

@@ -10,13 +10,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
-import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
-import jp.glory.practice.agentic.auth.command.domain.repository.AuthCredentialRepository
-import jp.glory.practice.agentic.auth.command.domain.service.PasswordHasher
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEvent
+import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEventHandler
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
-import jp.glory.practice.agentic.libraryuser.command.domain.repository.LibraryUserCommandRepository
 import jp.glory.practice.agentic.libraryuser.command.domain.service.LibraryUserRegistrationService
 import jp.glory.practice.agentic.shared.domain.DomainError
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
@@ -31,28 +27,24 @@ class RegisterLibraryUserUseCaseTest {
     private data class TestContext(
         val sut: RegisterLibraryUserUseCase,
         val registrationService: LibraryUserRegistrationService,
-        val libraryUserRepository: LibraryUserCommandRepository,
-        val authCredentialRepository: AuthCredentialRepository,
+        val libraryUserRegisteredEventHandler: LibraryUserRegisteredEventHandler,
     )
 
     @Nested
     inner class Register {
         @Test
-        fun `given valid input when register then saves user and credential`() {
+        fun `given valid input when register then handles registered event`() {
             val email = Email.create("user@example.com").getOrThrow { throw IllegalArgumentException("invalid param") }
             val input = RegisterLibraryUserInput(email.value, "Str0ng!Passw0rd")
 
             val eventSlot = slot<LibraryUserRegisteredEvent>()
-            val credentialSlot = slot<AuthCredential>()
 
             val context =
                 createSut(
-                    passwordHasher = PasswordHasher { hashed("hashed-$it") },
                     clock = Clock.fixed(Instant.parse("2026-02-22T12:34:56Z"), ZoneOffset.UTC),
                 )
             every { context.registrationService.verify(email) } returns Ok(Unit)
-            every { context.libraryUserRepository.save(any()) } just Runs
-            every { context.authCredentialRepository.save(any()) } just Runs
+            every { context.libraryUserRegisteredEventHandler.handle(any()) } just Runs
 
             val result = context.sut.register(input)
             result.fold(
@@ -63,11 +55,9 @@ class RegisterLibraryUserUseCaseTest {
                 failure = { error("expected success") },
             )
 
-            verify(exactly = 1) { context.libraryUserRepository.save(capture(eventSlot)) }
-            verify(exactly = 1) { context.authCredentialRepository.save(capture(credentialSlot)) }
+            verify(exactly = 1) { context.libraryUserRegisteredEventHandler.handle(capture(eventSlot)) }
             assertEquals("user@example.com", eventSlot.captured.email.value)
-            assertEquals(eventSlot.captured.libraryUserId, credentialSlot.captured.libraryUserId)
-            assertEquals(hashed("hashed-Str0ng!Passw0rd"), credentialSlot.captured.passwordHash)
+            assertEquals("Str0ng!Passw0rd", eventSlot.captured.rawPassword.value)
         }
 
         @Test
@@ -77,8 +67,7 @@ class RegisterLibraryUserUseCaseTest {
 
             val result = context.sut.register(RegisterLibraryUserInput("user@example.com", "Str0ng!Passw0rd"))
             assertEquals(Err(UsecaseError.DuplicateEmail), result)
-            verify(exactly = 0) { context.libraryUserRepository.save(any()) }
-            verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+            verify(exactly = 0) { context.libraryUserRegisteredEventHandler.handle(any()) }
         }
 
         @Test
@@ -90,38 +79,26 @@ class RegisterLibraryUserUseCaseTest {
                 Err(UsecaseError.Validation(field = "password", reason = "must_meet_password_policy")),
                 result,
             )
-            verify(exactly = 0) { context.libraryUserRepository.existsByEmail(any()) }
-            verify(exactly = 0) { context.libraryUserRepository.save(any()) }
-            verify(exactly = 0) { context.authCredentialRepository.save(any()) }
+            verify(exactly = 0) { context.registrationService.verify(any()) }
+            verify(exactly = 0) { context.libraryUserRegisteredEventHandler.handle(any()) }
         }
     }
 
     private fun createSut(
         registrationService: LibraryUserRegistrationService = mockk(),
-        libraryUserRepository: LibraryUserCommandRepository = mockk(),
-        authCredentialRepository: AuthCredentialRepository = mockk(),
-        passwordHasher: PasswordHasher = mockk(),
+        libraryUserRegisteredEventHandler: LibraryUserRegisteredEventHandler = mockk(),
         clock: Clock = Clock.systemDefaultZone(),
     ): TestContext {
         val sut =
             RegisterLibraryUserUseCase(
                 registrationService = registrationService,
-                libraryUserRepository = libraryUserRepository,
-                authCredentialRepository = authCredentialRepository,
-                passwordHasher = passwordHasher,
+                libraryUserRegisteredEventHandler = libraryUserRegisteredEventHandler,
                 clock = clock,
             )
         return TestContext(
             sut = sut,
             registrationService = registrationService,
-            libraryUserRepository = libraryUserRepository,
-            authCredentialRepository = authCredentialRepository,
+            libraryUserRegisteredEventHandler = libraryUserRegisteredEventHandler,
         )
     }
-
-    private fun hashed(value: String): PasswordHash =
-        PasswordHash.create(value).fold(
-            success = { it },
-            failure = { error("expected valid password hash") },
-        )
 }
