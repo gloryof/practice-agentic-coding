@@ -37,6 +37,7 @@ repositories {
 }
 
 val komapperVersion = "6.0.0"
+val testcontainersVersion = "2.0.3"
 val flywayUrl =
     providers
         .gradleProperty("flywayUrl")
@@ -75,9 +76,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
-    testImplementation("org.testcontainers:testcontainers:1.20.4")
-    testImplementation("org.testcontainers:junit-jupiter:1.20.4")
-    testImplementation("org.testcontainers:postgresql:1.20.4")
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter:$testcontainersVersion")
+    testImplementation("org.testcontainers:testcontainers-postgresql:$testcontainersVersion")
     testImplementation("io.mockk:mockk:1.13.12")
     testImplementation("com.github.f4b6a3:uuid-creator:5.3.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
