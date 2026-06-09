@@ -1,0 +1,4 @@
+interface:
+  display_name: "Run API E2E"
+  short_description: "Reset the local API database and run E2E checks"
+  default_prompt: "Use $run-api-e2e to start the local API or run its E2E suite."
