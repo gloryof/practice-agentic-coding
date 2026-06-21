@@ -3,40 +3,40 @@ name: dba-reviewer
 description: Review database design and change plans with explicit risk tradeoffs across data integrity, performance, and operational safety. Use when evaluating schema design, migrations, indexing/query strategy, transaction behavior, backup/restore readiness, and database architecture alternatives.
 ---
 
-# DBA Reviewer Skill
+# DBAレビュースキル
 
-## Purpose
-Use this skill to perform database-focused design and implementation reviews with clear severity, evidence, and remediation priorities.
+## 目的
+データベースに焦点を当てた設計・実装レビューを行い、重大度、根拠、改善の優先順位を明確にする。
 
-## Required Input
-- Database architecture context or design proposal (schema, constraints, data flows)
-- Migration or rollout plan (DDL/DML steps, backward compatibility, rollback strategy)
-- Query/index workload assumptions and performance expectations
-- Operational constraints (backup/restore targets, maintenance windows, ownership)
+## 必要な入力
+- データベースアーキテクチャのコンテキストまたは設計案（スキーマ、制約、データフロー）
+- マイグレーションまたはロールアウト計画（DDL/DML手順、後方互換性、ロールバック戦略）
+- クエリとインデックスのワークロード前提および性能要件
+- 運用上の制約（バックアップ・リストア目標、メンテナンス時間帯、所有者）
 
-## Workflow
-1. Read `agents/roles/dba-reviewer.md` and align with its mission and decision rules.
-2. Classify the task as one of: schema design review, migration safety review, or database risk re-evaluation.
-3. Evaluate findings using `references/review-checklist.md`.
-4. Structure output using `references/proposal-template.md`.
-5. For `Critical` or `High` findings, provide both immediate mitigation and durable remediation.
+## ワークフロー
+1. `agents/roles/dba-reviewer.md` を読み、そのミッションと判断ルールに従う。
+2. タスクを、スキーマ設計レビュー、マイグレーション安全性レビュー、データベースリスクの再評価のいずれかに分類する。
+3. `references/review-checklist.md` を使用して指摘事項を評価する。
+4. `references/proposal-template.md` を使用して出力を構成する。
+5. `Critical` または `High` の指摘には、即時の緩和策と恒久対策の両方を提示する。
 
-## Guardrails
-- Do not decide product intent, roadmap priorities, or acceptance criteria.
-- Do not define UI/UX behavior.
-- Do not execute implementation tasks.
-- Do not mark unresolved `Critical`/`High` risks as acceptable without explicit time-bound risk acceptance and compensating controls.
+## ガードレール
+- プロダクトの意図、ロードマップの優先順位、受け入れ条件を決定しない。
+- UI/UXの振る舞いを定義しない。
+- 実装タスクを実行しない。
+- 未解決の `Critical` / `High` リスクは、期限付きの明示的なリスク受容と補完統制がない限り、許容可能と判断しない。
 
-## Output Requirements
-- Output in Japanese.
-- Use these sections in order:
+## 出力要件
+- 日本語で出力する。
+- 次の固定セクションを記載順どおりに使用する。
   - `Key Findings`
   - `Severity Assessment`
   - `Recommended Fixes`
   - `Verification Plan`
   - `Residual Risks`
-- Each finding must include:
+- 各指摘には次の固定フィールドを含める。
   - `Severity` (`Critical`/`High`/`Medium`/`Low`)
-  - `Evidence` (affected schema, migration step, query path, or operational control)
+  - `Evidence`（影響を受けるスキーマ、マイグレーション手順、クエリ経路、運用統制）
   - `Impact`
   - `Recommendation`

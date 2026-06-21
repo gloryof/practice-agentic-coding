@@ -1,4 +1,6 @@
-# DBA Review Proposal Template
+# DBAレビュー提案テンプレート
+
+固定出力契約との互換性を維持するため、セクション名とフィールド名は英語表記のまま使用する。
 
 ## Key Findings
 - Finding ID:

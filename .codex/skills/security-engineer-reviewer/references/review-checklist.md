@@ -1,55 +1,55 @@
-# Security Review Checklist
+# セキュリティレビューチェックリスト
 
-## 1. Threat Modeling and Design
-- Define protected assets, attacker capabilities, and trust boundaries.
-- Validate data flow paths across services and external dependencies.
-- Confirm threat scenarios for spoofing, tampering, data disclosure, and privilege escalation.
-- Ensure failure modes degrade safely.
+## 1. 脅威モデリングと設計
+- 保護対象の資産、攻撃者の能力、信頼境界を定義する。
+- サービスと外部依存をまたぐデータフローを検証する。
+- なりすまし、改ざん、情報漏えい、権限昇格の脅威シナリオを確認する。
+- 障害時に安全側へ縮退することを確認する。
 
-## 2. Authentication and Session Security
-- Enforce strong authentication controls suitable for risk profile.
-- Protect against brute force and credential stuffing with rate limits and lockout policy.
-- Secure session lifecycle (creation, rotation, expiration, revocation).
-- Prevent replay and fixation risks.
+## 2. 認証とセッションのセキュリティ
+- リスク特性に適した強固な認証統制を適用する。
+- レート制限とロックアウト方針により、総当たり攻撃とクレデンシャルスタッフィングを防ぐ。
+- セッションのライフサイクルを保護する（作成、ローテーション、有効期限、失効）。
+- リプレイ攻撃とセッション固定化のリスクを防ぐ。
 
-## 3. Authorization and Access Control
-- Enforce server-side authorization for every protected operation.
-- Validate object-level access (IDOR prevention).
-- Apply least privilege for users, services, and tokens.
-- Verify tenant/data partitioning in multi-tenant flows.
+## 3. 認可とアクセス制御
+- 保護対象のすべての操作にサーバー側の認可を適用する。
+- オブジェクト単位のアクセスを検証する（IDORの防止）。
+- ユーザー、サービス、トークンに最小権限を適用する。
+- マルチテナント処理でテナントとデータが分離されていることを確認する。
 
-## 4. Input/Output Security
-- Validate and normalize untrusted input at trust boundaries.
-- Use parameterized queries and safe APIs to prevent injection.
-- Encode output by context to mitigate XSS.
-- Apply CSRF protections to state-changing endpoints.
+## 4. 入出力のセキュリティ
+- 信頼境界で信頼できない入力を検証し、正規化する。
+- パラメータ化クエリと安全なAPIを使用してインジェクションを防ぐ。
+- コンテキストに応じて出力をエンコードし、XSSを緩和する。
+- 状態を変更するエンドポイントにCSRF対策を適用する。
 
-## 5. Secrets and Cryptography
-- Store secrets in dedicated secret managers; avoid source/log/client leakage.
-- Use modern cryptographic algorithms and secure defaults.
-- Protect keys with lifecycle management (generation, rotation, revocation).
-- Enforce TLS and certificate hygiene.
+## 5. 秘密情報と暗号
+- 秘密情報を専用のシークレット管理基盤に保存し、ソース、ログ、クライアントへの漏えいを防ぐ。
+- 現代的な暗号アルゴリズムと安全なデフォルト設定を使用する。
+- ライフサイクル管理により鍵を保護する（生成、ローテーション、失効）。
+- TLSの適用と証明書の適切な管理を徹底する。
 
-## 6. Data Protection and Privacy
-- Classify sensitive data and apply minimum-necessary retention.
-- Encrypt sensitive data in transit and at rest.
-- Mask/redact sensitive fields in logs and telemetry.
-- Define secure deletion and backup protection controls.
+## 6. データ保護とプライバシー
+- 機密データを分類し、必要最小限の保持期間を適用する。
+- 転送中と保存時の機密データを暗号化する。
+- ログとテレメトリ内の機密フィールドをマスキングまたは削除する。
+- 安全な削除とバックアップ保護の統制を定義する。
 
-## 7. Dependency and Supply Chain Security
-- Pin and track dependency versions.
-- Scan advisories and remediate known vulnerable packages.
-- Validate build provenance and artifact integrity when possible.
-- Limit third-party permissions and blast radius.
+## 7. 依存関係とサプライチェーンのセキュリティ
+- 依存関係のバージョンを固定し、追跡する。
+- セキュリティ勧告をスキャンし、既知の脆弱性を持つパッケージを修正する。
+- 可能な場合はビルドの来歴と成果物の完全性を検証する。
+- サードパーティーの権限と影響範囲を制限する。
 
-## 8. Error Handling, Logging, and Observability
-- Avoid sensitive data in errors, traces, and logs.
-- Ensure logs support incident investigation with correlation identifiers.
-- Monitor abnormal auth/access/error patterns.
-- Define actionable alerts for likely exploit behavior.
+## 8. エラー処理、ログ、可観測性
+- エラー、トレース、ログに機密データを含めない。
+- 相関識別子により、ログがインシデント調査を支援できることを確認する。
+- 異常な認証、アクセス、エラーのパターンを監視する。
+- 悪用の可能性が高い挙動に対して実行可能なアラートを定義する。
 
-## 9. Verification and Release Gates
-- Map tests to OWASP Top 10 and relevant OWASP ASVS controls.
-- Include negative tests for authorization and input validation failures.
-- Re-test fixed findings and add regression tests.
-- Block release on unresolved `Critical`/`High` risks unless formally accepted.
+## 9. 検証とリリースゲート
+- テストをOWASP Top 10と関連するOWASP ASVS統制に対応付ける。
+- 認可と入力検証の失敗に対する異常系テストを含める。
+- 修正済みの指摘を再テストし、リグレッションテストを追加する。
+- 正式にリスク受容されていない `Critical` / `High` リスクが残る場合はリリースを停止する。

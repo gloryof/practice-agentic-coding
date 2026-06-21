@@ -1,8 +1,8 @@
-# Proposal Template
+# 提案テンプレート
 
-Use this template in Japanese for both architecture design and review responses.
+アーキテクチャ設計とレビューの両方で、このテンプレートを使用して日本語で回答する。固定出力契約との互換性を維持するため、セクション名と比較表の選択肢名は英語表記のまま使用する。
 
-## Required Output Sections
+## 必須出力セクション
 
 ### 1. Key Risks
 - 主要リスクを箇条書きで示す。
@@ -22,9 +22,9 @@ Use this template in Japanese for both architecture design and review responses.
 - `telemetry`: 追加または改善する計測。
 - `checkpoints`: リリース前後の判定ポイントと期限。
 
-## Option Comparison Format (A/B)
+## 選択肢の比較形式（A/B）
 
-Use this comparison when alternatives exist.
+代替案が存在する場合は、この比較表を使用する。
 
 | 観点 | Option A | Option B |
 | --- | --- | --- |
@@ -35,7 +35,7 @@ Use this comparison when alternatives exist.
 | 拡張性 |  |  |
 | 結論 |  |  |
 
-## Example: Design Request
+## 例: 設計依頼
 
 1. Key Risks
 - 例: 同期呼び出し集中により依存障害時の連鎖失敗リスクが高い。
@@ -53,7 +53,7 @@ Use this comparison when alternatives exist.
 - telemetry: キュー深さ、処理遅延、DLQ件数ダッシュボードを追加。
 - checkpoints: 2週間ごとに SLO とアラート妥当性を見直し。
 
-## Example: Review Request
+## 例: レビュー依頼
 
 1. Key Risks
 - 例: 構造化ログ不足でインシデント切り分けが 10 分以内に完了しない。

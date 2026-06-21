@@ -1,43 +1,43 @@
-# DBA Review Checklist
+# DBAレビューチェックリスト
 
-## 1. Data Modeling and Integrity
-- Confirm entities, keys, and relationships match domain invariants.
-- Validate PK/FK/UNIQUE/CHECK constraints for correctness and completeness.
-- Confirm nullable/default rules prevent invalid business states.
-- Evaluate normalization/denormalization tradeoffs with explicit rationale.
+## 1. データモデリングと整合性
+- エンティティ、キー、関連がドメインの不変条件と一致することを確認する。
+- PK、FK、UNIQUE、CHECK制約の正確性と網羅性を検証する。
+- NULL許可とデフォルト値のルールが不正な業務状態を防ぐことを確認する。
+- 正規化と非正規化のトレードオフを、明示的な根拠とともに評価する。
 
-## 2. Migration Safety and Change Management
-- Verify additive, backward-compatible rollout strategy where feasible.
-- Confirm zero/low-downtime migration sequencing across app versions.
-- Validate rollback or roll-forward recovery plan with clear triggers.
-- Require migration rehearsal steps and success/failure criteria.
+## 2. マイグレーションの安全性と変更管理
+- 実行可能な場合は、追加型で後方互換性のあるロールアウト戦略を確認する。
+- アプリケーションのバージョンをまたぐ、無停止または短時間停止のマイグレーション順序を確認する。
+- 明確な発動条件を持つロールバックまたはロールフォワードの復旧計画を検証する。
+- マイグレーションのリハーサル手順と成功・失敗条件を必須とする。
 
-## 3. Query and Index Performance
-- Validate critical query paths and expected access patterns.
-- Confirm index strategy balances read latency and write amplification.
-- Check execution plan quality for hot-path queries.
-- Identify regression risks such as full scans, sort spills, and N+1 patterns.
+## 3. クエリとインデックスの性能
+- 重要なクエリ経路と想定アクセスパターンを検証する。
+- 読み取り遅延と書き込み増幅のバランスを取ったインデックス戦略であることを確認する。
+- 高頻度クエリの実行計画の品質を確認する。
+- フルスキャン、ソート時のディスク退避、N+1などの性能劣化リスクを特定する。
 
-## 4. Transaction and Concurrency Control
-- Confirm transaction boundaries align with consistency requirements.
-- Validate isolation level choices against anomaly risks.
-- Evaluate lock scope/duration and potential contention hotspots.
-- Identify deadlock-prone flows and mitigation strategy.
+## 4. トランザクションと並行実行制御
+- トランザクション境界が整合性要件と一致することを確認する。
+- 分離レベルの選択を異常発生リスクに照らして検証する。
+- ロックの範囲と期間、および競合の集中箇所を評価する。
+- デッドロックが発生しやすい処理フローと緩和策を特定する。
 
-## 5. Operations, Capacity, and Reliability
-- Confirm backup/restore strategy and test cadence for affected datasets.
-- Validate retention, archival, and deletion policies.
-- Evaluate storage growth, vacuum/maintenance needs, and capacity headroom.
-- Confirm runbook readiness for migration incidents and degraded performance.
+## 5. 運用、容量、信頼性
+- 影響を受けるデータセットのバックアップ・リストア戦略とテスト頻度を確認する。
+- 保持、アーカイブ、削除の方針を検証する。
+- ストレージ増加、VACUUMやメンテナンスの必要性、容量余力を評価する。
+- マイグレーション障害と性能劣化に対応するランブックの準備状況を確認する。
 
-## 6. Observability and Verification
-- Ensure migration progress and failure metrics are defined.
-- Ensure query latency/error/lock metrics are observable for impacted paths.
-- Confirm alerts are actionable and mapped to likely DB failure modes.
-- Confirm release gates include schema validation, migration rehearsal, and post-release checks.
+## 6. 可観測性と検証
+- マイグレーションの進捗と失敗を示すメトリクスが定義されていることを確認する。
+- 影響経路のクエリ遅延、エラー、ロックを観測できることを確認する。
+- アラートが実行可能で、想定されるデータベース障害モードに対応していることを確認する。
+- リリースゲートにスキーマ検証、マイグレーションのリハーサル、リリース後確認が含まれることを確認する。
 
-## 7. Security and Data Protection
-- Confirm sensitive columns are protected according to policy (encryption/masking/access).
-- Ensure least-privilege DB roles and credentials separation.
-- Validate auditability of high-risk data and schema changes.
-- Confirm no secrets or sensitive data leak through logs and error outputs.
+## 7. セキュリティとデータ保護
+- 機密列が方針に従って保護されていることを確認する（暗号化、マスキング、アクセス制御）。
+- 最小権限のデータベースロールと認証情報の分離を確認する。
+- 高リスクなデータ変更とスキーマ変更を監査できることを検証する。
+- ログとエラー出力から秘密情報や機密データが漏えいしないことを確認する。

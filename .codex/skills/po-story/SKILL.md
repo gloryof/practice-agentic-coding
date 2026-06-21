@@ -3,26 +3,28 @@ name: po-story
 description: Create user stories with clear user value and testable acceptance criteria for the community library discovery service.
 ---
 
-# PO Story Skill
+# POストーリースキル
 
-## Purpose
-Use this skill to create high-quality user stories from feature requests.
+## 目的
+機能要望から高品質なユーザーストーリーを作成する。
 
-## Required Input
-- Feature request or problem statement
-- Known product constraints
-- Relevant context about target users
+## 必要な入力
+- 機能要望または課題の説明
+- 既知のプロダクト制約
+- 対象ユーザーに関する関連コンテキスト
 
-## Workflow
-1. Read `agents/roles/po.md` before producing output.
-2. Identify target users, their need, and expected user value.
-3. Draft one or more candidate user stories.
-4. Select the strongest story using PO decision rules.
-5. Produce output using the required template.
+## ワークフロー
+1. 出力を作成する前に `agents/roles/po.md` を読む。
+2. 対象ユーザー、そのニーズ、期待されるユーザー価値を特定する。
+3. 1つ以上のユーザーストーリー候補を作成する。
+4. PO判断ルールを使用して最も適切なストーリーを選択する。
+5. 必須テンプレートを使用して出力する。
 
-## Output Requirements
-- `User Benefit`: one short paragraph.
-- `User Story`: format must be "As a ..., I want ..., so that ...".
-- `Acceptance Criteria`: testable bullet list.
-- `Non-Goals`: explicit exclusions.
-- `Open Questions`: blockers or unknowns.
+## 出力要件
+固定出力契約との互換性を維持するため、フィールド名とユーザーストーリー構文は英語表記のまま使用する。
+
+- `User Benefit`: 短い1段落で記載する。
+- `User Story`: `As a ..., I want ..., so that ...` 形式で記載する。
+- `Acceptance Criteria`: テスト可能な箇条書きで記載する。
+- `Non-Goals`: 明示的な対象外を記載する。
+- `Open Questions`: ブロッカーまたは不明点を記載する。

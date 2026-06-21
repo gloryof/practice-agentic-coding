@@ -1,37 +1,37 @@
-# QA Test Code Review Checklist
+# QAテストコードレビューチェックリスト
 
-## 1. Test Correctness
-- Confirm test cases map to intended behavior and risk areas.
-- Validate positive, negative, and boundary scenarios.
-- Check that assertions verify behavior, not incidental implementation details.
-- Ensure failure conditions are meaningful and diagnosable.
+## 1. テストの正確性
+- テストケースが意図した振る舞いとリスク領域に対応していることを確認する。
+- 正常系、異常系、境界値のシナリオを検証する。
+- アサーションが偶発的な実装詳細ではなく、振る舞いを検証していることを確認する。
+- 失敗条件が意味を持ち、診断可能であることを確認する。
 
-## 2. Determinism and Flaky Risk
-- Detect time-dependent assumptions (clock, timezone, sleep-based waits).
-- Detect order dependence and shared mutable state.
-- Detect random/non-seeded behavior and race-prone concurrency checks.
-- Detect external dependency coupling (network, filesystem, environment state).
+## 2. 決定性と不安定化リスク
+- 時刻に依存する前提を検出する（時計、タイムゾーン、sleepによる待機）。
+- 実行順序への依存と共有された可変状態を検出する。
+- ランダム値のシード未指定と、競合しやすい並行実行検証を検出する。
+- 外部依存との結合を検出する（ネットワーク、ファイルシステム、環境状態）。
 
-## 3. Test Isolation and Data Setup
-- Ensure each test can run independently and repeatably.
-- Evaluate fixture scope and lifecycle for leakage/crosstalk.
-- Ensure mock/stub/fake usage reflects realistic contracts.
-- Minimize setup noise while keeping behavior clear.
+## 3. テストの分離とデータ準備
+- 各テストが独立して繰り返し実行できることを確認する。
+- フィクスチャのスコープとライフサイクルに、状態漏れや相互干渉がないか評価する。
+- モック、スタブ、フェイクの使用が実際の契約を反映していることを確認する。
+- 振る舞いを明確に保ちながら、セットアップのノイズを最小化する。
 
-## 4. Maintainability and Readability
-- Verify naming clarity for suites, cases, and helper utilities.
-- Identify duplicated test patterns suitable for refactoring.
-- Keep helper abstractions simple and behavior-oriented.
-- Ensure test intent is quickly understandable by reviewers.
+## 4. 保守性と可読性
+- テストスイート、テストケース、ヘルパーの命名が明確であることを確認する。
+- リファクタリング可能な重複テストパターンを特定する。
+- ヘルパーの抽象化を単純かつ振る舞い中心に保つ。
+- レビュアーがテストの意図を短時間で理解できることを確認する。
 
-## 5. Execution Efficiency and CI Stability
-- Identify slow tests and unnecessary heavyweight setup.
-- Confirm unit tests are optimized for fast feedback.
-- Evaluate parallel-execution safety and shared-resource contention.
-- Confirm rerun behavior and diagnostics support rapid triage.
+## 5. 実行効率とCI安定性
+- 遅いテストと不要に重いセットアップを特定する。
+- 単体テストが高速なフィードバック向けに最適化されていることを確認する。
+- 並列実行の安全性と共有リソースの競合を評価する。
+- 再実行時の振る舞いと診断情報が迅速な切り分けを支援することを確認する。
 
-## 6. Regression Prevention
-- Verify tests exist for previously fixed defects.
-- Ensure missing high-risk regression scenarios are explicitly called out.
-- Confirm improvements include measurable pass/fail validation criteria.
-- Track residual flaky risk with owner and follow-up window.
+## 6. リグレッション防止
+- 過去に修正した不具合に対応するテストが存在することを確認する。
+- 欠落している高リスクなリグレッションシナリオを明示する。
+- 改善内容に測定可能な合否判定基準が含まれることを確認する。
+- 残存する不安定化リスクを、所有者とフォローアップ期限とともに追跡する。
