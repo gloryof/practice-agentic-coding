@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.postgresql.PostgreSQLContainer
 import org.testcontainers.utility.MountableFile
 import java.sql.DriverManager
 import java.time.Duration
@@ -86,7 +86,7 @@ private object SharedPostgres {
     private const val maxWarmupWaitMillis = 10_000L
     private const val warmupRetryIntervalMillis = 200L
 
-    val container: PostgreSQLContainer<*> =
+    val container: PostgreSQLContainer =
         PostgreSQLContainer("postgres:16")
             .withDatabaseName("agentic")
             .withUsername("agentic")
@@ -106,7 +106,7 @@ private object SharedPostgres {
                 )
             }
 
-    private fun waitUntilDatabaseReady(postgres: PostgreSQLContainer<*>) {
+    private fun waitUntilDatabaseReady(postgres: PostgreSQLContainer) {
         val deadline = System.currentTimeMillis() + maxWarmupWaitMillis
         var lastError: Exception? = null
         while (System.currentTimeMillis() < deadline) {
