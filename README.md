@@ -9,6 +9,8 @@ Codexを使ってAgentic Codingの連取をする場所。
 - APIローカルセットアップ（Testcontainers/Rancher Desktop）: `api/README.md`
 
 ## OpenAPI UI
+- OpenAPIドキュメントはサーバー実装から動的に生成され、リポジトリ内では管理しない。
+- 必要に応じてサーバーを起動し、Swagger UIまたはOpenAPI JSONを参照する。
 - デフォルトではOpenAPI UI/JSONは無効。
 - 有効化する場合は環境変数を指定して起動する。
 - 例: `cd api && OPENAPI_ENABLED=true ./gradlew bootRun`

@@ -16,15 +16,14 @@ description: Create user stories with clear user value and testable acceptance c
 
 ## ワークフロー
 1. 出力を作成する前に `agents/roles/po.md` を読む。
-2. `product/domain-context/README.md` を読み、コンテキスト名、ファイル名、仕様用語で `product/domain-context` を検索して、関連するドメイン文書を特定する。
-3. `product/product-foundation.md`、関連するユーザーストーリー、検索で特定したドメイン文書を読む。
-4. 対象ユーザー、そのニーズ、期待されるユーザー価値を特定する。
-5. 1つ以上のユーザーストーリー候補を作成する。
-6. PO判断ルールを使用して最も適切なストーリーを選択する。
-7. ユーザー価値、ユースケースの振る舞い、ドメイン詳細に変更がある場合は `product/domain-context` を更新する。
-8. ユーザーストーリーまたは受け入れ条件を作成・変更する場合は、関連するユーザーストーリーを作成または更新する。
-9. 新しいドメイン文書は、`product/domain-context/README.md` の構造、命名、リンク規約に従って配置する。
-10. 必須テンプレートを使用して出力する。
+2. `agents/rules/specification-update-rules.md` と `product/domain-context/README.md` を読む。
+3. コンテキスト名、ファイル名、仕様用語で `product/domain-context` を検索して、関連するドメイン文書を特定する。
+4. `product/product-foundation.md`、関連するユーザーストーリー、検索で特定したドメイン文書を読む。
+5. 対象ユーザー、そのニーズ、期待されるユーザー価値を特定する。
+6. 1つ以上のユーザーストーリー候補を作成する。
+7. PO判断ルールを使用して最も適切なストーリーを選択する。
+8. 仕様変更がある場合は、`agents/rules/specification-update-rules.md` に従って正本を更新する。
+9. 必須テンプレートを使用して出力する。
 
 ## 出力要件
 固定出力契約との互換性を維持するため、フィールド名とユーザーストーリー構文は英語表記のまま使用する。

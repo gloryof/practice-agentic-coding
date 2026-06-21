@@ -11,6 +11,7 @@
 ## 前提
 - 参照ロール: `agents/roles/po.md`
 - 仕様探索の規約: `product/domain-context/README.md`
+- 仕様更新の規約: `agents/rules/specification-update-rules.md`
 - 参照スキル:
   - `.codex/skills/po-story/SKILL.md`
   - `.codex/skills/po-spec/SKILL.md`
@@ -57,10 +58,8 @@
   - `Escalation`（実装レベルのフォローが必要な場合のみ）
 
 ### 5. 仕様文書を更新する
-- ユーザー価値、入出力、制約、失敗条件、処理フロー、ドメインモデル、ドメインイベントを変更した場合は、該当する `product/domain-context` を更新する。
-- ユーザーストーリーまたは受け入れ条件を変更した場合は、該当する `task/user-stories` を更新する。
-- 新しいコンテキストまたはユースケースを追加した場合は、`product/domain-context/README.md` の構造・命名・リンク規約に従う。
-- HTTP 契約を変更する場合は OpenAPI の更新を実装タスクへ明示的に引き継ぐ。
+- `agents/rules/specification-update-rules.md` を適用し、PO スコープで決定した仕様の更新を完了する。
+- 実装レベルの決定が必要な事項は `Escalation` に明記して実装タスクへ引き継ぐ。
 
 ## 例示シナリオ
 1. 依頼: 「新機能のユーザーストーリーを作って」
@@ -82,4 +81,4 @@
 - 依頼カテゴリが `story_request` / `spec_change_request` / `spec_qa_request` / `implementation_request` のいずれかに一意に分類される。
 - 分類ごとのスキル/エージェント選択が決まる。
 - `po-story` または `po-spec` の必須出力項目を満たした成果物が作成される。
-- 仕様変更がある場合、探索して特定した正本文書が更新対象に含まれる。
+- 仕様変更がある場合、`agents/rules/specification-update-rules.md` で特定した正本文書が更新対象に含まれる。

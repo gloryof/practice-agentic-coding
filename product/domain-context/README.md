@@ -9,9 +9,8 @@
 - `product/product-foundation.md`: ビジョン、ミッション、プロダクト全体の前提。
 - `product/domain-context`: ユーザー価値、ユースケース、ドメインモデル、ドメインイベントの正本。
 - `task/user-stories`: 実現するユーザー価値と受け入れ条件の管理単位。
-- OpenAPI: HTTP API のパス、パラメータ、レスポンス形式の正本。
 
-ユーザーストーリーとドメイン仕様が食い違う場合は、どちらか一方だけを更新せず、意図を確認して同じ変更で整合させる。
+正本の更新条件と責務は `agents/rules/specification-update-rules.md` に従う。
 
 ## ディレクトリ構造
 ```text
@@ -72,11 +71,8 @@ rg -n '<keyword>' product/domain-context
 - [ドメインモデル](templates/domain-model.md)
 - [ドメインイベント](templates/domain-event.md)
 
-## 更新ルール
-- ユーザー価値、入出力、制約、失敗条件、処理フロー、モデル、イベントを変更する場合は、該当する `product/domain-context` 文書を同じ変更で更新する。
-- 受け入れ条件を変更する場合は、関連する `task/user-stories` も同じ変更で更新する。
-- HTTP 契約を変更する場合は OpenAPI も更新する。
+## 文書作成規約
 - 新しい仕様は本書のディレクトリ構造と命名規則に従って配置する。
 - ユースケース仕様では関連するユーザーストーリー、用語、モデル、イベントへのリポジトリ相対リンクを記載する。
 - モデル仕様とイベント仕様には、それらを利用するユースケースへの逆参照を記載しない。
-- 変更後は相対リンクの存在確認と `./scripts/check-no-local-paths.sh` を実行する。
+- 仕様変更時の正本、更新条件、責務、完了確認は `agents/rules/specification-update-rules.md` に従う。

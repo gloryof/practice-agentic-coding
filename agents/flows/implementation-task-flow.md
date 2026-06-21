@@ -14,6 +14,7 @@
 
 ## 前提
 - 関連仕様の探索規約: `product/domain-context/README.md`
+- 仕様更新の規約: `agents/rules/specification-update-rules.md`
 - 参照ロール:
   - `agents/roles/server-architecture-reviewer.md`
   - `agents/roles/security-engineer-reviewer.md`
@@ -44,7 +45,7 @@
 
 ### 3. 標準実行順序で進める
 1. 依頼の理解と分類（`app_implementation_focus`〜`test_quality_focus`）の確定
-2. 関連する `task/user-stories`、`product/domain-context`、OpenAPI の確認
+2. 関連する `task/user-stories`、`product/domain-context` の確認
 3. 実装方針と仕様文書の更新要否の明文化
 4. 実装、必要な仕様文書更新、ローカル検証の実施
 5. リスク条件に応じた必須レビューの実施
@@ -52,10 +53,7 @@
 7. 完了報告
 
 ### 4. 仕様変更を同期する
-- ユーザー価値、入出力、制約、失敗条件、処理フロー、ドメインモデル、ドメインイベントを変更する場合は、該当する `product/domain-context` を同じ変更で更新する。
-- 受け入れ条件を変更する場合は、関連する `task/user-stories` を同じ変更で更新する。
-- HTTP 契約を変更する場合は OpenAPI を同じ変更で更新する。
-- 新しいコンテキストまたはユースケースを追加する場合は、`product/domain-context/README.md` の構造・命名・リンク規約に従う。
+- `agents/rules/specification-update-rules.md` を適用し、実装による仕様の更新を完了する。
 
 ### 5. 出力契約を満たす
 - 完了報告には以下を必須で含める。
@@ -90,6 +88,6 @@
 ## 完了条件
 - 実装依頼が `app_implementation_focus`〜`test_quality_focus` の少なくとも1つに分類される。
 - 必須レビュー条件に該当する領域で、対応するレビュー担当が適用される。
-- 振る舞いまたは契約を変更した場合、対応する仕様正本が更新される。
+- 仕様上の振る舞いを変更した場合、対応する仕様正本が更新される。
 - 完了報告の必須項目が満たされる。
 - 未解決リスクがある場合、`task/todo` 起票と報告記載が完了する。
