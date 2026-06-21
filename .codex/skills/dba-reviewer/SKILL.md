@@ -13,16 +13,20 @@ description: Review database design and change plans with explicit risk tradeoff
 - マイグレーションまたはロールアウト計画（DDL/DML手順、後方互換性、ロールバック戦略）
 - クエリとインデックスのワークロード前提および性能要件
 - 運用上の制約（バックアップ・リストア目標、メンテナンス時間帯、所有者）
+- 関連する `task/user-stories` と `product/domain-context` の仕様
 
 ## ワークフロー
 1. `agents/roles/dba-reviewer.md` を読み、そのミッションと判断ルールに従う。
-2. タスクを、スキーマ設計レビュー、マイグレーション安全性レビュー、データベースリスクの再評価のいずれかに分類する。
-3. `references/review-checklist.md` を使用して指摘事項を評価する。
-4. `references/proposal-template.md` を使用して出力を構成する。
-5. `Critical` または `High` の指摘には、即時の緩和策と恒久対策の両方を提示する。
+2. `product/domain-context/README.md` の探索規約に従い、関連するユーザーストーリーとドメイン仕様を特定してレビュー基準として読む。
+3. タスクを、スキーマ設計レビュー、マイグレーション安全性レビュー、データベースリスクの再評価のいずれかに分類する。
+4. `references/review-checklist.md` を使用して指摘事項を評価する。
+5. 仕様との不整合または仕様更新の必要性を検出した場合は、指摘と推奨対応を出力し、呼び出し元のPOまたは実装フローへ引き継ぐ。
+6. `references/proposal-template.md` を使用して出力を構成する。
+7. `Critical` または `High` の指摘には、即時の緩和策と恒久対策の両方を提示する。
 
 ## ガードレール
 - プロダクトの意図、ロードマップの優先順位、受け入れ条件を決定しない。
+- ユーザーストーリーまたはドメイン仕様を更新しない。
 - UI/UXの振る舞いを定義しない。
 - 実装タスクを実行しない。
 - 未解決の `Critical` / `High` リスクは、期限付きの明示的なリスク受容と補完統制がない限り、許容可能と判断しない。

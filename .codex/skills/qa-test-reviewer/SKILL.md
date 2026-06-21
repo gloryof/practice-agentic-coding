@@ -13,16 +13,20 @@ description: Review test code quality from a QA perspective, focused on unit-tes
 - 関連する本番コードの振る舞いまたは受け入れ意図（存在する場合）
 - 現在のCI・テスト実行上の制約（時間枠、安定性要件）
 - 既知の不安定事象またはリグレッション履歴（存在する場合）
+- 関連する `task/user-stories` と `product/domain-context` の仕様
 
 ## ワークフロー
 1. `agents/roles/qa-test-reviewer.md` を読み、その判断ルールを適用する。
-2. 単体テストを主対象としてスコープを分類し、必要な場合に限り結合テスト・E2Eとの連携も確認する。
-3. `references/review-checklist.md` を使用して指摘事項を評価する。
-4. `references/proposal-template.md` を使用して結果を構成する。
-5. `Blocker` の指摘には、再現条件と即時の緩和策を含める。
+2. `product/domain-context/README.md` の探索規約に従い、関連するユーザーストーリーとドメイン仕様を特定してレビュー基準として読む。
+3. 単体テストを主対象としてスコープを分類し、必要な場合に限り結合テスト・E2Eとの連携も確認する。
+4. `references/review-checklist.md` を使用して指摘事項を評価する。
+5. 仕様との不整合または仕様更新の必要性を検出した場合は、指摘と推奨対応を出力し、呼び出し元のPOまたは実装フローへ引き継ぐ。
+6. `references/proposal-template.md` を使用して結果を構成する。
+7. `Blocker` の指摘には、再現条件と即時の緩和策を含める。
 
 ## ガードレール
 - プロダクトの意図、ロードマップの優先順位、受け入れ条件を決定しない。
+- ユーザーストーリーまたはドメイン仕様を更新しない。
 - このロールの一部として本番アーキテクチャを再設計しない。
 - 実装タスクを実行しない。
 - 不安定化リスクの分析を省略しない。決定性と安定性の確認は必須とする。
