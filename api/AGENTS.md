@@ -1,31 +1,23 @@
-# AGENTS.md for `api/`
+# `api/` AGENTS.md
 
-## Scope
-- This file applies to all work under `api/`.
-- Follow this file before the repository root `AGENTS.md` when working in `api/`.
+## 適用範囲
+- 本ファイルは `api/` 配下のすべての作業に適用する。
+- ルート `AGENTS.md` を継承し、本ファイルと競合する指示がある場合のみ本ファイルを優先する。
 
-## Mandatory Rule
-- `MUST` read and follow `api/docs/architecture.md` before implementing or reviewing API-related changes.
-- `MUST` run `./gradlew ktlintFormat` before finalizing Kotlin changes.
-- `MUST` run `./gradlew check` before sharing implementation or review results.
-- `MUST` stop and propose a rules update first if implementation needs to violate the coding rules.
-- `MUST` stage only files changed by AI in the current request before reporting completion.
-- `MUST NOT` use `git add -A` by default; allow it only on explicit user instruction.
-- `MUST` run `git status --short` after staging and include staged file results in the work report.
+## API開発ルールの入口
+- `MUST` API の実装またはレビューを開始する前に `api/docs/backend-guidelines.md` を参照し、作業条件に対応する詳細文書に従う。
+- `MUST` 実装が API 開発ルールに違反する必要がある場合は作業を止め、先にルール変更を提案する。
 
-## Priority Checkpoints (from coding rules)
-- `MUST` verify Command/Query architecture and API rules per `api/docs/architecture.md`.
+## 必須検証
+- `MUST` Kotlin の変更を確定する前に `./gradlew ktlintFormat` を実行する。
+- `MUST` 実装またはレビュー結果を共有する前に `./gradlew check` を実行する。
 
-## Review Expectations
-- `MUST` include a brief compliance note in API implementation/review output, stating which rules were checked.
-- `MUST` flag dependency-direction violations and HTTP method misuse as blocking issues.
-- `MUST` ensure UnitTest changes are reviewed with the QA Test Reviewer perspective (`qa-test-reviewer`) before finalizing API work.
-- `SHOULD` run `rg -n "throw " api/src/main/kotlin` and verify throws are only in Web layer for business control.
-- `SHOULD` verify domain packages use `model/event/service/repository` classification in command contexts.
+## レビュー要件
+- `MUST` API の実装またはレビュー結果に、確認したルールを示す簡潔な準拠メモを含める。
+- `MUST` 依存方向違反および HTTP メソッドの誤用をブロッキング指摘として扱う。
+- `MUST` UnitTest の変更を確定する前に `qa-test-reviewer` の観点でレビューする。
+- `SHOULD` `rg -n "throw " api/src/main/kotlin` を実行し、ビジネス制御を目的とする例外送出が Web レイヤに限定されていることを確認する。
+- `SHOULD` Command コンテキストのドメインパッケージが `model/event/service/repository` の分類に従うことを確認する。
 
-## Exception Handling
-- If an exception is unavoidable, document:
-- reason and necessity
-- impact scope
-- mitigation and resolution plan
-- target timing for review/removal
+## 例外時の記録
+- 例外的な対応が避けられない場合は、理由と必要性、影響範囲、緩和策と解消計画、見直しまたは撤去時期を記録する。

@@ -8,15 +8,19 @@
 - サブディレクトリで作業する場合は、ルート `AGENTS.md` よりも、そのサブディレクトリの `AGENTS.md` を優先して従う。
 - より近い `AGENTS.md` がない場合のみ、ルート `AGENTS.md` をデフォルトガイダンスとして適用する。
 
-## 参照ハブ
-- `MUST` スキルやレビュー担当を選択する前に、依頼を `agents/flows` でルーティングする。
-- ユーザーストーリー/仕様関連の依頼は `agents/flows/user-story-creation-flow.md` を正本とする。
-- 実装レベルの依頼は `agents/flows/implementation-task-flow.md` を正本とする。
-- 実装中の設計方針レビュー判定は `agents/flows/design-policy-review-checks.md` を正本とする。
-- API のテスト方針（MockK を含む）は `api/docs/test-policy.md` を正本とする。
-- API 開発ルールの入口は `api/docs/backend-guidelines.md` を参照する。
-- ユーザー価値、ユースケース、ドメインモデル、ドメインイベントの仕様は `product/domain-context/README.md` の探索規約に従って検索する。
-- スキル定義の正本は `.codex/skills/` 配下の各 `SKILL.md` を参照する。
+## 参照フロー
+- `MUST` スキルやレビュー担当を選択する前に、依頼種別に対応するフローから開始する。
+
+| 依頼種別 | 最初に参照するフロー |
+|---|---|
+| ユーザーストーリーの作成、仕様の作成・更新・Q&A | `agents/flows/user-story-creation-flow.md` |
+| 機能追加、バグ修正、リファクタリング、実装設計、実装レビュー | `agents/flows/implementation-task-flow.md` |
+
+### 作業条件に応じた追加参照
+- `api/` 配下で作業する場合は、`api/AGENTS.md` を優先し、API 開発ルールの入口として `api/docs/backend-guidelines.md` を参照する。
+- 実装中に設計方針レビューの適用条件を判定する場合は、`agents/flows/design-policy-review-checks.md` を参照する。
+- ユーザー価値、ユースケース、ドメインモデル、ドメインイベントを探索する場合は、`product/domain-context/README.md` の探索規約に従う。
+- フローで使用するスキルが決まった場合は、`.codex/skills/` 配下にある該当スキルの `SKILL.md` を参照する。
 
 ## 仕様更新ルール
 - `MUST` 仕様判断または実装着手前に、関連する `product/domain-context` と `task/user-stories` を確認する。
