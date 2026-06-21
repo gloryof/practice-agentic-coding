@@ -1,0 +1,5 @@
+prefix_rule(
+    pattern = ["git", "add"],
+    decision = "allow",
+    justification = "Allow staging explicitly selected files in this repository without repeated approval",
+)

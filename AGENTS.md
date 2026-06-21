@@ -15,7 +15,15 @@
 - 実装中の設計方針レビュー判定は `agents/flows/design-policy-review-checks.md` を正本とする。
 - API のテスト方針（MockK を含む）は `api/docs/test-policy.md` を正本とする。
 - API 開発ルールの入口は `api/docs/backend-guidelines.md` を参照する。
+- ユーザー価値、ユースケース、ドメインモデル、ドメインイベントの仕様は `product/domain-context/README.md` の探索規約に従って検索する。
 - スキル定義の正本は `.codex/skills/` 配下の各 `SKILL.md` を参照する。
+
+## 仕様更新ルール
+- `MUST` 仕様判断または実装着手前に、関連する `product/domain-context` と `task/user-stories` を確認する。
+- `MUST` ユーザー価値、入出力、制約、失敗条件、処理フロー、ドメインモデル、ドメインイベントを変更する場合は、該当する `product/domain-context` を同じ変更で更新する。
+- `MUST` 受け入れ条件を変更する場合は、関連する `task/user-stories` を同じ変更で更新する。
+- `MUST` HTTP 契約を変更する場合は、正本である OpenAPI も同じ変更で更新する。
+- `MUST` 新しいコンテキストまたはユースケースを追加する場合は、`product/domain-context/README.md` の構造・命名・リンク規約に従う。
 
 ## ドキュメントのパス方針
 - AI生成文書および人手作成文書には、マシンローカルな絶対パス（例: `/Users/...`, `/home/...`, `C:\Users\...`, `file:///...`）を `MUST NOT` で含めない。
