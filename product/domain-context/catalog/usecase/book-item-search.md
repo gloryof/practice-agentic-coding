@@ -33,6 +33,7 @@
 
 | 項目 | 型・モデル | 説明 |
 |---|---|---|
+| 書誌ID | [書誌ID](../domain/model/book-product-id.md) | 検索結果の書誌を一意に識別するID |
 | タイトル | 文字列 | 蔵書のタイトル |
 | 出版社 | 文字列 | 蔵書の出版社 |
 | 著者名 | 文字列のリスト | 蔵書の著者名 |
@@ -58,6 +59,7 @@
 - [貸出可否確認のユーザーストーリー](../../../../task/user-stories/US-0003-library-user-check-availability-before-visit.md)
 
 ## 関連モデル・イベント
+- [書誌ID](../domain/model/book-product-id.md)
 - [蔵書](../../../ubiquitous/terms/term-book-item.md)
 - [書誌](../../../ubiquitous/terms/term-book-product.md)
 
