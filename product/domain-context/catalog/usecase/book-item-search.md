@@ -54,10 +54,6 @@
 3. 指定された条件を AND で組み合わせて蔵書を検索する。
 4. 書誌情報、利用可能数、総蔵書数を結果として返す。
 
-## 関連仕様
-- [蔵書検索のユーザーストーリー](../../../../task/user-stories/US-0002-library-user-book-search.md)
-- [貸出可否確認のユーザーストーリー](../../../../task/user-stories/US-0003-library-user-check-availability-before-visit.md)
-
 ## 関連モデル・イベント
 - [書誌ID](../domain/model/book-product-id.md)
 - [蔵書](../../../ubiquitous/terms/term-book-item.md)

@@ -17,6 +17,9 @@ so that 来館前に読みたい本を見つけられる.
 - [ ] 検索結果一覧にタイトル・出版社・著者名・ISBNが表示される。
 - [ ] ログインしていない場合は検索できず、ログインが必要である旨が表示される。
 
+## 関連ユースケース
+- [蔵書検索](../../product/domain-context/catalog/usecase/book-item-search.md)
+
 ## Non-Goals
 - 予約作成
 - 貸出処理

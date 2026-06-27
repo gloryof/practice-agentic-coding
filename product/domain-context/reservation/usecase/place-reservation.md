@@ -41,9 +41,6 @@
 8. イベントハンドラーが[予約](../domain/model/reservation.md)を保存し、選択した蔵書を予約した図書館利用者向けに確保する。
 9. 予約ID、書誌ID、タイトル、ISBN、蔵書ID、予約日時、イベント名を返す。
 
-## 関連仕様
-- [来館不要予約のユーザーストーリー](../../../../task/user-stories/US-0004-library-user-reserve-book-product.md)
-
 ## 関連モデル・イベント・制約
 - [予約者](../domain/model/reserver.md)
 - [予約対象書誌](../domain/model/reservation-target-book-product.md)

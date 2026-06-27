@@ -19,6 +19,10 @@ so that サービスにログインして本の探索や予約機能を使い始
 - [ ] メールアドレスに半角以外の文字が含まれる場合、またはパスワード要件未満の場合は登録できず、入力修正に必要なエラーが表示される。
 - [ ] 登録失敗時はアカウントが作成されない。
 
+## 関連ユースケース
+- [図書館利用者登録](../../product/domain-context/library-user/usecase/register-library-user.md)
+- [ログイン](../../product/domain-context/auth/usecase/login.md)
+
 ## Non-Goals
 - メール認証フローの導入
 - 管理者承認フローの導入

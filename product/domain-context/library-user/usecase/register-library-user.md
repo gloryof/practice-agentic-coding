@@ -34,9 +34,6 @@
 5. イベントハンドラーが[図書館利用者](../domain/model/library-user.md)と[認証情報](../../auth/domain/model/auth-credential.md)を保存する。
 6. 図書館利用者ID、メールアドレス、登録日時、イベント名を返す。
 
-## 関連仕様
-- [利用者登録・ログインのユーザーストーリー](../../../../task/user-stories/US-0001-library-user-registration-login.md)
-
 ## 関連モデル・イベント
 - [図書館利用者](../domain/model/library-user.md)
 - [メールアドレス](../domain/model/email.md)

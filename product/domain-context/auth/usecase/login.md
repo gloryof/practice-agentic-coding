@@ -33,9 +33,6 @@
 5. [ログインイベント](../domain/event/logged-in.md)を発行し、ログインセッションを保存する。
 6. アクセストークン、トークンタイプ、失効までの秒数を返す。
 
-## 関連仕様
-- [利用者登録・ログインのユーザーストーリー](../../../../task/user-stories/US-0001-library-user-registration-login.md)
-
 ## 関連モデル・イベント
 - [認証されたアカウント](../domain/model/auth-account.md)
 - [認証情報](../domain/model/auth-credential.md)
