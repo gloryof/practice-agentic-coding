@@ -11,9 +11,11 @@ data class BookItemStockTable(
     val id: String,
     val bookItemId: String,
     val status: BookItemStockStatus,
+    val version: Int = 0,
 )
 
 enum class BookItemStockStatus {
     AVAILABLE,
+    RESERVED,
     CHECKED_OUT,
 }

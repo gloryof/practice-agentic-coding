@@ -34,6 +34,7 @@ class BookItemSearchUseCaseTest {
             every { query.search(defaultInput) } returns
                 listOf(
                     searchResult(
+                        bookProductId = "book-1",
                         title = "Kotlin入門",
                         publisher = "技術書房",
                         authorNames = listOf("山田太郎", "佐藤花子"),
@@ -49,6 +50,7 @@ class BookItemSearchUseCaseTest {
                 result = result,
                 index = 0,
                 expectedTitle = "Kotlin入門",
+                expectedBookProductId = "book-1",
                 expectedPublisher = "技術書房",
                 expectedAuthorNames = listOf("山田太郎", "佐藤花子"),
                 expectedIsbn = "9780000000001",
@@ -65,6 +67,7 @@ class BookItemSearchUseCaseTest {
             every { query.search(defaultInput) } returns
                 listOf(
                     searchResult(
+                        bookProductId = "book-1",
                         title = "Kotlin入門",
                         publisher = "技術書房",
                         authorNames = listOf("山田太郎"),
@@ -80,6 +83,7 @@ class BookItemSearchUseCaseTest {
                 result = result,
                 index = 0,
                 expectedTitle = "Kotlin入門",
+                expectedBookProductId = "book-1",
                 expectedPublisher = "技術書房",
                 expectedAuthorNames = listOf("山田太郎"),
                 expectedIsbn = "9780000000001",
@@ -118,6 +122,7 @@ class BookItemSearchUseCaseTest {
             every { query.search(defaultInput) } returns
                 listOf(
                     searchResult(
+                        bookProductId = "book-1",
                         title = "Kotlin入門",
                         publisher = "技術書房",
                         authorNames = listOf("山田太郎"),
@@ -126,6 +131,7 @@ class BookItemSearchUseCaseTest {
                         totalCount = 2,
                     ),
                     searchResult(
+                        bookProductId = "book-2",
                         title = "Kotlin実践",
                         publisher = "実装社",
                         authorNames = listOf("佐藤花子"),
@@ -142,6 +148,7 @@ class BookItemSearchUseCaseTest {
                 result = result,
                 index = 0,
                 expectedTitle = "Kotlin入門",
+                expectedBookProductId = "book-1",
                 expectedPublisher = "技術書房",
                 expectedAuthorNames = listOf("山田太郎"),
                 expectedIsbn = "9780000000001",
@@ -152,6 +159,7 @@ class BookItemSearchUseCaseTest {
                 result = result,
                 index = 1,
                 expectedTitle = "Kotlin実践",
+                expectedBookProductId = "book-2",
                 expectedPublisher = "実装社",
                 expectedAuthorNames = listOf("佐藤花子"),
                 expectedIsbn = "9780000000002",
@@ -162,6 +170,7 @@ class BookItemSearchUseCaseTest {
     }
 
     private fun searchResult(
+        bookProductId: String,
         title: String,
         publisher: String,
         authorNames: List<String>,
@@ -170,6 +179,7 @@ class BookItemSearchUseCaseTest {
         totalCount: Int,
     ): BookItemSearchResult =
         BookItemSearchResult(
+            bookProductId = bookProductId,
             title = title,
             publisher = publisher,
             authorNames = authorNames,
@@ -182,6 +192,7 @@ class BookItemSearchUseCaseTest {
         result: List<BookItemSearchResults>,
         index: Int,
         expectedTitle: String,
+        expectedBookProductId: String,
         expectedPublisher: String,
         expectedAuthorNames: List<String>,
         expectedIsbn: String,
@@ -189,6 +200,7 @@ class BookItemSearchUseCaseTest {
         expectedTotalCount: Int,
     ) {
         val item = result[index]
+        assertEquals(expectedBookProductId, item.bookProductId)
         assertEquals(expectedTitle, item.title)
         assertEquals(expectedPublisher, item.publisher)
         assertEquals(expectedAuthorNames, item.authorNames)

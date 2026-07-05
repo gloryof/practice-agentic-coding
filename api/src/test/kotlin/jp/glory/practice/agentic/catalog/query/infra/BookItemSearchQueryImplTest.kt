@@ -59,6 +59,7 @@ class BookItemSearchQueryImplTest {
             val result = sut.search(input)
 
             assertEquals(2, result.size)
+            assertEquals("book-1", result[0].bookProductId)
             assertEquals("Kotlin入門", result[0].title)
             assertEquals("技術書房", result[0].publisher)
             assertEquals(listOf("山田太郎"), result[0].authorNames)
@@ -66,6 +67,7 @@ class BookItemSearchQueryImplTest {
             assertEquals(1, result[0].availableCount)
             assertEquals(2, result[0].totalCount)
 
+            assertEquals("book-2", result[1].bookProductId)
             assertEquals("Java実践", result[1].title)
             assertEquals(listOf("佐藤花子"), result[1].authorNames)
             assertEquals(0, result[1].availableCount)
@@ -88,6 +90,7 @@ class BookItemSearchQueryImplTest {
             val result = sut.search(input)
 
             assertEquals(1, result.size)
+            assertEquals("book-3", result[0].bookProductId)
             assertEquals(0, result[0].availableCount)
             assertEquals(0, result[0].totalCount)
         }

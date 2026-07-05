@@ -9,11 +9,9 @@ class AccessTokenAuthenticator(
     private val store: AccessTokenStore,
     private val clock: Clock,
 ) {
-    fun requireValidToken(authorizationHeader: String?) {
+    fun requireValidToken(authorizationHeader: String?): AccessTokenSession {
         val session = resolveSession(authorizationHeader)
-        if (session == null) {
-            throw LoginRequiredApiException()
-        }
+        return session ?: throw LoginRequiredApiException()
     }
 
     private fun resolveSession(authorizationHeader: String?): AccessTokenSession? {

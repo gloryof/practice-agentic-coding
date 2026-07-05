@@ -11,4 +11,9 @@ fun toApiException(error: UsecaseError): RuntimeException =
 
         UsecaseError.DuplicateEmail -> DuplicateEmailApiException()
         UsecaseError.AuthenticationFailed -> UnauthorizedApiException()
+        UsecaseError.ReservationTargetNotFound -> ReservationTargetNotFoundApiException()
+        is UsecaseError.ReservationUnavailable ->
+            ReservationUnavailableApiException(
+                error.reasons.map { ApiErrorDetail(field = "reservation", reason = it) },
+            )
     }

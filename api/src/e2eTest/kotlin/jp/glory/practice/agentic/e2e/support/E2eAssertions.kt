@@ -43,6 +43,7 @@ internal object E2eAssertions {
 
     fun assertSearchSucceeded(
         response: Response,
+        expectedBookProductId: String,
         expectedTitle: String,
         expectedPublisher: String,
         expectedAuthorName: String,
@@ -55,11 +56,37 @@ internal object E2eAssertions {
             .then()
             .body("book_items", notNullValue())
         assertEquals(1, response.jsonPath().getList<Any>("book_items").size)
+        assertEquals(expectedBookProductId, response.jsonPath().getString("book_items[0].book_product_id"))
         assertEquals(expectedTitle, response.jsonPath().getString("book_items[0].title"))
         assertEquals(expectedPublisher, response.jsonPath().getString("book_items[0].publisher"))
         assertEquals(expectedAuthorName, response.jsonPath().getString("book_items[0].author_names[0]"))
         assertEquals(expectedIsbn, response.jsonPath().getString("book_items[0].isbn"))
         assertEquals(expectedAvailableCount, response.jsonPath().getInt("book_items[0].available_count"))
         assertEquals(expectedTotalCount, response.jsonPath().getInt("book_items[0].total_count"))
+    }
+
+    fun assertReservationPlaced(
+        response: Response,
+        expectedBookProductId: String,
+        expectedTitle: String,
+        expectedIsbn: String,
+    ) {
+        assertEquals(201, response.statusCode)
+        assertTrue(
+            response.jsonPath().getString("reservation_id").isNotBlank(),
+            "reservation_id should be returned",
+        )
+        assertEquals(expectedBookProductId, response.jsonPath().getString("book_product_id"))
+        assertEquals(expectedTitle, response.jsonPath().getString("title"))
+        assertEquals(expectedIsbn, response.jsonPath().getString("isbn"))
+        assertTrue(
+            response.jsonPath().getString("book_item_id").isNotBlank(),
+            "book_item_id should be returned",
+        )
+        assertTrue(
+            response.jsonPath().getString("reserved_at").isNotBlank(),
+            "reserved_at should be returned",
+        )
+        assertEquals("ReservationPlacedEvent", response.jsonPath().getString("event_name"))
     }
 }

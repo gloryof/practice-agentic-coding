@@ -28,6 +28,7 @@ class BookItemSearchQueryImpl(
         return bookProductRows.map { row ->
             val stockCount = stockCountMap[row.id] ?: StockCount(availableCount = 0, totalCount = 0)
             BookItemSearchResult(
+                bookProductId = row.id,
                 title = row.title,
                 publisher = row.publisher,
                 authorNames = authorMap[row.id] ?: emptyList(),

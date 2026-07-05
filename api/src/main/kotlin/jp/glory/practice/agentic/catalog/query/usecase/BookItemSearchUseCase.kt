@@ -12,6 +12,7 @@ class BookItemSearchUseCase(
 
     private fun BookItemSearchResult.toSearchResults(): BookItemSearchResults =
         BookItemSearchResults(
+            bookProductId = bookProductId,
             title = title,
             publisher = publisher,
             authorNames = authorNames,
@@ -38,6 +39,7 @@ data class BookItemSearchInput(
 )
 
 data class BookItemSearchResults(
+    val bookProductId: String,
     val title: String,
     val publisher: String,
     val authorNames: List<String>,
@@ -47,6 +49,7 @@ data class BookItemSearchResults(
 )
 
 data class BookItemSearchResult(
+    val bookProductId: String,
     val title: String,
     val publisher: String,
     val authorNames: List<String>,

@@ -1,7 +1,7 @@
 # US-0004: 図書館利用者が来館せずに蔵書を予約できる
 
 ## Status
-Todo
+Done
 
 ## User Story
 As a 図書館利用者, I want 来館せずに利用可能な書誌を予約したい, so that 来館前に借りたい蔵書を確保できる.

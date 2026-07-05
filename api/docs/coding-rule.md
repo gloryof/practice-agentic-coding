@@ -27,6 +27,8 @@
 #### 分割時の命名と構造
 - `MUST` 抽出したprivateメソッド名は処理意図が読める動詞句で表現する（例: `validateInput`、`buildEvent`、`persistCredential`）。
 - `SHOULD` publicメソッドはユースケース全体の流れを上から追える長さと構造を保つ。
+- `MUST` Usecase の publicメソッドは、入力変換、取得・ロック、業務判定、確保・保存、イベント発行、結果変換など、利用者操作を実現する意味のある処理単位でprivateメソッドへ分割する。
+- `MUST` privateメソッドへ分割する際は、行数削減ではなく処理意図の明確化を目的とし、呼び出し元が業務フローとして読める粒度にする。
 - `MUST NOT` 単純委譲だけの1行ラッパー抽出を可読性改善として扱わない。
 
 #### 例外
@@ -47,3 +49,9 @@
 
 ### Railway Oriented Programming
 - `MUST` `com.michael-bull.kotlin-result` を使い Railway Oriented Programming を行う。
+
+### 有限集合を表す業務種別・理由コード
+- `MUST` Domain/Usecase 内で有限集合の業務種別、理由、状態を判定に使う場合は、`enum class` などの型付き表現を使う。
+- `MUST NOT` 業務種別、理由、状態の判定を `String` 定数や文字列リテラルの直接比較で表現しない。
+- `MUST` 外部API、DTO、永続化など文字列契約が必要な境界では、型付き表現から明示的なコード値へ変換する。
+- `MAY` 数値上限、HTTPヘッダー名、外部仕様で固定されたキーなど、業務種別ではない値には `const val` を使ってよい。

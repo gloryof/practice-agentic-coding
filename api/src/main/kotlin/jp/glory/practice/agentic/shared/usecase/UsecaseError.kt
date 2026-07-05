@@ -16,6 +16,12 @@ sealed interface UsecaseError {
 
     data object AuthenticationFailed : UsecaseError
 
+    data object ReservationTargetNotFound : UsecaseError
+
+    data class ReservationUnavailable(
+        val reasons: List<String>,
+    ) : UsecaseError
+
     companion object {
         fun fromDomain(error: DomainError): UsecaseError =
             when (error) {

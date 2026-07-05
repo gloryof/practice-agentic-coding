@@ -10,6 +10,7 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class AccessTokenAuthenticatorTest {
@@ -31,8 +32,9 @@ class AccessTokenAuthenticatorTest {
 
             val sut = AccessTokenAuthenticator(store, clock)
 
-            sut.requireValidToken("Bearer token-123")
+            val result = sut.requireValidToken("Bearer token-123")
 
+            assertEquals(session, result)
             verify(exactly = 0) { store.remove(any()) }
         }
 

@@ -43,4 +43,16 @@ internal object E2eApiClient {
         .header("Authorization", "Bearer $accessToken")
         .queryParam("isbn", isbn)
         .get("/api/v1/book-items")
+
+    fun placeReservation(
+        accessToken: String,
+        bookProductId: String,
+    ) = given()
+        .baseUri(baseUrl)
+        .disableCsrf()
+        .contentType(ContentType.JSON)
+        .accept(ContentType.JSON)
+        .header("Authorization", "Bearer $accessToken")
+        .body(mapOf("book_product_id" to bookProductId))
+        .post("/api/v1/reservations")
 }

@@ -17,6 +17,7 @@ class BookItemSearchE2ETest {
 
         E2eAssertions.assertSearchSucceeded(
             response = response,
+            expectedBookProductId = "book-0001",
             expectedTitle = "世界史入門",
             expectedPublisher = "サンプル出版",
             expectedAuthorName = "ソクラテス",

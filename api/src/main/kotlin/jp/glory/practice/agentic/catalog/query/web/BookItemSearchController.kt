@@ -90,6 +90,7 @@ class BookItemSearchController(
     private fun toItems(results: List<BookItemSearchResults>): List<BookItemSearchItem> =
         results.map {
             BookItemSearchItem(
+                bookProductId = it.bookProductId,
                 title = it.title,
                 publisher = it.publisher,
                 authorNames = it.authorNames,
@@ -106,6 +107,8 @@ data class BookItemSearchResponse(
 )
 
 data class BookItemSearchItem(
+    @JsonProperty("book_product_id")
+    val bookProductId: String,
     val title: String,
     val publisher: String,
     @JsonProperty("author_names")

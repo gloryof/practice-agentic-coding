@@ -52,6 +52,7 @@ class BookItemSearchControllerTest {
             every { context.useCase.search(input) } returns
                 listOf(
                     BookItemSearchResults(
+                        bookProductId = "book-1",
                         title = "Kotlin入門",
                         publisher = "技術書房",
                         authorNames = listOf("山田太郎"),
@@ -68,6 +69,7 @@ class BookItemSearchControllerTest {
                         .header("Authorization", "Bearer token-123")
                         .accept(MediaType.APPLICATION_JSON),
                 ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.book_items[0].book_product_id").value("book-1"))
                 .andExpect(jsonPath("$.book_items[0].author_names[0]").value("山田太郎"))
                 .andExpect(jsonPath("$.book_items[0].available_count").value(1))
                 .andExpect(jsonPath("$.book_items[0].total_count").value(2))
@@ -128,6 +130,7 @@ class BookItemSearchControllerTest {
             every { context.useCase.search(input) } returns
                 listOf(
                     BookItemSearchResults(
+                        bookProductId = "book-1",
                         title = "Kotlin入門",
                         publisher = "技術書房",
                         authorNames = listOf("山田太郎"),
@@ -136,6 +139,7 @@ class BookItemSearchControllerTest {
                         totalCount = 2,
                     ),
                     BookItemSearchResults(
+                        bookProductId = "book-2",
                         title = "Kotlin実践",
                         publisher = "技術書房",
                         authorNames = listOf("佐藤花子"),

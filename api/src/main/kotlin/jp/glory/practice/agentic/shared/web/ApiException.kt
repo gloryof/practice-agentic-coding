@@ -38,3 +38,19 @@ class LoginRequiredApiException :
         message = "ログインが必要です。",
         status = HttpStatus.UNAUTHORIZED,
     )
+
+class ReservationTargetNotFoundApiException :
+    ApiException(
+        code = "RESERVATION_TARGET_NOT_FOUND",
+        message = "予約対象の書誌が見つかりません。",
+        status = HttpStatus.NOT_FOUND,
+    )
+
+class ReservationUnavailableApiException(
+    details: List<ApiErrorDetail>,
+) : ApiException(
+        code = "RESERVATION_UNAVAILABLE",
+        message = "予約を受け付けられません。",
+        status = HttpStatus.CONFLICT,
+        details = details,
+    )

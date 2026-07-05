@@ -8,6 +8,7 @@ import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.bookProd
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.bookProductTable
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.libraryUserTable
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.publisherTable
+import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.reservationTable
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -43,9 +44,11 @@ abstract class PostgreSqlTestBase {
     private val publishers = Meta.publisherTable
     private val credentials = Meta.authCredentialTable
     private val libraryUsers = Meta.libraryUserTable
+    private val reservations = Meta.reservationTable
 
     @BeforeEach
     fun clearTables() {
+        komapperDatabase.runQuery { QueryDsl.delete(reservations).all() }
         komapperDatabase.runQuery { QueryDsl.delete(bookItemStocks).all() }
         komapperDatabase.runQuery { QueryDsl.delete(bookItems).all() }
         komapperDatabase.runQuery { QueryDsl.delete(bookProductAuthors).all() }
