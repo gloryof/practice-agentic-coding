@@ -6,7 +6,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
-import jp.glory.practice.agentic.reservation.command.domain.model.ReservationUnavailableReason
 import jp.glory.practice.agentic.reservation.command.usecase.PlaceReservationResult
 import jp.glory.practice.agentic.reservation.command.usecase.PlaceReservationUseCase
 import jp.glory.practice.agentic.shared.auth.AccessTokenAuthenticator
@@ -138,7 +137,11 @@ class PlaceReservationControllerTest {
             val context = createSut()
             every { context.authenticator.requireValidToken("Bearer token-123") } returns session()
             every { context.useCase.place(any()) } returns
-                Err(UsecaseError.ReservationUnavailable(listOf(ReservationUnavailableReason.NO_AVAILABLE_BOOK_ITEM.code)))
+                Err(
+                    UsecaseError.ReservationUnavailable(
+                        listOf(UsecaseError.ReservationUnavailable.Reason.NO_AVAILABLE_BOOK_ITEM),
+                    ),
+                )
 
             val response =
                 context.mvc

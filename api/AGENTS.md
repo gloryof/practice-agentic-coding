@@ -17,7 +17,7 @@
 - `MUST` 依存方向違反および HTTP メソッドの誤用をブロッキング指摘として扱う。
 - `MUST` UnitTest の変更を確定する前に `qa-test-reviewer` の観点でレビューする。
 - `SHOULD` `rg -n "throw " api/src/main/kotlin` を実行し、ビジネス制御を目的とする例外送出が Web レイヤに限定されていることを確認する。
-- `SHOULD` Command コンテキストのドメインパッケージが `model/event/service/repository` の分類に従うことを確認する。
+- `SHOULD` Command コンテキストのドメインパッケージが `model/event/constraint/service/repository` の分類に従うことを確認する。
 
 ## 例外時の記録
 - 例外的な対応が避けられない場合は、理由と必要性、影響範囲、緩和策と解消計画、見直しまたは撤去時期を記録する。

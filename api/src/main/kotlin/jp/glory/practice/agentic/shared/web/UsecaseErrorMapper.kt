@@ -14,6 +14,6 @@ fun toApiException(error: UsecaseError): RuntimeException =
         UsecaseError.ReservationTargetNotFound -> ReservationTargetNotFoundApiException()
         is UsecaseError.ReservationUnavailable ->
             ReservationUnavailableApiException(
-                error.reasons.map { ApiErrorDetail(field = "reservation", reason = it) },
+                error.reasons.map { ApiErrorDetail(field = "reservation", reason = it.code) },
             )
     }

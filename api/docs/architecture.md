@@ -26,7 +26,8 @@
 - `MUST NOT` Domain/Usecase が業務エラーを例外で表現する。
 - `MUST NOT` 想定外の技術障害（DB障害、ライブラリ障害など）を業務エラーへ偽装する。
 - `MUST` レイヤごとのエラー型は単一の共通型（例: `DomainError`, `UsecaseError`）へ集約する。
-- `MUST` Usecase の公開メソッドは `Result<Success, UsecaseError>` を返す。
+- `MUST` 仕様上の業務失敗が存在するUsecaseの公開メソッドは `Result<Success, UsecaseError>` を返す。
+- `MAY` 仕様上の業務失敗が存在しないUsecaseの公開メソッドは成功値を直接返してよい。想定外の技術障害は結果値へ変換せず、例外としてWebレイヤまで伝播させる。
 - `MUST` Web レイヤで `UsecaseError` を `ApiException` に一元変換するマッパーを利用する。
 
 ### DBアクセス
@@ -96,23 +97,46 @@
 #### 依存して良いレイヤ
 - `MUST` Domain のみへ依存する。
 
-#### ドメイン分類
-- `MUST` `model` をドメインモデルとして定義し、用語をユビキタス言語と同期する。
-- `SHOULD` `event` は可能な限りモデルから生成する。
-- `MUST` `service` は業務処理を表し、技術要因を含まない処理はクラス、技術要因を含む処理はインターフェースを定義する。
-- `MUST` `repository` はドメインモデル復元のためのインターフェースのみを定義する。
-
 #### 設計方針
-- `SHOULD` `event` のプロパティは可能な限り `model` の型（値オブジェクトやモデル）を参照し、プリミティブ型の重複定義を避ける。
-- `MUST` `repository` の公開メソッド（引数・戻り値）は原則としてドメインモデル/値オブジェクトを使用し、`String` などのプリミティブ型を露出しない。
+
+##### model
+- `MUST` `model` をドメインモデルとして定義し、用語をユビキタス言語と同期する。
+- `MUST` `model` は `jp.glory.practice.agentic.{コンテキスト境界}.command.domain.model` に配置する。
 - `MUST` ドメインモデルが保持する状態だけで判断できる業務判定は、そのモデルに意図が読めるメソッドとして定義する。
 - `MUST NOT` Domain Service / Usecase が、ドメインモデル内部の件数、集合、プリミティブ値を取り出して業務ルールを再構成しない。
-- `MUST` Domain Service は複数モデルを組み合わせた判定、理由集約、業務処理の調停を主な責務とする。
+
+##### event
+- `MUST` `event` は `jp.glory.practice.agentic.{コンテキスト境界}.command.domain.event` に配置する。
+- `SHOULD` `event` は可能な限りモデルから生成する。
+- `SHOULD` `event` のプロパティは可能な限り `model` の型（値オブジェクトやモデル）を参照し、プリミティブ型の重複定義を避ける。
+- Eventは対応するハンドラーインターフェイスをEventクラスと同じファイルに作成する。
+
+##### constraint
+- `MUST` `constraint` は複数のモデルまたは状態を組み合わせた業務上の可否判定と、違反理由の集約を表す。
+- `MUST` `constraint` は `jp.glory.practice.agentic.{コンテキスト境界}.command.domain.constraint` に配置する。
+- `MUST` `constraint` は、入力されたドメインモデルまたは値オブジェクトの振る舞いを組み合わせ、副作用なしで判定する。
+- `MUST NOT` `constraint` は Repository、Domain Service、Usecase、Infra、現在時刻、外部I/Oに依存する。
+- `MUST` `constraint` のクラス名は制約の概念名、公開判定メソッド名は `evaluate`、結果型は `{制約名}Result`、違反理由型は `{制約名}Violation` とする。
+- `MUST` `constraint` の結果型は型付けされた違反理由の一覧を保持し、違反理由が空の場合に真を返す `isSatisfied` メソッドを提供する。
+- `MUST` `constraint` は該当する違反理由をすべて、対応するドメイン制約仕様の記載順で返す。
+- `MUST NOT` `constraint` の成立・不成立を `kotlin-result` の成功・失敗で表現する。
+- `MUST` Usecase は制約評価に必要なモデルの取得とロック、制約の呼び出し、型付けされた業務エラーへの変換を担う。
+- `MUST` 制約評価後の競合、永続化失敗、外部依存の失敗は `constraint` の違反理由へ含めず、発生したレイヤの規約に従って扱う。
+- `MUST` `product/domain-context/{コンテキスト}/domain/constraint/{制約名}.md` に対応する実装は、コンテキストの実装基底パッケージ配下の `command.domain.constraint` と同じ制約概念名から探索できるようにする。
+
+##### service
+- `MUST` `service` は業務処理を表し、技術要因を含まない処理はクラス、技術要因を含む処理はインターフェースとして定義する。
+- `MUST` `service` は `jp.glory.practice.agentic.{コンテキスト境界}.command.domain.service` に配置する。
+- `MUST` Domain Service は業務処理の調停、または技術要因を含むドメイン操作の抽象化を担い、`constraint` に分類できる純粋な可否判定を配置しない。
+
+##### repository
+- `MUST` `repository` はドメインモデル復元のためのインターフェースのみを定義する。
+- `MUST` `repository` は `jp.glory.practice.agentic.{コンテキスト境界}.command.domain.repository` に配置する。
+- `MUST` `repository` の公開メソッド（引数・戻り値）は原則としてドメインモデル/値オブジェクトを使用し、`String` などのプリミティブ型を露出しない。
+
+##### 共通
 - `MAY` 技術的制約でプリミティブ型が不可避な場合のみ例外を認める。
 - `MUST` 例外適用時はPRに必要性、影響範囲、解消計画を記載する。
-
-#### event
-Eventは対応するハンドラーインターフェイスをEventクラスと同じファイルに作成する。
 
 ### Usecase
 #### 責務
@@ -123,7 +147,7 @@ Eventは対応するハンドラーインターフェイスをEventクラスと�
 
 #### 設計方針
 - `MUST` 更新処理は対応するイベントクラスを作成しイベントハンドラーに渡す。
-- `MUST` Usecase の publicメソッドは、Domain モデルや Domain Service の判定を組み合わせ、入力変換、取得、業務判定、永続化依頼、イベント発行、結果変換の流れを読み取れる構造にする。
+- `MUST` Usecase の publicメソッドは、Domain モデル、`constraint`、Domain Service の判定や処理を組み合わせ、入力変換、取得、業務判定、永続化依頼、イベント発行、結果変換の流れを読み取れる構造にする。
 - `MUST` Usecase はドメインモデルが担うべき業務判定を再実装せず、アプリケーション処理の調停単位をprivateメソッドとして表現する。
 - `MAY` ユースケースの入力を表す `Input`、戻り値を表す `Result` クラスを定義する。
 
@@ -148,8 +172,9 @@ Eventは対応するハンドラーインターフェイスをEventクラスと�
 - `MUST` DBや外部サービス、ライブラリ連携など技術的処理を担当する。
 
 #### 依存して良いレイヤ
-- `MUST` Infra のみに依存する。
-- `MAY` Repository インターフェース実装のための依存を許可する。
+- `MUST` Infra は同一コンテキストの Domain と Infra のみに依存する。
+- `MUST` Domain への依存は、Repository、Domain Service、イベントハンドラーのインターフェースを実装するために必要なインターフェース、ドメインモデル、ドメインイベントに限定する。
+- `MUST NOT` Infra は Usecase または Web に依存する。
 
 #### Event
 - `MUST` `jp.glory.practice.agentic.{コンテキスト境界}.command.infra.adapter.event` にイベントハンドラーのクラスを作成する
@@ -204,8 +229,9 @@ Eventは対応するハンドラーインターフェイスをEventクラスと�
 - `MUST` 参照用データ取得（DB検索、外部参照）を担当する。
 
 #### 依存して良いレイヤ
-- `MUST` Infra のみに依存する。
-- `MAY` Repository インターフェース実装のための依存を許可する。
+- `MUST` Infra は同一コンテキストの Usecase と Infra のみに依存する。
+- `MUST` Usecase への依存は、参照用インターフェースを実装するために必要なインターフェースと入出力型に限定する。
+- `MUST NOT` Infra は Web に依存する。
 
 #### enumマッピング
 - `MUST` Infra層でInfra層以外での同義のenumを扱う場合、Infra enumは明示的な変換関数を提供する。

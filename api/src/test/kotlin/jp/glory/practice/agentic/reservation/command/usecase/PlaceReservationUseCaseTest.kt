@@ -9,15 +9,14 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
+import jp.glory.practice.agentic.reservation.command.domain.constraint.ReservationEligibility
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEvent
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEventHandler
 import jp.glory.practice.agentic.reservation.command.domain.model.BookItemId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookProductId
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationTargetBookProduct
-import jp.glory.practice.agentic.reservation.command.domain.model.ReservationUnavailableReason
 import jp.glory.practice.agentic.reservation.command.domain.model.Reserver
 import jp.glory.practice.agentic.reservation.command.domain.repository.ReservationCommandRepository
-import jp.glory.practice.agentic.reservation.command.domain.service.ReservationEligibility
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
 import org.junit.jupiter.api.Nested
 import java.time.Clock
@@ -79,16 +78,32 @@ class PlaceReservationUseCaseTest {
         }
 
         @Test
-        fun `given ineligible reservation when place then returns unavailable reasons`() {
+        fun `given all eligibility violations when place then returns all unavailable reasons in specification order`() {
             val context = createSut()
             every { context.repository.findTarget(BookProductId("book-1")) } returns target(availableBookItemCount = 0)
             every { context.repository.lockReserver(LibraryUserId("user-1")) } returns true
-            every { context.repository.findReserver(LibraryUserId("user-1")) } returns reserver()
+            every { context.repository.findReserver(LibraryUserId("user-1")) } returns
+                reserver(
+                    reservedBookProductIds =
+                        setOf(
+                            BookProductId("book-1"),
+                            BookProductId("book-2"),
+                            BookProductId("book-3"),
+                        ),
+                )
 
             val result = context.sut.place(PlaceReservationInput(libraryUserId = "user-1", bookProductId = "book-1"))
 
             assertEquals(
-                Err(UsecaseError.ReservationUnavailable(listOf(ReservationUnavailableReason.NO_AVAILABLE_BOOK_ITEM.code))),
+                Err(
+                    UsecaseError.ReservationUnavailable(
+                        listOf(
+                            UsecaseError.ReservationUnavailable.Reason.NO_AVAILABLE_BOOK_ITEM,
+                            UsecaseError.ReservationUnavailable.Reason.ALREADY_RESERVED_BOOK_PRODUCT,
+                            UsecaseError.ReservationUnavailable.Reason.RESERVATION_LIMIT_REACHED,
+                        ),
+                    ),
+                ),
                 result,
             )
             verify(exactly = 0) { context.repository.reserveAvailableBookItem(any()) }
@@ -105,7 +120,14 @@ class PlaceReservationUseCaseTest {
 
             val result = context.sut.place(PlaceReservationInput(libraryUserId = "user-1", bookProductId = "book-1"))
 
-            assertEquals(Err(UsecaseError.ReservationUnavailable(listOf(ReservationUnavailableReason.RESERVATION_CONFLICT.code))), result)
+            assertEquals(
+                Err(
+                    UsecaseError.ReservationUnavailable(
+                        listOf(UsecaseError.ReservationUnavailable.Reason.RESERVATION_CONFLICT),
+                    ),
+                ),
+                result,
+            )
             verify(exactly = 0) { context.eventHandler.handle(any()) }
         }
     }
@@ -132,10 +154,12 @@ class PlaceReservationUseCaseTest {
             availableBookItemCount = availableBookItemCount,
         )
 
-    private fun reserver(): Reserver =
+    private fun reserver(
+        reservedBookProductIds: Set<BookProductId> = emptySet(),
+    ): Reserver =
         Reserver(
             libraryUserId = LibraryUserId("user-1"),
-            reservedBookProductIds = emptySet(),
+            reservedBookProductIds = reservedBookProductIds,
         )
 
     private fun assertReservationPlacedEvent(

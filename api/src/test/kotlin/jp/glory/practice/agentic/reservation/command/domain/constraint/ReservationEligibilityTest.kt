@@ -1,9 +1,8 @@
-package jp.glory.practice.agentic.reservation.command.domain.service
+package jp.glory.practice.agentic.reservation.command.domain.constraint
 
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookProductId
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationTargetBookProduct
-import jp.glory.practice.agentic.reservation.command.domain.model.ReservationUnavailableReason
 import jp.glory.practice.agentic.reservation.command.domain.model.Reserver
 import org.junit.jupiter.api.Nested
 import kotlin.test.Test
@@ -23,8 +22,8 @@ class ReservationEligibilityTest {
                     target = target(bookProductId = BookProductId("book-2"), availableBookItemCount = 1),
                 )
 
-            assertTrue(result.isEligible())
-            assertEquals(emptyList(), result.reasons)
+            assertTrue(result.isSatisfied())
+            assertEquals(emptyList(), result.violations)
         }
 
         @Test
@@ -38,8 +37,8 @@ class ReservationEligibilityTest {
                 )
 
             assertEquals(
-                listOf(ReservationUnavailableReason.NO_AVAILABLE_BOOK_ITEM),
-                result.reasons,
+                listOf(ReservationEligibilityViolation.NO_AVAILABLE_BOOK_ITEM),
+                result.violations,
             )
         }
 
@@ -55,8 +54,8 @@ class ReservationEligibilityTest {
                 )
 
             assertEquals(
-                listOf(ReservationUnavailableReason.ALREADY_RESERVED_BOOK_PRODUCT),
-                result.reasons,
+                listOf(ReservationEligibilityViolation.ALREADY_RESERVED_BOOK_PRODUCT),
+                result.violations,
             )
         }
 
@@ -79,8 +78,8 @@ class ReservationEligibilityTest {
                 )
 
             assertEquals(
-                listOf(ReservationUnavailableReason.RESERVATION_LIMIT_REACHED),
-                result.reasons,
+                listOf(ReservationEligibilityViolation.RESERVATION_LIMIT_REACHED),
+                result.violations,
             )
         }
 
@@ -105,11 +104,11 @@ class ReservationEligibilityTest {
 
             assertEquals(
                 listOf(
-                    ReservationUnavailableReason.NO_AVAILABLE_BOOK_ITEM,
-                    ReservationUnavailableReason.ALREADY_RESERVED_BOOK_PRODUCT,
-                    ReservationUnavailableReason.RESERVATION_LIMIT_REACHED,
+                    ReservationEligibilityViolation.NO_AVAILABLE_BOOK_ITEM,
+                    ReservationEligibilityViolation.ALREADY_RESERVED_BOOK_PRODUCT,
+                    ReservationEligibilityViolation.RESERVATION_LIMIT_REACHED,
                 ),
-                result.reasons,
+                result.violations,
             )
         }
     }

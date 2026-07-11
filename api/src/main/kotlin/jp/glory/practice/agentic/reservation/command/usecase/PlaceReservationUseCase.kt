@@ -6,15 +6,15 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.map
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
+import jp.glory.practice.agentic.reservation.command.domain.constraint.ReservationEligibility
+import jp.glory.practice.agentic.reservation.command.domain.constraint.ReservationEligibilityViolation
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEvent
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEventHandler
 import jp.glory.practice.agentic.reservation.command.domain.model.BookItemId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookProductId
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationId
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationTargetBookProduct
-import jp.glory.practice.agentic.reservation.command.domain.model.ReservationUnavailableReason
 import jp.glory.practice.agentic.reservation.command.domain.repository.ReservationCommandRepository
-import jp.glory.practice.agentic.reservation.command.domain.service.ReservationEligibility
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -68,8 +68,8 @@ class PlaceReservationUseCase(
                 ?: return Err(UsecaseError.ReservationTargetNotFound)
         val reserver = lockAndFindReserver(request.libraryUserId)
         val eligibility = reservationEligibility.evaluate(reserver, target)
-        if (!eligibility.isEligible()) {
-            return Err(UsecaseError.ReservationUnavailable(eligibility.reasons.map { it.code }))
+        if (!eligibility.isSatisfied()) {
+            return Err(UsecaseError.ReservationUnavailable(eligibility.violations.map(::toUnavailableReason)))
         }
 
         return Ok(ReservationPreparation(request = request, target = target))
@@ -87,12 +87,24 @@ class PlaceReservationUseCase(
             reservationRepository.reserveAvailableBookItem(preparation.request.bookProductId)
                 ?: return Err(
                     UsecaseError.ReservationUnavailable(
-                        listOf(ReservationUnavailableReason.RESERVATION_CONFLICT.code),
+                        listOf(UsecaseError.ReservationUnavailable.Reason.RESERVATION_CONFLICT),
                     ),
                 )
 
         return Ok(ReservedBookItem(preparation = preparation, bookItemId = bookItemId))
     }
+
+    private fun toUnavailableReason(
+        violation: ReservationEligibilityViolation,
+    ): UsecaseError.ReservationUnavailable.Reason =
+        when (violation) {
+            ReservationEligibilityViolation.NO_AVAILABLE_BOOK_ITEM ->
+                UsecaseError.ReservationUnavailable.Reason.NO_AVAILABLE_BOOK_ITEM
+            ReservationEligibilityViolation.ALREADY_RESERVED_BOOK_PRODUCT ->
+                UsecaseError.ReservationUnavailable.Reason.ALREADY_RESERVED_BOOK_PRODUCT
+            ReservationEligibilityViolation.RESERVATION_LIMIT_REACHED ->
+                UsecaseError.ReservationUnavailable.Reason.RESERVATION_LIMIT_REACHED
+        }
 
     private fun recordReservation(reservedBookItem: ReservedBookItem): ReservationPlacement {
         val request = reservedBookItem.preparation.request
