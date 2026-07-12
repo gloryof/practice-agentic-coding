@@ -1,6 +1,7 @@
 package jp.glory.practice.agentic.shared.auth
 
-import jp.glory.practice.agentic.shared.web.LoginRequiredApiException
+import jp.glory.practice.agentic.shared.web.AuthenticationApiErrorCode
+import jp.glory.practice.agentic.shared.web.AuthenticationApiException
 import org.springframework.stereotype.Component
 import java.time.Clock
 
@@ -11,7 +12,7 @@ class AccessTokenAuthenticator(
 ) {
     fun requireValidToken(authorizationHeader: String?): AccessTokenSession {
         val session = resolveSession(authorizationHeader)
-        return session ?: throw LoginRequiredApiException()
+        return session ?: throw AuthenticationApiException(AuthenticationApiErrorCode.LOGIN_REQUIRED)
     }
 
     private fun resolveSession(authorizationHeader: String?): AccessTokenSession? {

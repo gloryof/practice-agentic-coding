@@ -8,7 +8,8 @@ import jp.glory.practice.agentic.catalog.query.usecase.BookItemSearchResults
 import jp.glory.practice.agentic.catalog.query.usecase.BookItemSearchUseCase
 import jp.glory.practice.agentic.shared.auth.AccessTokenAuthenticator
 import jp.glory.practice.agentic.shared.spring.GlobalExceptionHandler
-import jp.glory.practice.agentic.shared.web.LoginRequiredApiException
+import jp.glory.practice.agentic.shared.web.AuthenticationApiErrorCode
+import jp.glory.practice.agentic.shared.web.AuthenticationApiException
 import org.junit.jupiter.api.Nested
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -189,7 +190,8 @@ class BookItemSearchControllerTest {
         @Test
         fun `given unauthenticated request when get book items then returns 401`() {
             val context = createSut()
-            every { context.authenticator.requireValidToken(null) } throws LoginRequiredApiException()
+            every { context.authenticator.requireValidToken(null) } throws
+                AuthenticationApiException(AuthenticationApiErrorCode.LOGIN_REQUIRED)
 
             val response =
                 context.mvc

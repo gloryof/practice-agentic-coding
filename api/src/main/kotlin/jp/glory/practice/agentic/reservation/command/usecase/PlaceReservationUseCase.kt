@@ -5,9 +5,9 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.map
+import com.github.michaelbull.result.mapError
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.constraint.ReservationEligibility
-import jp.glory.practice.agentic.reservation.command.domain.constraint.ReservationEligibilityViolation
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEvent
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEventHandler
 import jp.glory.practice.agentic.reservation.command.domain.model.BookItemId
@@ -67,12 +67,10 @@ class PlaceReservationUseCase(
             reservationRepository.findTarget(request.bookProductId)
                 ?: return Err(UsecaseError.ReservationTargetNotFound)
         val reserver = lockAndFindReserver(request.libraryUserId)
-        val eligibility = reservationEligibility.evaluate(reserver, target)
-        if (!eligibility.isSatisfied()) {
-            return Err(UsecaseError.ReservationUnavailable(eligibility.violations.map(::toUnavailableReason)))
-        }
-
-        return Ok(ReservationPreparation(request = request, target = target))
+        return reservationEligibility
+            .evaluate(reserver, target)
+            .mapError(UsecaseError::fromDomain)
+            .map { ReservationPreparation(request = request, target = target) }
     }
 
     // 同一利用者の並行予約で古い予約一覧を使って予約上限・重複予約判定を通過しないよう、
@@ -93,18 +91,6 @@ class PlaceReservationUseCase(
 
         return Ok(ReservedBookItem(preparation = preparation, bookItemId = bookItemId))
     }
-
-    private fun toUnavailableReason(
-        violation: ReservationEligibilityViolation,
-    ): UsecaseError.ReservationUnavailable.Reason =
-        when (violation) {
-            ReservationEligibilityViolation.NO_AVAILABLE_BOOK_ITEM ->
-                UsecaseError.ReservationUnavailable.Reason.NO_AVAILABLE_BOOK_ITEM
-            ReservationEligibilityViolation.ALREADY_RESERVED_BOOK_PRODUCT ->
-                UsecaseError.ReservationUnavailable.Reason.ALREADY_RESERVED_BOOK_PRODUCT
-            ReservationEligibilityViolation.RESERVATION_LIMIT_REACHED ->
-                UsecaseError.ReservationUnavailable.Reason.RESERVATION_LIMIT_REACHED
-        }
 
     private fun recordReservation(reservedBookItem: ReservedBookItem): ReservationPlacement {
         val request = reservedBookItem.preparation.request

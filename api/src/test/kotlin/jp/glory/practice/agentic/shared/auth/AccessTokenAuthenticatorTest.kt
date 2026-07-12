@@ -4,7 +4,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
-import jp.glory.practice.agentic.shared.web.LoginRequiredApiException
+import jp.glory.practice.agentic.shared.web.AuthenticationApiErrorCode
+import jp.glory.practice.agentic.shared.web.AuthenticationApiException
 import org.junit.jupiter.api.Nested
 import java.time.Clock
 import java.time.Instant
@@ -43,9 +44,12 @@ class AccessTokenAuthenticatorTest {
             val store = mockk<AccessTokenStore>(relaxed = true)
             val sut = AccessTokenAuthenticator(store, clock)
 
-            assertFailsWith<LoginRequiredApiException> {
-                sut.requireValidToken(null)
-            }
+            val exception =
+                assertFailsWith<AuthenticationApiException> {
+                    sut.requireValidToken(null)
+                }
+
+            assertEquals(AuthenticationApiErrorCode.LOGIN_REQUIRED, exception.errorCode)
 
             verify(exactly = 0) { store.find(any()) }
         }
@@ -64,9 +68,12 @@ class AccessTokenAuthenticatorTest {
 
             val sut = AccessTokenAuthenticator(store, clock)
 
-            assertFailsWith<LoginRequiredApiException> {
-                sut.requireValidToken("Bearer token-123")
-            }
+            val exception =
+                assertFailsWith<AuthenticationApiException> {
+                    sut.requireValidToken("Bearer token-123")
+                }
+
+            assertEquals(AuthenticationApiErrorCode.LOGIN_REQUIRED, exception.errorCode)
 
             verify(exactly = 1) { store.remove("token-123") }
         }

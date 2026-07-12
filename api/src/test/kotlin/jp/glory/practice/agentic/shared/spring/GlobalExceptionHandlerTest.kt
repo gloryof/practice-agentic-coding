@@ -6,11 +6,11 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import jakarta.servlet.http.HttpServletRequest
 import jp.glory.practice.agentic.shared.web.ApiErrorDetail
-import jp.glory.practice.agentic.shared.web.ApiException
+import jp.glory.practice.agentic.shared.web.BusinessApiErrorCode
+import jp.glory.practice.agentic.shared.web.BusinessApiException
 import org.junit.jupiter.api.Nested
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockHttpServletRequest
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -71,10 +71,8 @@ class GlobalExceptionHandlerTest {
             try {
                 MDC.put(TraceIdFilter.TRACE_ID_MDC_KEY, "trace-456")
                 val apiException =
-                    ApiException(
-                        status = HttpStatus.BAD_REQUEST,
-                        code = "VALIDATION_ERROR",
-                        message = "invalid",
+                    BusinessApiException(
+                        errorCode = BusinessApiErrorCode.DUPLICATE_EMAIL,
                         details = listOf(ApiErrorDetail("field", "invalid")),
                     )
 

@@ -36,6 +36,20 @@ sealed interface UsecaseError {
             when (error) {
                 is DomainError.Validation -> Validation(field = error.field, reason = error.reason)
                 DomainError.DuplicateEmail -> DuplicateEmail
+                is DomainError.ReservationUnavailable ->
+                    ReservationUnavailable(
+                        error.reasons.map { reason -> reason.toUsecaseReason() },
+                    )
+            }
+
+        private fun DomainError.ReservationUnavailable.Reason.toUsecaseReason(): ReservationUnavailable.Reason =
+            when (this) {
+                DomainError.ReservationUnavailable.Reason.NO_AVAILABLE_BOOK_ITEM ->
+                    ReservationUnavailable.Reason.NO_AVAILABLE_BOOK_ITEM
+                DomainError.ReservationUnavailable.Reason.ALREADY_RESERVED_BOOK_PRODUCT ->
+                    ReservationUnavailable.Reason.ALREADY_RESERVED_BOOK_PRODUCT
+                DomainError.ReservationUnavailable.Reason.RESERVATION_LIMIT_REACHED ->
+                    ReservationUnavailable.Reason.RESERVATION_LIMIT_REACHED
             }
     }
 }

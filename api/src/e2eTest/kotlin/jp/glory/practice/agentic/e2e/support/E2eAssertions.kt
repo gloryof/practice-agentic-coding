@@ -36,9 +36,11 @@ internal object E2eAssertions {
     }
 
     fun assertDuplicateEmailRejected(response: Response) {
-        assertEquals(400, response.statusCode)
-        assertTrue(response.contentType.contains("application/json"))
-        assertEquals("DUPLICATE_EMAIL", response.jsonPath().getString("code"))
+        assertApiError(
+            response = response,
+            expectedStatus = 400,
+            expectedCode = "DUPLICATE_EMAIL",
+        )
     }
 
     fun assertSearchSucceeded(
@@ -71,14 +73,22 @@ internal object E2eAssertions {
         expectedTitle: String,
         expectedIsbn: String,
     ) {
+        assertReservationAccepted(response, expectedBookProductId)
+        assertEquals(expectedTitle, response.jsonPath().getString("title"))
+        assertEquals(expectedIsbn, response.jsonPath().getString("isbn"))
+        assertEquals("ReservationPlacedEvent", response.jsonPath().getString("event_name"))
+    }
+
+    fun assertReservationAccepted(
+        response: Response,
+        expectedBookProductId: String,
+    ) {
         assertEquals(201, response.statusCode)
         assertTrue(
             response.jsonPath().getString("reservation_id").isNotBlank(),
             "reservation_id should be returned",
         )
         assertEquals(expectedBookProductId, response.jsonPath().getString("book_product_id"))
-        assertEquals(expectedTitle, response.jsonPath().getString("title"))
-        assertEquals(expectedIsbn, response.jsonPath().getString("isbn"))
         assertTrue(
             response.jsonPath().getString("book_item_id").isNotBlank(),
             "book_item_id should be returned",
@@ -87,6 +97,44 @@ internal object E2eAssertions {
             response.jsonPath().getString("reserved_at").isNotBlank(),
             "reserved_at should be returned",
         )
-        assertEquals("ReservationPlacedEvent", response.jsonPath().getString("event_name"))
+    }
+
+    fun assertReservationTargetNotFound(response: Response) {
+        assertApiError(
+            response = response,
+            expectedStatus = 404,
+            expectedCode = "RESERVATION_TARGET_NOT_FOUND",
+        )
+    }
+
+    fun assertReservationUnavailable(
+        response: Response,
+        expectedReasons: List<String>,
+    ) {
+        assertApiError(
+            response = response,
+            expectedStatus = 409,
+            expectedCode = "RESERVATION_UNAVAILABLE",
+            expectedDetails =
+                expectedReasons.map { reason ->
+                    mapOf("field" to "reservation", "reason" to reason)
+                },
+        )
+    }
+
+    private fun assertApiError(
+        response: Response,
+        expectedStatus: Int,
+        expectedCode: String,
+        expectedDetails: List<Map<String, String>> = emptyList(),
+    ) {
+        assertEquals(expectedStatus, response.statusCode)
+        assertTrue(response.contentType.contains("application/json"))
+        assertEquals(expectedCode, response.jsonPath().getString("code"))
+        assertEquals(expectedDetails, response.jsonPath().getList<Map<String, String>>("details"))
+        assertTrue(
+            response.jsonPath().getString("trace_id").isNotBlank(),
+            "trace_id should be returned",
+        )
     }
 }

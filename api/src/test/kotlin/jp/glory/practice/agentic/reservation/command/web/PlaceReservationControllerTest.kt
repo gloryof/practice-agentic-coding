@@ -12,7 +12,8 @@ import jp.glory.practice.agentic.shared.auth.AccessTokenAuthenticator
 import jp.glory.practice.agentic.shared.auth.AccessTokenSession
 import jp.glory.practice.agentic.shared.spring.GlobalExceptionHandler
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
-import jp.glory.practice.agentic.shared.web.LoginRequiredApiException
+import jp.glory.practice.agentic.shared.web.AuthenticationApiErrorCode
+import jp.glory.practice.agentic.shared.web.AuthenticationApiException
 import org.junit.jupiter.api.Nested
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -76,7 +77,8 @@ class PlaceReservationControllerTest {
         @Test
         fun `given unauthenticated request when post reservations then returns 401`() {
             val context = createSut()
-            every { context.authenticator.requireValidToken(null) } throws LoginRequiredApiException()
+            every { context.authenticator.requireValidToken(null) } throws
+                AuthenticationApiException(AuthenticationApiErrorCode.LOGIN_REQUIRED)
 
             val response =
                 context.mvc

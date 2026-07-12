@@ -7,4 +7,14 @@ sealed interface DomainError {
     ) : DomainError
 
     data object DuplicateEmail : DomainError
+
+    data class ReservationUnavailable(
+        val reasons: List<Reason>,
+    ) : DomainError {
+        enum class Reason {
+            NO_AVAILABLE_BOOK_ITEM,
+            ALREADY_RESERVED_BOOK_PRODUCT,
+            RESERVATION_LIMIT_REACHED,
+        }
+    }
 }
