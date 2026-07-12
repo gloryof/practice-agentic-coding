@@ -1,8 +1,9 @@
 # Repository実装のユニットテスト整備
 
 ## ステータス
-- Status: Proposed
+- Status: Done
 - Updated: 2026-07-05 - 起票
+- Updated: 2026-07-12 - Repository 実装を棚卸しし、予約 Repository の変換・委譲契約テストを追加して完了
 
 ## 背景
 Repository 実装は DAO とドメインモデルの変換、値オブジェクトと永続化引数の変換、DAO への委譲契約を担っている。既存実装には Repository 単位のテストがあるものと不足しているものが混在しており、全体として Repository 実装テストの整備状況を棚卸しする必要がある。
