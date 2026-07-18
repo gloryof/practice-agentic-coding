@@ -10,8 +10,8 @@
 ## 入力
 | 項目 | 必須 | 型・モデル | 制約 |
 |---|---|---|---|
-| メールアドレス | 必須 | [メールアドレス](../../library-user/domain/model/email.md) | メールアドレスモデルの制約を満たす |
-| パスワード | 必須 | [入力パスワード](../../library-user/domain/model/raw-password.md) | 入力パスワードモデルの制約を満たす |
+| メールアドレス | 必須 | [メールアドレス](../domain/model/email.md) | メールアドレスモデルの制約を満たす |
+| パスワード | 必須 | [入力パスワード](../domain/model/raw-password.md) | 入力パスワードモデルの制約を満たす |
 
 ## 出力
 | 項目 | 型・モデル | 説明 |
@@ -36,6 +36,8 @@
 ## 関連モデル・イベント
 - [認証されたアカウント](../domain/model/auth-account.md)
 - [認証情報](../domain/model/auth-credential.md)
+- [メールアドレス](../domain/model/email.md)
+- [入力パスワード](../domain/model/raw-password.md)
 - [ログインイベント](../domain/event/logged-in.md)
 
 ## 用語

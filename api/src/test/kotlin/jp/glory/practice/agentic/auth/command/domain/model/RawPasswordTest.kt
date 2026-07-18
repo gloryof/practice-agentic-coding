@@ -1,4 +1,4 @@
-package jp.glory.practice.agentic.libraryuser.command.domain.model
+package jp.glory.practice.agentic.auth.command.domain.model
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.fold

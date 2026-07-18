@@ -3,9 +3,9 @@ package jp.glory.practice.agentic.reservation.command.infra.adapter.persistence
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookItemId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookProductId
+import jp.glory.practice.agentic.reservation.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.model.Reservation
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationId
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.ReservationBookProductRow

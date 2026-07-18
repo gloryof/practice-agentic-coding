@@ -7,8 +7,8 @@ import io.mockk.slot
 import io.mockk.verify
 import jp.glory.practice.agentic.auth.command.domain.event.AuthLoggedInEvent
 import jp.glory.practice.agentic.auth.command.domain.model.AuthAccount
-import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
+import jp.glory.practice.agentic.auth.command.domain.model.Email
+import jp.glory.practice.agentic.auth.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.shared.auth.AccessTokenSession
 import jp.glory.practice.agentic.shared.auth.AccessTokenStore
 import java.time.Instant
@@ -36,7 +36,7 @@ class AuthLoggedInEventHandlerImplTest {
 
         verify(exactly = 1) { accessTokenStore.save(any()) }
         assertEquals("token-123", sessionSlot.captured.token)
-        assertEquals(account.libraryUserId, sessionSlot.captured.libraryUserId)
+        assertEquals(account.libraryUserId.value, sessionSlot.captured.libraryUserId)
         assertEquals(expiresAt, sessionSlot.captured.expiresAt)
     }
 

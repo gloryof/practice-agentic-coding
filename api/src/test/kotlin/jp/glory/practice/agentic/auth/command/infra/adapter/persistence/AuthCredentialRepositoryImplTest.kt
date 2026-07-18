@@ -6,8 +6,8 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import jp.glory.practice.agentic.auth.command.domain.model.AuthCredential
+import jp.glory.practice.agentic.auth.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.auth.command.domain.model.PasswordHash
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.AuthCredentialDao
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.AuthCredentialTable
 import org.junit.jupiter.api.Nested

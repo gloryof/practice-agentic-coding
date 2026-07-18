@@ -1,9 +1,9 @@
-package jp.glory.practice.agentic.libraryuser.command.infra.adapter.persistence
+package jp.glory.practice.agentic.auth.command.infra.adapter.persistence
 
 import com.github.michaelbull.result.fold
 import io.mockk.every
 import io.mockk.mockk
-import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
+import jp.glory.practice.agentic.auth.command.domain.model.Email
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.dao.LibraryUserDao
 import jp.glory.practice.agentic.shared.infra.adapter.persistence.table.LibraryUserTable
 import org.junit.jupiter.api.Nested

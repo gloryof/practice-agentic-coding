@@ -1,8 +1,8 @@
 package jp.glory.practice.agentic.reservation.command.infra.adapter.persistence
 
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookItemId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookProductId
+import jp.glory.practice.agentic.reservation.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.model.Reservation
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationTargetBookProduct
 import jp.glory.practice.agentic.reservation.command.domain.model.Reserver

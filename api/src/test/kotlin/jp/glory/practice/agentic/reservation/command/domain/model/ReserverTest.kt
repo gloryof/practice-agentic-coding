@@ -1,6 +1,5 @@
 package jp.glory.practice.agentic.reservation.command.domain.model
 
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import org.junit.jupiter.api.Nested
 import kotlin.test.Test
 import kotlin.test.assertFalse

@@ -47,7 +47,7 @@
 - [予約](../domain/model/reservation.md)
 - [予約成立イベント](../domain/event/reservation-placed.md)
 - [予約可能条件](../domain/constraint/reservation-eligibility.md)
-- [図書館利用者ID](../../library-user/domain/model/library-user-id.md)
+- [図書館利用者ID](../domain/model/library-user-id.md)
 - [書誌ID](../../catalog/domain/model/book-product-id.md)
 - [書誌](../../../ubiquitous/terms/term-book-product.md)
 - [蔵書](../../../ubiquitous/terms/term-book-item.md)

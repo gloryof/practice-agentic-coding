@@ -9,8 +9,9 @@ import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserReg
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEventHandler
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
 import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
-import jp.glory.practice.agentic.libraryuser.command.domain.model.RawPassword
 import jp.glory.practice.agentic.libraryuser.command.domain.service.LibraryUserRegistrationService
+import jp.glory.practice.agentic.shared.auth.AuthCredentialProvisioner
+import jp.glory.practice.agentic.shared.auth.ValidatedAuthPassword
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,17 +22,19 @@ import java.time.Instant
 class RegisterLibraryUserUseCase(
     private val registrationService: LibraryUserRegistrationService,
     private val libraryUserRegisteredEventHandler: LibraryUserRegisteredEventHandler,
+    private val authCredentialProvisioner: AuthCredentialProvisioner,
     private val clock: Clock,
 ) {
     private data class ValidatedInput(
         val email: Email,
-        val rawPassword: RawPassword,
+        val password: ValidatedAuthPassword,
     )
 
     private data class RegistrationContext(
         val libraryUserId: LibraryUserId,
         val registeredAt: Instant,
         val event: LibraryUserRegisteredEvent,
+        val password: ValidatedAuthPassword,
     )
 
     @Transactional
@@ -45,9 +48,9 @@ class RegisterLibraryUserUseCase(
     private fun validateInput(input: RegisterLibraryUserInput): Result<ValidatedInput, UsecaseError> =
         zip(
             { Email.create(input.email) },
-            { RawPassword.create(input.password) },
-        ) { email, rawPassword ->
-            ValidatedInput(email = email, rawPassword = rawPassword)
+            { authCredentialProvisioner.validate(input.password) },
+        ) { email, password ->
+            ValidatedInput(email = email, password = password)
         }.mapError(UsecaseError::fromDomain)
 
     private fun verifyRegistration(validated: ValidatedInput): Result<ValidatedInput, UsecaseError> =
@@ -63,7 +66,6 @@ class RegisterLibraryUserUseCase(
             LibraryUserRegisteredEvent(
                 libraryUserId = libraryUserId,
                 email = validated.email,
-                rawPassword = validated.rawPassword,
                 occurredAt = registeredAt,
             )
 
@@ -71,11 +73,16 @@ class RegisterLibraryUserUseCase(
             libraryUserId = libraryUserId,
             registeredAt = registeredAt,
             event = event,
+            password = validated.password,
         )
     }
 
     private fun persistRegistration(context: RegistrationContext): RegistrationContext {
         libraryUserRegisteredEventHandler.handle(context.event)
+        authCredentialProvisioner.provision(
+            libraryUserId = context.libraryUserId.value,
+            password = context.password,
+        )
         return context
     }
 

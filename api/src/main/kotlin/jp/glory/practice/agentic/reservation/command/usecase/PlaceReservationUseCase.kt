@@ -6,12 +6,12 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.constraint.ReservationEligibility
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEvent
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEventHandler
 import jp.glory.practice.agentic.reservation.command.domain.model.BookItemId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookProductId
+import jp.glory.practice.agentic.reservation.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationId
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationTargetBookProduct
 import jp.glory.practice.agentic.reservation.command.domain.repository.ReservationCommandRepository

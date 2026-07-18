@@ -3,7 +3,6 @@ package jp.glory.practice.agentic.shared.auth
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.shared.web.AuthenticationApiErrorCode
 import jp.glory.practice.agentic.shared.web.AuthenticationApiException
 import org.junit.jupiter.api.Nested
@@ -26,7 +25,7 @@ class AccessTokenAuthenticatorTest {
             val session =
                 AccessTokenSession(
                     token = "token-123",
-                    libraryUserId = LibraryUserId("user-id"),
+                    libraryUserId = "user-id",
                     expiresAt = now.plusSeconds(60),
                 )
             every { store.find("token-123") } returns session
@@ -60,7 +59,7 @@ class AccessTokenAuthenticatorTest {
             val session =
                 AccessTokenSession(
                     token = "token-123",
-                    libraryUserId = LibraryUserId("user-id"),
+                    libraryUserId = "user-id",
                     expiresAt = now.minusSeconds(1),
                 )
             every { store.find("token-123") } returns session

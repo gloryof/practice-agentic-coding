@@ -5,7 +5,6 @@ import com.github.michaelbull.result.Ok
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.usecase.PlaceReservationResult
 import jp.glory.practice.agentic.reservation.command.usecase.PlaceReservationUseCase
 import jp.glory.practice.agentic.shared.auth.AccessTokenAuthenticator
@@ -181,7 +180,7 @@ class PlaceReservationControllerTest {
     private fun session(): AccessTokenSession =
         AccessTokenSession(
             token = "token-123",
-            libraryUserId = LibraryUserId("user-1"),
+            libraryUserId = "user-1",
             expiresAt = Instant.parse("2026-02-22T13:34:56Z"),
         )
 }

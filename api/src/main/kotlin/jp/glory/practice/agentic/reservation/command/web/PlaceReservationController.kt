@@ -34,7 +34,7 @@ class PlaceReservationController(
         return useCase
             .place(
                 PlaceReservationInput(
-                    libraryUserId = session.libraryUserId.value,
+                    libraryUserId = session.libraryUserId,
                     bookProductId = request.bookProductId!!,
                 ),
             ).fold(

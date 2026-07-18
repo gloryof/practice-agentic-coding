@@ -8,12 +8,12 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.constraint.ReservationEligibility
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEvent
 import jp.glory.practice.agentic.reservation.command.domain.event.ReservationPlacedEventHandler
 import jp.glory.practice.agentic.reservation.command.domain.model.BookItemId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookProductId
+import jp.glory.practice.agentic.reservation.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationTargetBookProduct
 import jp.glory.practice.agentic.reservation.command.domain.model.Reserver
 import jp.glory.practice.agentic.reservation.command.domain.repository.ReservationCommandRepository

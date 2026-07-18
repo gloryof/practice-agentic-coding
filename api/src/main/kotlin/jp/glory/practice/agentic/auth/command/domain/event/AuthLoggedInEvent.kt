@@ -13,7 +13,7 @@ data class AuthLoggedInEvent(
     fun toAccessTokenSession(): AccessTokenSession =
         AccessTokenSession(
             token = accessToken,
-            libraryUserId = account.libraryUserId,
+            libraryUserId = account.libraryUserId.value,
             expiresAt = expiresAt,
         )
 }

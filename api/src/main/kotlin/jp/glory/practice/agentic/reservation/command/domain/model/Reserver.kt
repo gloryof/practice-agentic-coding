@@ -1,7 +1,5 @@
 package jp.glory.practice.agentic.reservation.command.domain.model
 
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
-
 data class Reserver(
     val libraryUserId: LibraryUserId,
     val reservedBookProductIds: Set<BookProductId>,

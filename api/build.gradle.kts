@@ -25,6 +25,11 @@ version = "0.0.1-SNAPSHOT"
 description = "Demo project for Spring Boot"
 
 val e2eTestSourceSet = sourceSets.create("e2eTest")
+val architectureTestSourceSet =
+    sourceSets.create("architectureTest") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += output + compileClasspath
+    }
 
 java {
     toolchain {
@@ -83,6 +88,10 @@ dependencies {
     testImplementation("com.github.f4b6a3:uuid-creator:5.3.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    add("architectureTestImplementation", "com.tngtech.archunit:archunit-junit5:1.4.2")
+    add("architectureTestImplementation", "org.jetbrains.kotlin:kotlin-test-junit5")
+    add("architectureTestRuntimeOnly", "org.junit.platform:junit-platform-launcher")
+
     add("e2eTestImplementation", "org.springframework.boot:spring-boot-starter-actuator-test")
     add("e2eTestImplementation", "org.jetbrains.kotlin:kotlin-test-junit5")
     add("e2eTestImplementation", "io.rest-assured:rest-assured:6.0.0")
@@ -107,6 +116,14 @@ configurations.named("e2eTestRuntimeOnly") {
     extendsFrom(configurations.testRuntimeOnly.get())
 }
 
+configurations.named("architectureTestImplementation") {
+    extendsFrom(configurations.implementation.get())
+}
+
+configurations.named("architectureTestRuntimeOnly") {
+    extendsFrom(configurations.runtimeOnly.get())
+}
+
 tasks.register<Test>("e2eTest") {
     group = "verification"
     description = "Runs end-to-end tests against a running API."
@@ -115,6 +132,16 @@ tasks.register<Test>("e2eTest") {
     shouldRunAfter(tasks.test)
     useJUnitPlatform()
 }
+
+val architectureTest =
+    tasks.register<Test>("architectureTest") {
+        group = "verification"
+        description = "Runs architecture dependency rules without external services."
+        testClassesDirs = architectureTestSourceSet.output.classesDirs
+        classpath = architectureTestSourceSet.runtimeClasspath
+        shouldRunAfter(tasks.test)
+        useJUnitPlatform()
+    }
 
 tasks.jacocoTestCoverageVerification {
     val jacocoExcludes =
@@ -229,7 +256,13 @@ tasks.named<org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask>("runKtlintForm
 }
 
 tasks.named("check") {
-    dependsOn("detekt", "ktlintCheck", "jacocoTestCoverageVerification", "jacocoTestReport")
+    dependsOn(
+        "detekt",
+        "ktlintCheck",
+        "jacocoTestCoverageVerification",
+        "jacocoTestReport",
+        architectureTest,
+    )
 }
 
 flyway {

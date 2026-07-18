@@ -14,6 +14,8 @@ import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserReg
 import jp.glory.practice.agentic.libraryuser.command.domain.event.LibraryUserRegisteredEventHandler
 import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
 import jp.glory.practice.agentic.libraryuser.command.domain.service.LibraryUserRegistrationService
+import jp.glory.practice.agentic.shared.auth.AuthCredentialProvisioner
+import jp.glory.practice.agentic.shared.auth.ValidatedAuthPassword
 import jp.glory.practice.agentic.shared.domain.DomainError
 import jp.glory.practice.agentic.shared.usecase.UsecaseError
 import org.junit.jupiter.api.Nested
@@ -28,6 +30,7 @@ class RegisterLibraryUserUseCaseTest {
         val sut: RegisterLibraryUserUseCase,
         val registrationService: LibraryUserRegistrationService,
         val libraryUserRegisteredEventHandler: LibraryUserRegisteredEventHandler,
+        val authCredentialProvisioner: AuthCredentialProvisioner,
     )
 
     @Nested
@@ -45,6 +48,7 @@ class RegisterLibraryUserUseCaseTest {
                 )
             every { context.registrationService.verify(email) } returns Ok(Unit)
             every { context.libraryUserRegisteredEventHandler.handle(any()) } just Runs
+            every { context.authCredentialProvisioner.provision(any(), any()) } just Runs
 
             val result = context.sut.register(input)
             result.fold(
@@ -57,7 +61,12 @@ class RegisterLibraryUserUseCaseTest {
 
             verify(exactly = 1) { context.libraryUserRegisteredEventHandler.handle(capture(eventSlot)) }
             assertEquals("user@example.com", eventSlot.captured.email.value)
-            assertEquals("Str0ng!Passw0rd", eventSlot.captured.rawPassword.value)
+            verify(exactly = 1) {
+                context.authCredentialProvisioner.provision(
+                    libraryUserId = eventSlot.captured.libraryUserId.value,
+                    password = any(),
+                )
+            }
         }
 
         @Test
@@ -68,11 +77,14 @@ class RegisterLibraryUserUseCaseTest {
             val result = context.sut.register(RegisterLibraryUserInput("user@example.com", "Str0ng!Passw0rd"))
             assertEquals(Err(UsecaseError.DuplicateEmail), result)
             verify(exactly = 0) { context.libraryUserRegisteredEventHandler.handle(any()) }
+            verify(exactly = 0) { context.authCredentialProvisioner.provision(any(), any()) }
         }
 
         @Test
         fun `given invalid password when register then returns validation error`() {
             val context = createSut()
+            every { context.authCredentialProvisioner.validate("short") } returns
+                Err(DomainError.Validation(field = "password", reason = "must_meet_password_policy"))
 
             val result = context.sut.register(RegisterLibraryUserInput("user@example.com", "short"))
             assertEquals(
@@ -81,24 +93,30 @@ class RegisterLibraryUserUseCaseTest {
             )
             verify(exactly = 0) { context.registrationService.verify(any()) }
             verify(exactly = 0) { context.libraryUserRegisteredEventHandler.handle(any()) }
+            verify(exactly = 0) { context.authCredentialProvisioner.provision(any(), any()) }
         }
     }
 
     private fun createSut(
         registrationService: LibraryUserRegistrationService = mockk(),
         libraryUserRegisteredEventHandler: LibraryUserRegisteredEventHandler = mockk(),
+        authCredentialProvisioner: AuthCredentialProvisioner = mockk(),
         clock: Clock = Clock.systemDefaultZone(),
     ): TestContext {
+        every { authCredentialProvisioner.validate(any()) } returns
+            Ok(ValidatedAuthPassword("Str0ng!Passw0rd"))
         val sut =
             RegisterLibraryUserUseCase(
                 registrationService = registrationService,
                 libraryUserRegisteredEventHandler = libraryUserRegisteredEventHandler,
+                authCredentialProvisioner = authCredentialProvisioner,
                 clock = clock,
             )
         return TestContext(
             sut = sut,
             registrationService = registrationService,
             libraryUserRegisteredEventHandler = libraryUserRegisteredEventHandler,
+            authCredentialProvisioner = authCredentialProvisioner,
         )
     }
 }

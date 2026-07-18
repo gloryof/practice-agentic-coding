@@ -2,8 +2,8 @@ package jp.glory.practice.agentic.auth.command.domain.event
 
 import com.github.michaelbull.result.fold
 import jp.glory.practice.agentic.auth.command.domain.model.AuthAccount
-import jp.glory.practice.agentic.libraryuser.command.domain.model.Email
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
+import jp.glory.practice.agentic.auth.command.domain.model.Email
+import jp.glory.practice.agentic.auth.command.domain.model.LibraryUserId
 import org.junit.jupiter.api.Nested
 import java.time.Instant
 import kotlin.test.Test
@@ -50,7 +50,7 @@ class AuthLoggedInEventTest {
             val session = event.toAccessTokenSession()
 
             assertEquals("token-123", session.token)
-            assertEquals(account.libraryUserId, session.libraryUserId)
+            assertEquals(account.libraryUserId.value, session.libraryUserId)
             assertEquals(expiresAt, session.expiresAt)
         }
     }

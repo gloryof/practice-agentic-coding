@@ -11,7 +11,7 @@
 | 項目 | 必須 | 型・モデル | 制約 |
 |---|---|---|---|
 | メールアドレス | 必須 | [メールアドレス](../domain/model/email.md) | メールアドレスモデルの制約を満たし、未登録であること |
-| パスワード | 必須 | [入力パスワード](../domain/model/raw-password.md) | 入力パスワードモデルの制約を満たす |
+| パスワード | 必須 | [入力パスワード](../../auth/domain/model/raw-password.md) | 認証コンテキストの入力パスワードモデルの制約を満たす |
 
 ## 出力
 | 項目 | 型・モデル | 説明 |
@@ -27,17 +27,18 @@
 - 登録処理はトランザクション内で実行し、利用者情報または認証情報の保存に失敗した場合は登録を成立させない。
 
 ## フロー
-1. メールアドレスとパスワードを検証する。
+1. メールアドレスを検証し、認証情報発行契約を通じてパスワードを検証する。
 2. メールアドレスが未登録であることを確認する。
 3. 図書館利用者IDと登録日時を生成する。
 4. [図書館利用者登録イベント](../domain/event/library-user-registered.md)を発行する。
-5. イベントハンドラーが[図書館利用者](../domain/model/library-user.md)と[認証情報](../../auth/domain/model/auth-credential.md)を保存する。
-6. 図書館利用者ID、メールアドレス、登録日時、イベント名を返す。
+5. イベントハンドラーが[図書館利用者](../domain/model/library-user.md)を保存する。
+6. 同一トランザクション内で認証情報発行契約を呼び出し、[認証情報](../../auth/domain/model/auth-credential.md)を保存する。
+7. 図書館利用者ID、メールアドレス、登録日時、イベント名を返す。
 
 ## 関連モデル・イベント
 - [図書館利用者](../domain/model/library-user.md)
 - [メールアドレス](../domain/model/email.md)
-- [入力パスワード](../domain/model/raw-password.md)
+- [入力パスワード](../../auth/domain/model/raw-password.md)
 - [図書館利用者登録イベント](../domain/event/library-user-registered.md)
 
 ## 用語

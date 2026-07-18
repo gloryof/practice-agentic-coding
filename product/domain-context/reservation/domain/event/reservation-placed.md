@@ -8,7 +8,7 @@
 | 項目 | 必須 | 型・モデル | 説明 |
 |---|---|---|---|
 | 予約ID | 必須 | 文字列 | 成立する予約を一意に識別するID |
-| 図書館利用者ID | 必須 | [図書館利用者ID](../../../library-user/domain/model/library-user-id.md) | 予約した図書館利用者 |
+| 図書館利用者ID | 必須 | [図書館利用者ID](../model/library-user-id.md) | 予約した図書館利用者 |
 | 書誌ID | 必須 | [書誌ID](../../../catalog/domain/model/book-product-id.md) | 予約対象の書誌を一意に識別するID |
 | 蔵書ID | 必須 | 文字列 | 確保する蔵書を一意に識別するID |
 | 発生日時 | 必須 | 日時 | 予約が成立した日時 |

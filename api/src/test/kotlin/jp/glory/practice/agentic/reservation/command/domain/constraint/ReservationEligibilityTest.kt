@@ -2,8 +2,8 @@ package jp.glory.practice.agentic.reservation.command.domain.constraint
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
-import jp.glory.practice.agentic.libraryuser.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.model.BookProductId
+import jp.glory.practice.agentic.reservation.command.domain.model.LibraryUserId
 import jp.glory.practice.agentic.reservation.command.domain.model.ReservationTargetBookProduct
 import jp.glory.practice.agentic.reservation.command.domain.model.Reserver
 import jp.glory.practice.agentic.shared.domain.DomainError

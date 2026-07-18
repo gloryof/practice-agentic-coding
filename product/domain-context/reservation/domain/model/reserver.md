@@ -7,7 +7,7 @@
 ## 項目
 | 項目 | 必須 | 型・モデル | 制約 |
 |---|---|---|---|
-| 図書館利用者ID | 必須 | [図書館利用者ID](../../../library-user/domain/model/library-user-id.md) | 予約を申し込む図書館利用者を識別する |
+| 図書館利用者ID | 必須 | [図書館利用者ID](library-user-id.md) | 予約を申し込む図書館利用者を識別する |
 | 予約中の書誌ID | 必須 | [書誌ID](../../../catalog/domain/model/book-product-id.md)の集合 | 0件以上3件以下であり、同一の[書誌](../../../../ubiquitous/terms/term-book-product.md)を識別する書誌IDを複数含まない |
 
 ## 振る舞い
