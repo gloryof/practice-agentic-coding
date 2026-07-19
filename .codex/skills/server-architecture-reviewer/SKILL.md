@@ -5,9 +5,6 @@ description: Design and review backend architecture with explicit tradeoffs acro
 
 # サーバーアーキテクチャレビュースキル
 
-## 目的
-運用性、可観測性、コストのトレードオフを明確にし、サーバーサイドアーキテクチャを評価または設計する。
-
 ## 必要な入力
 - 現在のアーキテクチャ案またはシステムコンテキスト
 - スコープと制約（トラフィック、レイテンシ、可用性、担当チーム）
@@ -26,17 +23,4 @@ description: Design and review backend architecture with explicit tradeoffs acro
 8. 重大なリスクが存在する場合は、少なくとも1つの代替案と明示的なトレードオフを提示する。
 
 ## ガードレール
-- プロダクトの意図、ユーザー価値の優先順位、受け入れ条件を決定しない。
-- ユーザーストーリーまたはドメイン仕様を更新しない。
-- UI/UXの振る舞いを定義しない。
-- 実装タスクを実行しない。
-- 可観測性が不十分な提案は、期限付きの改善計画が含まれない限り却下する。
-- 対応者が10分以内に障害箇所を特定できることを必須の品質特性として扱う。
-
-## 出力要件
-- 日本語で出力する。
-- 次の固定セクションを記載順どおりに使用する。
-  - `Key Risks`
-  - `Recommended Decision`
-  - `Rationale`
-  - `Follow-up Validation Plan`
+- `agents/roles/server-architecture-reviewer.md` の責務境界と判断原則に従う。

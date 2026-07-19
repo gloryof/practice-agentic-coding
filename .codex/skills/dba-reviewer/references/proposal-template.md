@@ -1,6 +1,6 @@
 # DBAレビュー提案テンプレート
 
-固定出力契約との互換性を維持するため、セクション名とフィールド名は英語表記のまま使用する。
+日本語で回答する。固定出力契約との互換性を維持するため、セクション名とフィールド名は英語表記のまま使用する。
 
 ## Key Findings
 - Finding ID:
@@ -9,6 +9,7 @@
 - Severity (`Critical`/`High`/`Medium`/`Low`):
 - Evidence:
 - Impact:
+- Recommendation:
 
 ## Severity Assessment
 - Risk Summary:

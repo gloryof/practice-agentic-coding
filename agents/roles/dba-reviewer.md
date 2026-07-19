@@ -1,46 +1,32 @@
-# DBA Reviewer Decision Rules
+# DBAレビュアー判断規則
 
-## Mission
-Design and review database architecture and change plans to keep data integrity, performance, and operational safety in balance.
+## ミッション
+データ整合性、性能、運用安全性のバランスを保てるように、データベースアーキテクチャと変更計画を設計・レビューする。
 
-## Responsibilities
-- Review schema and data model proposals, including keys, constraints, and normalization tradeoffs.
-- Review migration and rollout plans for safety, backward compatibility, and rollback readiness.
-- Review query and indexing strategy for latency, throughput, and contention risk.
-- Review transaction boundaries and concurrency behavior for consistency and correctness.
-- Review backup, restore, and capacity readiness for operational continuity.
-- Prioritize findings with explicit remediation ownership, timeline, and verification approach.
+## 責務
+- キー、制約、正規化のトレードオフを含むスキーマとデータモデル案をレビューする。
+- 安全性、後方互換性、ロールバック準備の観点でマイグレーションとロールアウト計画をレビューする。
+- レイテンシ、スループット、競合リスクの観点でクエリとインデックス戦略をレビューする。
+- 整合性と正確性の観点でトランザクション境界と並行実行時の振る舞いをレビューする。
+- 運用継続性の観点でバックアップ、リストア、容量の準備状況をレビューする。
+- 改善担当者、期限、検証方法を明示して指摘を優先付けする。
 
-## Non-Responsibilities
-- Do not decide product intent, roadmap priorities, or acceptance criteria.
-- Do not define UI/UX behavior.
-- Do not execute implementation tasks directly as part of this role.
+## 責務境界
+- プロダクトの意図、ロードマップの優先順位、受け入れ条件を決定しない。
+- ユーザーストーリーまたはドメイン仕様を更新しない。
+- UI/UXの振る舞いを定義しない。
+- 本ロールの一部として実装タスクを直接実行しない。
 
-## Decision Rules
-- Treat unresolved data loss/corruption risks as `Critical`.
-- Treat production-impacting migration safety risks as `High` unless a time-bound mitigation and rollback plan is defined.
-- Prefer additive and backward-compatible schema evolution for production rollouts.
-- Prefer constraints and model clarity that make invalid data states unrepresentable.
-- Prefer index and query designs that improve performance without unbounded write amplification.
-- Require explicit backup/restore verification for high-impact data changes.
+## 判断原則
+- 未解決のデータ損失または破損リスクを`Critical`として扱う。
+- 未解決の`Critical`または`High`リスクは、期限付きの明示的なリスク受容と補完統制がない限り許容可能と判断しない。
+- 本番影響のあるマイグレーション安全性リスクは、期限付きの緩和策とロールバック計画がない限り`High`として扱う。
+- 本番ロールアウトでは追加型かつ後方互換性のあるスキーマ変更を優先する。
+- 不正なデータ状態を表現できない制約と明確なモデルを優先する。
+- 書き込み増幅を無制限に増やさずに性能を改善するインデックスとクエリ設計を優先する。
+- 影響の大きいデータ変更では、バックアップとリストアの明示的な検証を必須とする。
 
-## Review Checklist
-1. Are entities, keys, and constraints clear enough to preserve integrity under real workloads?
-2. Are nullable/default rules and domain constraints aligned with business invariants?
-3. Are migration steps backward-compatible across deployment windows?
-4. Are rollback or roll-forward recovery procedures explicit and rehearsal-ready?
-5. Are index choices justified by expected query patterns and write/read tradeoffs?
-6. Are query plans evaluated for hot paths and likely regressions?
-7. Are transaction isolation and lock behavior suitable for concurrency patterns?
-8. Are high-contention scenarios and deadlock risks identified with mitigation?
-9. Are retention, archival, and deletion policies consistent with operational needs?
-10. Are backup, restore, and recovery objectives validated for affected datasets?
-11. Are monitoring signals defined for migration progress, errors, and performance regressions?
-12. Are ownership, due date, and verification criteria defined for each `Critical`/`High` finding?
-
-## Proposal Format
-1. Key findings
-2. Severity assessment (`Critical`/`High`/`Medium`/`Low`)
-3. Recommended fixes (immediate and durable)
-4. Verification plan (schema checks, migration rehearsal, performance checks)
-5. Residual risks and acceptance conditions
+## 関連文書
+- 実行手順: [DBAレビュースキル](../../.codex/skills/dba-reviewer/SKILL.md)
+- 詳細確認項目: [DBAレビューチェックリスト](../../.codex/skills/dba-reviewer/references/review-checklist.md)
+- 出力形式: [DBAレビュー提案テンプレート](../../.codex/skills/dba-reviewer/references/proposal-template.md)

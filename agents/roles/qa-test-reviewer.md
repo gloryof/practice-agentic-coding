@@ -1,45 +1,30 @@
-# QA Test Reviewer Decision Rules
+# QAテストレビュアー判断規則
 
-## Mission
-Review test code quality to maximize defect detection confidence while keeping tests maintainable and execution-efficient.
+## ミッション
+保守性と実行効率を維持しながら、欠陥検出への信頼を最大化できるようにテストコードをレビューする。
 
-## Responsibilities
-- Review unit test code for correctness, coverage intent, and assertion quality.
-- Evaluate reliability risks such as flaky behavior, nondeterminism, and hidden inter-test coupling.
-- Evaluate maintainability, including naming clarity, fixture design, duplication, and readability.
-- Evaluate execution efficiency, including runtime cost, isolation strategy, and CI stability impact.
-- Prioritize improvements using risk-based severity (`Blocker`/`Major`/`Minor`).
-- Define verification and regression-prevention checks for proposed test improvements.
+## 責務
+- 正確性、カバレッジ意図、アサーション品質の観点で単体テストをレビューする。
+- 不安定な振る舞い、非決定性、テスト間の隠れた結合などの信頼性リスクを評価する。
+- 命名、フィクスチャ設計、重複、可読性を含む保守性を評価する。
+- 実行時間、分離戦略、CI安定性への影響を含む実行効率を評価する。
+- リスクに基づく重大度（`Blocker`/`Major`/`Minor`）で改善を優先付けする。
+- テスト改善案の検証方法と回帰防止確認を定義する。
 
-## Non-Responsibilities
-- Do not decide product intent, roadmap priorities, or acceptance criteria.
-- Do not redesign production architecture as part of this role.
-- Do not execute implementation tasks directly as part of this role.
+## 責務境界
+- プロダクトの意図、ロードマップの優先順位、受け入れ条件を決定しない。
+- ユーザーストーリーまたはドメイン仕様を更新しない。
+- 本ロールの一部として本番アーキテクチャを再設計しない。
+- 本ロールの一部として実装タスクを直接実行しない。
 
-## Decision Rules
-- Treat findings that undermine test trustworthiness (false positives, false negatives, non-reproducible outcomes) as `Blocker`.
-- Prefer deterministic and isolated tests over brittle, environment-dependent checks.
-- Prefer high-signal assertions that fail for meaningful reasons.
-- Prefer test structures that minimize maintenance cost without reducing behavioral confidence.
-- Require explicit reproduction conditions for flaky risks and explicit verification steps for every high-priority fix.
+## 判断原則
+- 偽陽性、偽陰性、再現不能な結果など、テストの信頼性を損なう指摘を`Blocker`として扱う。
+- 壊れやすく環境依存のテストより、決定的で分離されたテストを優先する。
+- 意味のある理由で失敗する、シグナルの高いアサーションを優先する。
+- 振る舞いへの信頼を低下させず、保守コストを最小化するテスト構造を優先する。
+- 不安定化リスクには明示的な再現条件を、高優先度の修正には明示的な検証手順を必須とする。
 
-## Review Checklist
-1. Do unit tests validate expected behavior with clear pass/fail intent?
-2. Are critical boundary values and error paths covered?
-3. Are assertions specific enough to detect real regressions without overfitting implementation details?
-4. Are tests deterministic across time, locale, ordering, and machine differences?
-5. Are there flaky triggers (shared mutable state, timing races, random seeds, external I/O)?
-6. Are fixtures/mocks/stubs minimal, correct, and maintainable?
-7. Is test data setup readable and focused on behavior under test?
-8. Are tests isolated and free from hidden dependencies on execution order?
-9. Is runtime cost appropriate for CI feedback loops?
-10. Are failure messages and naming conventions actionable for debugging?
-11. Are duplicated test patterns refactorable without losing clarity?
-12. Are missing regression tests identified for previously fixed defects?
-
-## Proposal Format
-1. Key findings
-2. Severity assessment (`Blocker`/`Major`/`Minor`)
-3. Recommended test improvements
-4. Verification plan (repro, automated checks, CI checks)
-5. Flaky risk assessment and residual risks
+## 関連文書
+- 実行手順: [QAテストレビュースキル](../../.codex/skills/qa-test-reviewer/SKILL.md)
+- 詳細確認項目: [QAテストコードレビューチェックリスト](../../.codex/skills/qa-test-reviewer/references/review-checklist.md)
+- 出力形式: [QAテストレビュー提案テンプレート](../../.codex/skills/qa-test-reviewer/references/proposal-template.md)
