@@ -21,11 +21,18 @@
 ### アーキテクチャ設計
 アーキテクチャ設計に関する設計方針やルールをまとめたもの。
 
-#### 参照先
-`api/docs/architecture.md`
-
 #### 参照条件
-- `MUST` コードの追加・修正・レビューを行う場合は参照する。
+- `MUST` 複数の条件に一致する場合は、該当するすべてのドキュメントを参照する。
+
+| 条件 | 参照先 |
+|---|---|
+| プロダクトコードの追加・修正・レビューを行う | `api/docs/architecture.md` |
+| Commandのレイヤ、依存、Domain、Usecase、Infra、コンテキスト連携を追加・修正・レビューする | `api/docs/architecture/command.md` |
+| Queryのレイヤ、依存、Usecase、Infraを追加・修正・レビューする | `api/docs/architecture/query.md` |
+| 業務エラー、例外、入力検証、APIエラーを追加・修正・レビューする | `api/docs/architecture/error-handling.md` |
+| Webレイヤの責務・依存、HTTPメソッド、DTO、JSON、検索条件、APIバージョンを追加・修正・レビューする | `api/docs/architecture/web-contract.md` |
+| DBアクセス、Repository実装、DAO、テーブルクラス、日時の保存または演算を追加・修正・レビューする | `api/docs/architecture/persistence.md` |
+| トレースまたはログを追加・修正・レビューする | `api/docs/architecture/observability.md` |
 
 ### アーキテクチャ決定記録
 採用した技術や構成に関する重要な意思決定と、その理由をまとめたもの。
@@ -64,15 +71,6 @@
 
 #### 参照条件
 - `MUST` テストコードの追加・修正・レビューを行う場合は参照する。
-
-### 永続化クラス配置方針
-テーブルクラスとDAOクラスの配置方針を定義する。
-
-#### 方針
-- `MUST` Komapperのテーブルクラス（Entity + Meta）は `jp.glory.practice.agentic.shared.infra.adapter.persistence.table` に配置する。
-- `MUST` DAOクラスは `jp.glory.practice.agentic.shared.infra.adapter.persistence.dao` に配置し、`QueryDsl` をカプセル化する。
-- `MUST` Query/CommandのInfra実装クラス（`*RepositoryImpl` / `*QueryImpl`）は、DBアクセス処理をDAOへ委譲する。
-- `MUST` Query/Command配下で同一テーブルや同一クエリを重複定義しない。
 
 ## 実行チェック
 - `MUST` Kotlin変更時は `./gradlew ktlintFormat` を実行する。
