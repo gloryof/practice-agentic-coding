@@ -1,7 +1,8 @@
 # AGENTS指示の継承と優先順位を明確化する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-07-19 - 継承モデルと競合時の優先順位を明確化
 - Updated: 2026-07-18 - 起票
 
 ## 背景

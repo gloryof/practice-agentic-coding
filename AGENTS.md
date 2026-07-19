@@ -5,8 +5,8 @@
 - 詳細なプロダクト目標は `product/product-foundation.md` を参照する。
 
 ## AGENTS適用優先順位
-- サブディレクトリで作業する場合は、ルート `AGENTS.md` よりも、そのサブディレクトリの `AGENTS.md` を優先して従う。
-- より近い `AGENTS.md` がない場合のみ、ルート `AGENTS.md` をデフォルトガイダンスとして適用する。
+- ルートから作業対象のディレクトリまでに存在するすべての `AGENTS.md` を適用する。
+- 複数の `AGENTS.md` の指示が競合する場合のみ、作業対象に近い `AGENTS.md` の指示を優先する。
 
 ## 参照フロー
 - `MUST` スキルやレビュー担当を選択する前に、依頼種別に対応するフローから開始する。
@@ -17,7 +17,7 @@
 | 機能追加、バグ修正、リファクタリング、実装設計、実装レビュー | `agents/flows/implementation-task-flow.md` |
 
 ### 作業条件に応じた追加参照
-- `api/` 配下で作業する場合は、`api/AGENTS.md` を優先し、API 開発ルールの入口として `api/docs/backend-guidelines.md` を参照する。
+- `api/` 配下で作業する場合は、`api/AGENTS.md` を追加で適用し、API 開発ルールの入口として `api/docs/backend-guidelines.md` を参照する。
 - 実装中に設計方針レビューの適用条件を判定する場合は、`agents/flows/design-policy-review-checks.md` を参照する。
 - ユーザー価値、ユースケース、ドメインモデル、ドメインイベントを探索する場合は、`product/domain-context/README.md` の探索規約に従う。
 - フローで使用するスキルが決まった場合は、`.codex/skills/` 配下にある該当スキルの `SKILL.md` を参照する。

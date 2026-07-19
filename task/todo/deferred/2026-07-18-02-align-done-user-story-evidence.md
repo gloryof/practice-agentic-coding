@@ -1,7 +1,8 @@
 # Doneユーザーストーリーと検証根拠を整合させる
 
 ## ステータス
-- Status: Proposed
+- Status: Deferred
+- Updated: 2026-07-19 - 対応を保留
 - Updated: 2026-07-18 - 起票
 
 ## 背景
