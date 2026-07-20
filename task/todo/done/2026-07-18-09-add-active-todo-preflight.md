@@ -1,7 +1,8 @@
 # 対象領域のactive TODOを作業前に確認する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-07-20 - 実装タスク開始時のactive TODO検索と重複起票防止手順を追加
 - Updated: 2026-07-18 - 起票
 
 ## 背景
