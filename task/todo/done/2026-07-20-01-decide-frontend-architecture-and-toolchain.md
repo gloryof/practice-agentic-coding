@@ -1,7 +1,8 @@
 # フロントエンドのアーキテクチャとツールチェーンを決定する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-07-21 - 初期アーキテクチャ、ツールチェーン、実行時設定、ビルド・配布、開発文書の正本を決定
 - Updated: 2026-07-20 - 起票
 
 ## 背景
@@ -15,6 +16,14 @@
 - ルーティング、APIクライアント、環境変数、ディレクトリ構成、ローカル実行、ビルド、依存関係更新の方針を決定する。
 - フロントエンド開発ガイドと `frontend/AGENTS.md` の配置、責務、参照関係を決定する。
 - 採用案、代替案、判断理由を記録し、`product/operational-nonfunctional-baseline.md` の該当する決定状態を更新する。
+
+## 決定内容
+- CSR SPA、React、React Router Framework Mode、Vite、TypeScript strictを採用した。
+- Node.js 24 LTS、npm、ViteのBaseline Widely Availableを標準にした。
+- 明示ルート、機能単位の構成、ブラウザ標準の`fetch`、実行時設定JSONを採用した。
+- APIと独立した静的成果物を生成し、Node.jsは開発とビルドに限定した。
+- 依存関係は手動更新とし、外部テレメトリは現在の対象外とした。
+- 現在有効な規則は `frontend/docs/frontend-guidelines.md`、判断履歴は `frontend/docs/ADR/0001-adopt-react-router-spa-architecture.md` を正本とした。
 
 ## 確認方法
 - 選定した構成で登録、ログイン、検索、予約を実装できることを設計上確認する。

@@ -7,6 +7,7 @@ Codexを使ってAgentic Codingの連取をする場所。
 - ドメイン仕様ガイド: `product/domain-context/README.md`
 - APIバックエンドガイドライン: `api/docs/backend-guidelines.md`
 - APIローカルセットアップ（Testcontainers/Rancher Desktop）: `api/README.md`
+- フロントエンド開発ガイドライン: `frontend/docs/frontend-guidelines.md`
 
 ## OpenAPI UI
 - OpenAPIドキュメントはサーバー実装から動的に生成され、リポジトリ内では管理しない。
