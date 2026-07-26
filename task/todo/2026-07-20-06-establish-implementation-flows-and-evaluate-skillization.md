@@ -28,4 +28,4 @@
 
 ## 期限 / 優先度
 - 優先度: 06
-- 依存関係: `2026-07-20-01-decide-frontend-architecture-and-toolchain.md` から `2026-07-20-05-define-frontend-quality-and-nonfunctional-requirements.md` まで
+- 依存関係: `2026-07-20-02-define-frontend-api-auth-integration.md`から`2026-07-20-05-define-frontend-quality-and-nonfunctional-requirements.md`まで

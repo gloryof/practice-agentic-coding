@@ -2,6 +2,7 @@
 
 ## ステータス
 - Status: Done
+- Updated: 2026-07-26 - 認証設計により初期アーキテクチャがADR-0002へ置換されたことを追記
 - Updated: 2026-07-21 - 初期アーキテクチャ、ツールチェーン、実行時設定、ビルド・配布、開発文書の正本を決定
 - Updated: 2026-07-20 - 起票
 
@@ -18,6 +19,8 @@
 - 採用案、代替案、判断理由を記録し、`product/operational-nonfunctional-baseline.md` の該当する決定状態を更新する。
 
 ## 決定内容
+以下は当時の決定であり、2026-07-26に`frontend/docs/ADR/0002-adopt-nextjs-bff-architecture.md`で置き換えた。
+
 - CSR SPA、React、React Router Framework Mode、Vite、TypeScript strictを採用した。
 - Node.js 24 LTS、npm、ViteのBaseline Widely Availableを標準にした。
 - 明示ルート、機能単位の構成、ブラウザ標準の`fetch`、実行時設定JSONを採用した。

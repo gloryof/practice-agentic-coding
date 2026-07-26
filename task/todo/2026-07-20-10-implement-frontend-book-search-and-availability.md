@@ -23,5 +23,5 @@ US-0002とUS-0003を実現するAPIは存在するが、図書館利用者がブ
 - キーボード操作、モバイル相当表示、ローディング、空状態、エラー状態を確認する。
 
 ## 期限 / 優先度
-- 優先度: 09
-- 依存関係: `2026-07-20-08-implement-frontend-registration-and-login.md`
+- 優先度: 10
+- 依存関係: `2026-07-20-09-implement-frontend-registration-and-login.md`

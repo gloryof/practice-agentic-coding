@@ -11,4 +11,5 @@
 - 現在有効な実装規則は `frontend/docs/frontend-guidelines.md` を正本とし、ADRへ重複させない。
 
 ## ADR一覧
-- [ADR-0001: React Router SPAをフロントエンドの初期アーキテクチャに採用する](0001-adopt-react-router-spa-architecture.md)
+- [ADR-0001: React Router SPAをフロントエンドの初期アーキテクチャに採用する（置換済み）](0001-adopt-react-router-spa-architecture.md)
+- [ADR-0002: Next.js BFFをフロントエンドアーキテクチャに採用する](0002-adopt-nextjs-bff-architecture.md)

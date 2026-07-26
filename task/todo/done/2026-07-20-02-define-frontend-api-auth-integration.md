@@ -1,7 +1,8 @@
 # フロントエンドのAPI・認証連携を定義する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-07-26 - Next.js BFFによるAPI・認証連携、セッション、Cookie、型同期、エラー、トレース、後続実装責務を決定
 - Updated: 2026-07-20 - 起票
 
 ## 背景
@@ -16,6 +17,17 @@
 - Bearerトークンの保持場所、ライフサイクル、期限切れ、未認証遷移、ログアウト要否を脅威モデルとともに決定する。
 - APIエラーの分類と画面表示への変換、相関識別子の伝播方針を決定する。
 - XSS、CSRF、認証情報のログ・ブラウザ保存領域への露出を確認し、必要なサーバー変更とフロント変更を分離する。
+
+## 決定内容
+- React Routerの静的CSR SPAをNext.js 16 App Routerへ置き換え、Next.jsをBFFとして使用する。
+- ブラウザには`HttpOnly` CookieでランダムなBFFセッションIDだけを保持し、Bearerアクセストークンを露出させない。
+- BFFがサーバー側セッションからBearerを取得し、Spring Boot APIの既存`Authorization`ヘッダー契約へ変換する。
+- セッションは最長24時間の固定期限とし、ブラウザ再起動後も期限、ログアウト、または上流トークン失効まで維持する。
+- ログアウトは現在のセッションだけを対象とし、BFF側の破棄に加えてSpring Boot APIへBearer失効APIを追加する。
+- 動的OpenAPIから`openapi-typescript`でサーバー専用型を生成し、生成物の差分を契約ドリフトとして検知する。
+- APIエラーとBFFエラーを共通分類へ変換し、検証済みトレースIDをBFFとAPIの間で伝播する。
+- 詳細な決定は`frontend/docs/ADR/0002-adopt-nextjs-bff-architecture.md`と`frontend/docs/api-auth-integration.md`を正本とする。
+- 実装は`task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`以降へ分離する。
 
 ## 確認方法
 - 登録、ログイン、認証済み検索、予約、期限切れのデータフローを追跡できることを確認する。

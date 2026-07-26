@@ -23,5 +23,5 @@ US-0004を実現するAPIは存在するが、図書館利用者が検索結果�
 - 代表的な業務エラーで予約が成立せず、利用者が理由と次の操作を理解できることを確認する。
 
 ## 期限 / 優先度
-- 優先度: 10
-- 依存関係: `2026-07-20-09-implement-frontend-book-search-and-availability.md`
+- 優先度: 11
+- 依存関係: `2026-07-20-10-implement-frontend-book-search-and-availability.md`

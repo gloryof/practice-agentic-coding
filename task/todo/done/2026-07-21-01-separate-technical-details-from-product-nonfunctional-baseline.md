@@ -1,7 +1,8 @@
 # プロダクト非機能ベースラインから技術依存の記述を分離する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-07-26 - 技術非依存の横断目標とAPI・フロントエンド固有の実装前提を分離
 - Updated: 2026-07-21 - 起票
 
 ## 背景
@@ -21,6 +22,13 @@
 - フレームワーク、レンダリング方式、ビルド、API接続、実行時設定、ブラウザ、フロントエンドの計測に依存する記述は、`frontend/docs/frontend-guidelines.md` または関連ADRへ移管する。
 - 各記述の正本を一つに限定し、プロダクト文書から技術文書へ必要な参照だけを設ける。
 - 関連するactive TODOを見直し、技術固有の非機能要件は各技術領域の文書へ、技術非依存のプロダクト目標だけはプロダクト側へ反映するよう、更新先と依存関係を整合させる。
+
+## 決定内容
+- `product/operational-nonfunctional-baseline.md`には、利用規模、利用者から見た性能、可用性、復旧、データ分類・保持、コストなど技術非依存の目標だけを残した。
+- Spring Boot、PostgreSQL、性能計測、可観測性、復旧、BFF連携の技術固有前提を`api/docs/operational-nonfunctional-guidelines.md`へ分離した。
+- Next.js、レンダリング、BFF、API接続、設定、ビルドの技術固有規則を`frontend/docs/frontend-guidelines.md`と関連ADRへ集約した。
+- 技術方式だけを変更する場合はプロダクト側ベースラインを更新しない規則へ変更した。
+- フロントエンド品質・非機能要件TODOの更新先を、技術固有事項はフロントエンド文書、横断目標の変更だけはプロダクト側とするよう修正した。
 
 ## 確認方法
 - `product/operational-nonfunctional-baseline.md` に残る規範的記述が、特定の製品、フレームワーク、実装方式に依存していないことを確認する。

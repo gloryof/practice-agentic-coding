@@ -1,7 +1,9 @@
 # ADR-0001: React Router SPAをフロントエンドの初期アーキテクチャに採用する
 
 ## ステータス
-採用
+置換済み
+
+2026-07-26 に [ADR-0002](0002-adopt-nextjs-bff-architecture.md) で置き換えた。
 
 ## 決定日
 2026-07-21

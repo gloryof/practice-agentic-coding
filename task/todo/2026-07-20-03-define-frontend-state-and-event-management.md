@@ -24,4 +24,4 @@
 
 ## 期限 / 優先度
 - 優先度: 03
-- 依存関係: `2026-07-20-01-decide-frontend-architecture-and-toolchain.md`
+- 依存関係: `2026-07-20-02-define-frontend-api-auth-integration.md`

@@ -15,7 +15,8 @@
 - 型検査、静的解析、ビルド、テスト、アクセシビリティ検査のCIゲートを決定する。
 - 初期表示、主要操作、配信資産量、対応ブラウザ、Web Vitalsの目標と測定方法を決定する。
 - 画面エラー、主要操作成功率、APIまで伝播する相関識別子の観測方針を決定する。
-- 依存関係の固定、脆弱性検査、更新方針を決定し、`product/operational-nonfunctional-baseline.md` を更新する。
+- 依存関係の固定、脆弱性検査、更新方針を決定し、技術固有事項は`frontend/docs/frontend-guidelines.md`または責務の合う詳細文書へ記録する。
+- 利用者から見た性能、可用性、復旧、データ保護など横断目標を変更する場合だけ`product/operational-nonfunctional-baseline.md`を更新する。
 
 ## 確認方法
 - 登録・ログイン、検索・在庫、予約を実APIで検証するブラウザE2Eの責務が明確であることを確認する。
@@ -24,4 +25,4 @@
 
 ## 期限 / 優先度
 - 優先度: 05
-- 依存関係: `2026-07-20-01-decide-frontend-architecture-and-toolchain.md`、`2026-07-20-02-define-frontend-api-auth-integration.md`、`2026-07-20-03-define-frontend-state-and-event-management.md`、`2026-07-20-04-define-frontend-design-system.md`
+- 依存関係: `2026-07-20-02-define-frontend-api-auth-integration.md`、`2026-07-20-03-define-frontend-state-and-event-management.md`、`2026-07-20-04-define-frontend-design-system.md`
