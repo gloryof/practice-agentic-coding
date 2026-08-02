@@ -26,7 +26,7 @@
 - ログアウトは現在のセッションだけを対象とし、BFF側の破棄に加えてSpring Boot APIへBearer失効APIを追加する。
 - 動的OpenAPIから`openapi-typescript`でサーバー専用型を生成し、生成物の差分を契約ドリフトとして検知する。
 - APIエラーとBFFエラーを共通分類へ変換し、検証済みトレースIDをBFFとAPIの間で伝播する。
-- 詳細な決定は`frontend/docs/ADR/0002-adopt-nextjs-bff-architecture.md`と`frontend/docs/api-auth-integration.md`を正本とする。
+- 詳細な決定は`frontend/docs/ADR/0002-adopt-nextjs-bff-architecture.md`と`frontend/docs/bff/api-auth-integration.md`を正本とする。
 - 実装は`task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`以降へ分離する。
 
 ## 確認方法

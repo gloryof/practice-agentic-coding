@@ -27,7 +27,7 @@ ADR-0001はBFFが必要になった場合を再評価条件としていた。フ
 - Spring Boot APIはブラウザへ直接公開せず、BFFとAPIを同一サイトの別プロセスとして扱う。
 - Node.js 24 LTSとnpmを使用し、`package-lock.json`で依存解決を固定する。
 - Next.jsの実行時サーバーを配布単位とし、Static Exportは使用しない。
-- 詳細な実装規則は`frontend/docs/frontend-guidelines.md`、API・認証連携の契約は`frontend/docs/api-auth-integration.md`を正本とする。
+- 詳細な実装規則は`frontend/docs/frontend-guidelines.md`、BFFの入口は`frontend/docs/bff/architecture.md`、API・認証連携の契約は`frontend/docs/bff/api-auth-integration.md`を正本とする。
 
 ## データフロー
 ```text

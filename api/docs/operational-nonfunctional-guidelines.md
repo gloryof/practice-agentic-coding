@@ -36,7 +36,7 @@
 - フロントエンド向けCORS許可を追加しない。
 - BFFから受け取るトレースIDはAPI境界で形式と長さを検証する。
 - Bearer、パスワード、メールアドレス、Cookie、API本文をログへ記録しない。
-- 詳細な連携契約は`frontend/docs/api-auth-integration.md`を参照する。
+- 詳細な連携契約は`frontend/docs/bff/api-auth-integration.md`を参照する。
 
 ## 更新条件
 - Spring Boot、Java、PostgreSQL、DB構成、API計測、バックアップ方式、BFFとの技術境界を変更する場合は本文書を更新する。

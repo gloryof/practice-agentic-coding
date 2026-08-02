@@ -12,17 +12,17 @@
 ## 適用範囲と現在状態
 - `MUST` 本規約を`frontend/`配下へ適用する。
 - `MUST` 作業開始時に`frontend/AGENTS.md`を最初に参照し、本ガイドと併せて従う。
-- 現在はアーキテクチャ、ツールチェーン、API・認証連携のみ決定済みで、アプリケーションは未構築である。
-- 状態・イベント管理、デザインシステム、品質・非機能要件は、対応するactive TODOで決定後に本ガイドへ追加する。
+- `MUST` BFFを変更する場合は[BFFアーキテクチャ](bff/architecture.md)を参照する。
+- `MUST` Client Componentsまたはブラウザ側を変更する場合は[Clientアーキテクチャ](client/architecture.md)を参照する。
+- `MUST` BFFとClientの両境界を変更する場合は、両方のアーキテクチャを参照する。
+- 現在はアーキテクチャ、ツールチェーン、API・認証連携、状態・イベント管理まで決定済みで、アプリケーションは未構築である。
+- デザインシステム、品質・非機能要件は、対応するactive TODOで決定後に責務の合う詳細文書へ記録し、本ガイドから参照する。
 
 ## アーキテクチャ
 
 ### レンダリングとアプリケーション基盤
 - `MUST` Next.js 16のApp Router、React、TypeScript strictを使用する。
 - `MUST` Server Componentsを既定とする。
-- `MUST` Client Componentsを、ブラウザAPI、クライアント状態、または利用者イベントが必要な最小範囲に限定する。
-- `MUST NOT` Server Components、Server Actions、Route Handlers、サーバー専用モジュールから認証秘密やサーバー専用設定をClient Componentsへ渡す。
-- `MUST NOT` Static Exportを使用する。BFFを提供するNode.js実行時を配布単位とする。
 - `MUST` TypeScriptの`strict`を有効にし、設定全体を緩和しない。
 
 ### ツールチェーン
@@ -39,13 +39,9 @@
 - `MUST` パッケージの解決結果を`package-lock.json`へ固定してコミットする。
 - `MUST` 対象ブラウザとpolyfill方針を品質・非機能要件の正本で決定するまで、ブラウザ互換性を狭める機能を無検証で導入しない。
 
-### ルーティングとサーバー境界
+### ルーティング
 - `MUST` URL、レイアウト、ローディング、エラー境界をApp Routerの規約に従って`app/`配下へ配置する。
-- `MUST` 読み取り処理をServer Componentsからサーバー専用のデータアクセス境界へ委譲する。
 - `MUST` ブラウザ起点の更新処理にServer Actionsを既定として使用する。
-- `MAY` 外部クライアント向けHTTP契約、Webhook、ファイル応答、または明示的なHTTP境界が必要な場合にRoute Handlersを使用してよい。
-- `MUST` Server ActionsとRoute Handlersを公開エンドポイントとして扱い、入力検証、認証、認可を各操作で実施する。
-- `MUST NOT` `proxy.ts`だけで認証・認可を完結させる。`proxy.ts`は楽観的なリダイレクトにのみ使用する。
 
 ### ディレクトリと依存方向
 ```text
@@ -66,22 +62,21 @@ frontend/
 - `MUST` `app`から`features`と`shared`への依存を許可し、`features`から`app`への依存を禁止する。
 - `MUST NOT` 異なる機能間を直接依存させる。共有が必要な場合は、責務を確認して`shared`または画面合成へ移す。
 - `MUST` `shared`には複数機能で実際に再利用する、業務機能を所有しない処理だけを配置する。
-- `MUST` `server-only`で保護するモジュールにSpring Boot APIクライアント、Bearer、セッションストア、サーバー専用設定を配置する。
 - `MUST NOT` バックエンドのパッケージ構成を理由なく複製し、利用者画面の変更単位を分断しない。
 
 ## API・認証連携
-- `MUST` [API・認証連携設計](api-auth-integration.md)をAPI接続、セッション、Cookie、エラー、トレースの詳細な正本として適用する。
-- `MUST` ブラウザからSpring Boot APIへ直接接続せず、Server Components、Server Actions、またはRoute HandlersからBFF境界を経由する。
-- `MUST` Spring Boot APIへのHTTP通信にサーバー側の`fetch`を使用し、Axiosを初期依存へ追加しない。
-- `MUST` 共通APIクライアントで、HTTP成功判定、本文解析、タイムアウト、キャンセル、契約検証、共通エラー変換を扱う。
+- `MUST` ブラウザからSpring Boot APIへ直接接続せず、BFF境界を経由する。
+- `MUST` API接続、セッション、Cookie、エラー、トレースを変更する場合は[BFFアーキテクチャ](bff/architecture.md)と[API・認証連携設計](bff/api-auth-integration.md)を適用する。
 - `MUST NOT` Spring Boot APIのBearerアクセストークンをClient Components、ブラウザCookie、Web Storage、HTML、URL、ブラウザログへ露出させない。
 
-## 設定
-- `MUST` Spring Boot APIの接続先をサーバー専用環境変数`SPRING_API_BASE_URL`から取得し、起動時に検証する。
-- `MUST NOT` `SPRING_API_BASE_URL`、サービス資格情報、暗号鍵、セッションデータを`NEXT_PUBLIC_`環境変数へ設定する。
-- `MUST NOT` パスワード、Bearerアクセストークン、APIキー、サービス資格情報、暗号鍵をブラウザへ渡す設定へ含めない。
-- `MUST` 設定の取得失敗または検証失敗を起動・準備エラーとして扱い、暗黙の接続先へフォールバックしない。
-- `MAY` ブラウザで必要な公開設定だけを`NEXT_PUBLIC_`環境変数へ含めてよい。
+## 状態・イベント管理
+- `MUST` [状態・イベント管理設計](state-and-event-management.md)を状態所有、イベント、非同期処理、二重送信、エラー回復の詳細な正本として適用する。
+- `MUST` Client Components、URL、フォーム、ローカルUIを変更する場合は[Clientアーキテクチャ](client/architecture.md)を入口として適用する。
+- `MUST` Server Components、Server Actions、Route Handlers、サーバー専用データアクセス境界を変更する場合は[BFFアーキテクチャ](bff/architecture.md)を入口として適用する。
+- `MUST` 認証、URL、フォーム、APIサーバー、ローカルUI、派生状態を分類し、それぞれの正本を重複させない。
+- `MUST` 画面横断の状態変更をURL、BFFセッション、APIサーバー状態、Server Action後の再検証またはリダイレクトで伝える。
+- `MUST NOT` 初期構成へ外部状態管理ライブラリ、クライアントデータキャッシュ、フォーム管理ライブラリ、汎用イベントバスを追加する。
+- `MUST` 更新操作のpendingとsingle-flightを操作単位で管理し、認証、認可、入力、業務制約はサーバー側で再検証する。
 
 ## ローカル実行とビルド
 アプリケーション構築後は、`frontend/package.json`のnpm scriptsをコマンドの正本とする。
@@ -122,6 +117,8 @@ frontend/
 
 ## 文書の管理
 - `MUST` 本ガイドをフロントエンド規則の単一の入口として維持する。
+- `MUST` BFFまたはClientのみに属する詳細文書を、それぞれの`bff/`または`client/`配下へ配置する。
+- `MUST` 両境界にまたがる契約とフロントエンド全体の規則だけを`frontend/docs/`直下へ配置する。
 - `MUST` 詳細文書へ分割した関心事は本ガイドから参照し、規則の正本を重複させない。
 
 ## 関連するアーキテクチャ決定
@@ -129,7 +126,6 @@ frontend/
 - [ADR-0002: Next.js BFFをフロントエンドアーキテクチャに採用する](ADR/0002-adopt-nextjs-bff-architecture.md)
 
 ## 決定を後続TODOへ委ねる事項
-- 状態・イベント管理: `task/todo/2026-07-20-03-define-frontend-state-and-event-management.md`
 - デザインシステム: `task/todo/2026-07-20-04-define-frontend-design-system.md`
 - 品質・非機能要件: `task/todo/2026-07-20-05-define-frontend-quality-and-nonfunctional-requirements.md`
 - Next.js基盤構築: `task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`
