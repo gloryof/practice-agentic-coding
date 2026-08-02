@@ -1,7 +1,8 @@
 # フロントエンドのデザインシステムを定義する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-08-02 - Tailwind、意味トークン、共通UI、アクセシビリティ、Storybook、変更規則を決定
 - Updated: 2026-07-20 - 起票
 
 ## 背景
@@ -16,6 +17,18 @@
 - 登録、ログイン、予約でも再利用できるコンポーネント境界と状態バリエーションを定義する。
 - キーボード操作、フォーカス表示、コントラスト、読み上げを含むWCAG 2.2 AA相当の基準を定義する。
 - コンポーネントを実装前に確認できる表示・文書化方法を決定する。
+
+## 決定内容
+- Tailwind CSS v4を採用し、基礎値と機能が利用する意味トークンを分離した。
+- 温かい紙面、森林色の主要操作、琥珀色の補助的な強調を初期テーマとし、ライトテーマと日本語表示に限定した。
+- 初期色、余白、文字サイズ、角丸を実画面確認後に変更可能な既定値とし、安定させる意味トークンと状態契約から分離した。
+- `shared/ui`が所有する共通UIと、登録、認証、検索、在庫、予約の機能が所有する業務パターンの境界を決定した。
+- 通常、hover、active、focus-visible、disabled、pending、成功、警告、エラー、空状態の表示と操作契約を定義した。
+- WCAG 2.2 Level AとLevel AAを画面の設計・実装基準とし、コンポーネント単体では適合を宣言しない方針とした。
+- Markdownを規則の正本、`@storybook/nextjs-vite`を使用するStorybookを実行可能な状態例の正本とした。
+- 詳細は`frontend/docs/design-system.md`、入口は`frontend/docs/frontend-guidelines.md`を正本とする。
+- Tailwind、Storybook、代表コンポーネントの実装を`task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`へ引き継いだ。
+- StorybookのCIゲートと視覚差分検査の採否を`task/todo/2026-07-20-05-define-frontend-quality-and-nonfunctional-requirements.md`へ引き継いだ。
 
 ## 確認方法
 - 登録、ログイン、検索、予約に必要な共通状態をコンポーネント一覧で網羅していることを確認する。

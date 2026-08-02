@@ -15,8 +15,8 @@
 - `MUST` BFFを変更する場合は[BFFアーキテクチャ](bff/architecture.md)を参照する。
 - `MUST` Client Componentsまたはブラウザ側を変更する場合は[Clientアーキテクチャ](client/architecture.md)を参照する。
 - `MUST` BFFとClientの両境界を変更する場合は、両方のアーキテクチャを参照する。
-- 現在はアーキテクチャ、ツールチェーン、API・認証連携、状態・イベント管理まで決定済みで、アプリケーションは未構築である。
-- デザインシステム、品質・非機能要件は、対応するactive TODOで決定後に責務の合う詳細文書へ記録し、本ガイドから参照する。
+- 現在はアーキテクチャ、ツールチェーン、API・認証連携、状態・イベント管理、デザインシステムまで決定済みで、アプリケーションは未構築である。
+- 品質・非機能要件は、対応するactive TODOで決定後に責務の合う詳細文書へ記録し、本ガイドから参照する。
 
 ## アーキテクチャ
 
@@ -78,6 +78,13 @@ frontend/
 - `MUST NOT` 初期構成へ外部状態管理ライブラリ、クライアントデータキャッシュ、フォーム管理ライブラリ、汎用イベントバスを追加する。
 - `MUST` 更新操作のpendingとsingle-flightを操作単位で管理し、認証、認可、入力、業務制約はサーバー側で再検証する。
 
+## デザインシステム
+- `MUST` [フロントエンドデザインシステム](design-system.md)をトークン、共通UI、機能UI、状態、レスポンシブ、文言、アクセシビリティ、Storybookの正本として適用する。
+- `MUST` Tailwind CSS v4を使用し、機能コードから意味トークンと共通UIを利用する。
+- `MUST NOT` 色、文字サイズ、余白、角丸を画面ごとに任意指定しない。
+- `MUST` 初期テーマをライトテーマ、日本語表示とし、実画面確認後の視覚調整を意味トークンへ集約する。
+- `MUST` Markdownを規則の正本、Storybookを実行可能なコンポーネント状態例として維持する。
+
 ## ローカル実行とビルド
 アプリケーション構築後は、`frontend/package.json`のnpm scriptsをコマンドの正本とする。
 
@@ -126,7 +133,6 @@ frontend/
 - [ADR-0002: Next.js BFFをフロントエンドアーキテクチャに採用する](ADR/0002-adopt-nextjs-bff-architecture.md)
 
 ## 決定を後続TODOへ委ねる事項
-- デザインシステム: `task/todo/2026-07-20-04-define-frontend-design-system.md`
 - 品質・非機能要件: `task/todo/2026-07-20-05-define-frontend-quality-and-nonfunctional-requirements.md`
 - Next.js基盤構築: `task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`
 - BFF認証・API連携実装: `task/todo/2026-07-20-08-implement-bff-auth-api-integration.md`
