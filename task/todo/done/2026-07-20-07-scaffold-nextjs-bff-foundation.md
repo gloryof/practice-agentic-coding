@@ -1,7 +1,8 @@
 # Next.js App RouterとBFFの基盤を構築する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-08-09 - Next.js BFF基盤、共通UI、品質ゲート、セキュリティ統制を実装して完了
 - Updated: 2026-08-09 - 品質ゲート、テスト基盤、性能計測、セキュリティヘッダーの実装責務を追加
 - Updated: 2026-08-02 - TailwindとStorybookによるデザインシステム基盤を追加
 - Updated: 2026-07-20 - 起票
@@ -35,3 +36,13 @@
 ## 期限 / 優先度
 - 優先度: 07
 - 依存関係: `2026-07-20-02-define-frontend-api-auth-integration.md`から`2026-07-20-06-establish-implementation-flows-and-evaluate-skillization.md`まで
+
+## 完了内容
+- Next.js 16 App Router、React 19、TypeScript strict、Node.js 24、npmの実行可能な基盤を構築した。
+- Tailwind CSS v4の意味トークン、共通UI、基盤ページ、ローディング、エラー、404状態と代表storyを追加した。
+- サーバー専用設定、Spring APIヘルスチェック、`BffSessionStore`、インメモリ実装、公開ヘルスRoute Handlerの土台を追加した。
+- リクエストごとのnonce付きCSP、主要セキュリティヘッダー、秘密情報とサーバー専用モジュールのブラウザ成果物検査を追加した。
+- 型検査、静的解析、単体・境界テスト、production build、Storybook build、story・a11y検査をnpm scriptsへ統一した。
+- Playwrightの実APIブラウザE2EとLighthouse CIは後続の利用者画面で実行できる設定まで追加した。利用者画面が未実装であるため、今回の完了確認では実行していない。
+- `npm run check`の一括実行は、利用者画面が未実装であることからユーザー承認の例外として省略した。構成する個別ゲートの成功は確認済みであり、初回の利用者機能実装時に一括実行して問題を修正する。
+- CI製品へのゲート接続、依存関係の一時的な公開待機例外、修正版のないStorybook推移的依存の既知脆弱性は、それぞれ独立したTODOで追跡する。

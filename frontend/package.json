@@ -1,0 +1,61 @@
+{
+  "name": "community-library-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "overrides": {
+    "nanoid": "3.3.17",
+    "sharp": "0.35.0",
+    "tmp": "0.2.7",
+    "uuid": "11.1.1"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "typecheck": "next typegen && tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "next build --webpack && node scripts/check-client-bundle.mjs",
+    "start": "next start",
+    "storybook": "storybook dev -p 6006",
+    "build:storybook": "storybook build",
+    "test:storybook": "vitest run --config vitest.storybook.config.ts",
+    "test:e2e": "npm run build && ./scripts/run-browser-e2e.sh --project=chromium",
+    "test:e2e:cross-browser": "npm run build && ./scripts/run-browser-e2e.sh",
+    "test:performance": "npm run build && lhci autorun",
+    "audit:signatures": "npm audit signatures",
+    "audit:high": "npm audit --audit-level=high",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run build:storybook && npm run test:storybook"
+  },
+  "dependencies": {
+    "next": "16.3.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@lhci/cli": "0.15.1",
+    "@playwright/test": "1.62.1",
+    "@storybook/addon-a11y": "10.5.5",
+    "@storybook/addon-vitest": "10.5.5",
+    "@storybook/nextjs-vite": "10.5.5",
+    "@tailwindcss/postcss": "4.3.3",
+    "@testing-library/jest-dom": "7.0.0",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.1",
+    "@types/node": "26.1.2",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitest/browser-playwright": "4.1.10",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.0",
+    "jsdom": "30.0.1",
+    "postcss": "8.5.25",
+    "storybook": "10.5.5",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}

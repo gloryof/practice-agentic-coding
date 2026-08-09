@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+:root {
+  --foundation-canvas: #faf7f0;
+  --foundation-surface: #ffffff;
+  --foundation-surface-subtle: #f1ebdd;
+  --foundation-text: #202722;
+  --foundation-text-muted: #56615b;
+  --foundation-border: #727c75;
+  --foundation-action: #315c4a;
+  --foundation-action-hover: #25483a;
+  --foundation-on-action: #ffffff;
+  --foundation-accent: #9a552a;
+  --foundation-on-accent: #ffffff;
+  --foundation-focus: #006aa6;
+  --foundation-info: #075985;
+  --foundation-info-subtle: #e0f2fe;
+  --foundation-success: #1f6a4a;
+  --foundation-success-subtle: #e5f4ec;
+  --foundation-warning: #765100;
+  --foundation-warning-subtle: #fff1cc;
+  --foundation-danger: #b3261e;
+  --foundation-danger-subtle: #fce8e6;
+}
+
+@theme inline {
+  --color-canvas: var(--foundation-canvas);
+  --color-surface: var(--foundation-surface);
+  --color-surface-subtle: var(--foundation-surface-subtle);
+  --color-text: var(--foundation-text);
+  --color-text-muted: var(--foundation-text-muted);
+  --color-border: var(--foundation-border);
+  --color-action: var(--foundation-action);
+  --color-action-hover: var(--foundation-action-hover);
+  --color-on-action: var(--foundation-on-action);
+  --color-accent: var(--foundation-accent);
+  --color-on-accent: var(--foundation-on-accent);
+  --color-focus: var(--foundation-focus);
+  --color-info: var(--foundation-info);
+  --color-info-subtle: var(--foundation-info-subtle);
+  --color-success: var(--foundation-success);
+  --color-success-subtle: var(--foundation-success-subtle);
+  --color-warning: var(--foundation-warning);
+  --color-warning-subtle: var(--foundation-warning-subtle);
+  --color-danger: var(--foundation-danger);
+  --color-danger-subtle: var(--foundation-danger-subtle);
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--foundation-canvas);
+  color: var(--foundation-text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+body {
+  min-width: 20rem;
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--foundation-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

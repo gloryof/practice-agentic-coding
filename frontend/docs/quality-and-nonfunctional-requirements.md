@@ -66,6 +66,7 @@
 | `npm run test:e2e` | Chromiumで実APIブラウザE2Eを実行する |
 | `npm run test:e2e:cross-browser` | Chromium、Firefox、WebKitで対象フローを実行する |
 | `npm run test:performance` | production buildへLighthouse CIと主要操作の性能検査を実行する |
+| `npm run audit:signatures` | npm Registryの署名と来歴証明を検査する |
 | `npm run audit:high` | CriticalとHighの既知脆弱性を検査する |
 | `npm run check` | 型検査、静的解析、単体・境界テスト、build、Storybook build、story・a11y検査を順に実行する |
 
@@ -159,6 +160,7 @@
 - `MUST` 依存関係の通常更新を手動で行い、DependabotまたはRenovateを初期導入しない。
 - `MUST` 新しい依存関係について、標準Web APIまたは既存依存で代替できない理由、保守状態、ライセンス、既知脆弱性、ブラウザ成果物への影響を確認する。
 - `MUST` `package.json`または`package-lock.json`を変更する場合、および対象機能へ着手する前に`npm run audit:high`を実行する。
+- `MUST` ロックファイルを新規作成または更新する場合、`npm run audit:signatures`でRegistry署名と来歴証明を検査する。
 - `MUST` CriticalまたはHighの既知脆弱性を、影響評価、補完統制、担当、期限、再確認日を持つ明示的なリスク対応なしに採用または維持しない。
 - `MUST` major更新について、破壊的変更、移行手順、build、ブラウザE2E、性能予算への影響を個別に確認する。
 - デプロイまたは実利用を開始する場合は、依存関係の自動更新、定期的な脆弱性検査、ビルド来歴と成果物完全性の検証を再評価する。

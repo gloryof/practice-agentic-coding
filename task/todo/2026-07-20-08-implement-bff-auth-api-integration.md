@@ -2,6 +2,7 @@
 
 ## ステータス
 - Status: Proposed
+- Updated: 2026-08-09 - 構築済みのセッションストア、サーバー設定、実API E2E基盤を利用する前提へ更新
 - Updated: 2026-08-09 - フロントエンド品質・非機能要件に基づく契約、トレース、実API E2Eの検証責務を追加
 - Updated: 2026-07-26 - API・認証連携設計から実装責務を分離して起票
 
@@ -12,7 +13,7 @@ Next.js BFFを介してSpring Boot APIのBearer認証契約を利用する方針
 認証境界を画面機能と同時に実装すると、Bearerのブラウザ露出、期限切れやログアウトの不整合、API契約ドリフト、エラー処理の重複が発生しやすい。検索と予約の実装前に共通境界を検証可能にする必要がある。
 
 ## 対応案
-- `frontend/docs/bff/architecture.md`を入口として`frontend/docs/bff/api-auth-integration.md`に従い、`BffSessionStore`と初期`InMemoryBffSessionStore`を実装する。
+- `frontend/docs/bff/architecture.md`を入口として`frontend/docs/bff/api-auth-integration.md`に従い、構築済みの`BffSessionStore`と初期`InMemoryBffSessionStore`を認証フローへ組み込む。
 - 暗号学的に安全なセッションID、最長24時間の固定期限、`HttpOnly`、`SameSite=Strict`、`Path=/`、環境に応じた`Secure`を持つCookieを実装する。
 - ログイン、認証済み呼び出し、期限切れ、API認証失敗、現在セッションのログアウトをServer Actionsとサーバー専用境界で実装する。
 - Spring Boot APIへ`POST /api/v1/auth/logout`を追加し、現在のBearerを失効させる。

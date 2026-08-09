@@ -15,7 +15,7 @@
 - `MUST` BFFを変更する場合は[BFFアーキテクチャ](bff/architecture.md)を参照する。
 - `MUST` Client Componentsまたはブラウザ側を変更する場合は[Clientアーキテクチャ](client/architecture.md)を参照する。
 - `MUST` BFFとClientの両境界を変更する場合は、両方のアーキテクチャを参照する。
-- 現在はアーキテクチャ、ツールチェーン、API・認証連携、状態・イベント管理、デザインシステム、品質・非機能要件まで決定済みで、アプリケーションは未構築である。
+- 現在はアーキテクチャ、ツールチェーン、API・認証連携、状態・イベント管理、デザインシステム、品質・非機能要件を決定し、Next.js BFFの実行可能な基盤まで構築済みである。登録、認証、蔵書検索、在庫確認、予約の利用者機能は未実装である。
 - `MUST` テスト、CI、アクセシビリティ検査、対応ブラウザ、性能、可観測性、セキュリティヘッダー、依存関係には[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を適用する。
 
 ## アーキテクチャ
@@ -91,7 +91,16 @@ frontend/
 - `MUST` async Server Components、BFF、Cookie、Spring Boot API、DBをまたぐ利用者フローを単体テストだけで保証しない。
 
 ## ローカル実行とビルド
-アプリケーション構築後は、`frontend/package.json`のnpm scriptsをコマンドの正本とする。
+`frontend/package.json`のnpm scriptsをコマンドの正本とする。初回はNode.js 24を有効にし、`frontend/`で次を実行する。
+
+```shell
+cp .env.example .env.local
+npm ci
+npx playwright install chromium firefox webkit
+npm run check
+```
+
+`.npmrc`で依存パッケージのライフサイクルスクリプトを無効化している。必要なブラウザ取得は上記の明示コマンドで行い、依存パッケージのインストール時に任意コードを実行させない。
 
 | コマンド | 責務 |
 |---|---|
@@ -107,6 +116,7 @@ frontend/
 | `npm run test:e2e` | Chromiumで実APIブラウザE2Eを実行する |
 | `npm run test:e2e:cross-browser` | Chromium、Firefox、WebKitで対象フローを実行する |
 | `npm run test:performance` | production buildの性能予算を検査する |
+| `npm run audit:signatures` | Registry署名と来歴証明を検査する |
 | `npm run audit:high` | CriticalとHighの既知脆弱性を検査する |
 | `npm run check` | すべてのフロントエンド変更に必要な高速ゲートを実行する |
 
@@ -132,5 +142,4 @@ frontend/
 - [ADR-0002: Next.js BFFをフロントエンドアーキテクチャに採用する](ADR/0002-adopt-nextjs-bff-architecture.md)
 
 ## 実装を後続TODOへ委ねる事項
-- Next.js基盤構築: `task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`
 - BFF認証・API連携実装: `task/todo/2026-07-20-08-implement-bff-auth-api-integration.md`
