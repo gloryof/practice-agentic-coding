@@ -9,7 +9,7 @@
 - `MUST` 本文書を図書館利用者向けフロントエンドのトークン、共通UI、機能UI、Storybookへ適用する。
 - `MUST` 状態の所有、非同期処理、二重送信、エラー回復には[状態・イベント管理設計](state-and-event-management.md)を併せて適用する。
 - `MUST` APIエラーの分類と問い合わせ識別子には[API・認証連携設計](bff/api-auth-integration.md)を適用する。
-- 本文書は画面の業務フロー、API契約、テストのCIゲートを決定しない。
+- 本文書は画面の業務フロー、API契約、テストのCIゲートを決定しない。テストのCIゲートは[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を正本とする。
 
 ## 設計原則
 - `MUST` 温かい紙面を基調に、主要操作を森林色、発見を促す補助表現を琥珀色で表す。
@@ -143,7 +143,7 @@ Tailwind theme variablesの仕様は[Theme variables](https://tailwindcss.com/do
 - `MUST` 共通UIの全variantと必須状態を個別のstoryで表示する。
 - `MUST` 登録・ログイン、検索結果と在庫、予約を代表パターンとして表示し、APIやServer Actionへ接続せず純粋な表示propsで状態を再現する。
 - `MUST` 360px、768px、1280px相当のviewportで、長いタイトル、複数著者、長いエラー文言を確認する。
-- `MUST` Storybookのa11y検査結果を実装中に確認する。CIの必須ゲートと視覚差分検査の採否は、フロントエンド品質・非機能要件で決定する。
+- `MUST` Storybookのa11y検査結果を実装中に確認し、[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)に従ってstoryとa11y検査をCIの必須ゲートにする。視覚差分検査は初期導入せず、同文書の条件で再評価する。
 
 StorybookとNext.jsの統合方式は[Storybook for Next.js with Vite](https://storybook.js.org/docs/get-started/frameworks/nextjs-vite/)を参照する。
 
@@ -156,6 +156,7 @@ StorybookとNext.jsの統合方式は[Storybook for Next.js with Vite](https://s
 
 ## 関連文書
 - [フロントエンド開発ガイドライン](frontend-guidelines.md)
+- [フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)
 - [状態・イベント管理設計](state-and-event-management.md)
 - [Clientアーキテクチャ](client/architecture.md)
 - [API・認証連携設計](bff/api-auth-integration.md)

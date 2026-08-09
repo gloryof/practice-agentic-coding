@@ -2,6 +2,7 @@
 
 ## ステータス
 - Status: Proposed
+- Updated: 2026-08-09 - フロントエンド品質・非機能要件に基づく契約、トレース、実API E2Eの検証責務を追加
 - Updated: 2026-07-26 - API・認証連携設計から実装責務を分離して起票
 
 ## 背景
@@ -18,6 +19,7 @@ Next.js BFFを介してSpring Boot APIのBearer認証契約を利用する方針
 - 認証秘密をドメインイベントへ含めずにセッションを保存できるよう、ログインイベントと技術的セッション永続化の責務を分離する。
 - 動的OpenAPIと`openapi-typescript`による型生成、生成物のコミット、CIドリフト検査を追加する。
 - Spring Boot APIエラーとBFFエラーの共通変換、トレースIDの検証・生成・伝播、秘密情報のログ除外を実装する。
+- `frontend/docs/quality-and-nonfunctional-requirements.md`に従い、構造化ログ、ブラウザの未処理例外とconsole errorの検出、Playwright traceとBFF・APIログの保存を実装する。
 - ログインとログアウトの濫用対策を実装し、しきい値と失敗時の振る舞いを記録する。
 
 ## 確認方法
@@ -27,6 +29,7 @@ Next.js BFFを介してSpring Boot APIのBearer認証契約を利用する方針
 - API E2Eでログアウト後に同じBearerを再利用できないことを確認する。
 - OpenAPI生成物の再生成で差分がないこと、型検査、静的解析、ビルド、フロントエンドテスト、APIテストが成功することを確認する。
 - BFF、セッションストア、Spring Boot APIの失敗をトレースIDで相関し、主要障害領域を10分以内に特定できることを確認する。
+- Chromiumのproduction buildと実APIブラウザE2Eで登録、ログイン、ブラウザ再起動相当、期限切れ、ログアウトを確認し、機能完了時にFirefoxとWebKitでも主要フローを確認する。
 
 ## 期限 / 優先度
 - 優先度: 08

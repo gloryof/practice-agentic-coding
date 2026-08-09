@@ -9,7 +9,7 @@
 - ブラウザ側だけに属する詳細は[Client状態・イベント管理設計](client/state-and-event-management.md)を正本とする。
 - BFF側だけに属する詳細は[BFF状態・イベント管理設計](bff/state-and-event-management.md)を正本とする。
 - API接続、BFFセッション、Cookie、エラー分類、トレースの詳細は[API・認証連携設計](bff/api-auth-integration.md)を正本とする。
-- 視覚表現とアクセシビリティ、テストツールとCIゲート、キャッシュの性能目標は、それぞれの後続設計で決定する。
+- 視覚表現とアクセシビリティは[フロントエンドデザインシステム](design-system.md)、テストツール、CIゲート、性能目標は[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を正本とする。
 
 ## 基本原則
 - `MUST` 状態ごとに正本を一つだけ持ち、同じ確定状態をブラウザとBFFを含む複数の独立した正本へ同期しない。
@@ -110,10 +110,11 @@ type ActionState<TData, TError> =
 - `MUST` 検索Aを遅延させた後に検索Bを完了させ、BのURLと結果がAに上書きされないことを確認する。
 - `MUST` 予約APIを遅延させて同じボタンを連続操作し、同一UIから並行送信されず、サーバー側でも予約が一件だけ成立することを確認する。
 - `MUST` ログイン、ログアウト、期限切れ後にClient ContextやWeb Storageの値では認証済み表示へ戻れないことを確認する。
-- テストランナー、ブラウザ、フィクスチャ、CIゲートは、フロントエンド品質・非機能要件の設計で決定する。
+- テストランナー、ブラウザ、フィクスチャ、CIゲートは[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を適用する。
 
 ## 関連文書
 - [フロントエンド開発ガイドライン](frontend-guidelines.md)
+- [フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)
 - [Client状態・イベント管理設計](client/state-and-event-management.md)
 - [BFF状態・イベント管理設計](bff/state-and-event-management.md)
 - [API・認証連携設計](bff/api-auth-integration.md)

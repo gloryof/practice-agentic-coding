@@ -2,6 +2,7 @@
 
 ## ステータス
 - Status: Proposed
+- Updated: 2026-08-09 - 品質ゲート、テスト基盤、性能計測、セキュリティヘッダーの実装責務を追加
 - Updated: 2026-08-02 - TailwindとStorybookによるデザインシステム基盤を追加
 - Updated: 2026-07-20 - 起票
 
@@ -16,14 +17,18 @@
 - Tailwind CSS v4を導入し、`frontend/docs/design-system.md`で定義した基礎値と意味トークンを構築する。
 - Server Componentsを既定とするディレクトリと依存境界を構築する。
 - BFFのサーバー専用設定、APIクライアント、`BffSessionStore`インターフェース、インメモリ実装の土台を追加する。
-- ローカル開発、型検査、静的解析、ビルド、単体・コンポーネントテストのコマンドを整備する。
-- CIの最小ゲート、`SPRING_API_BASE_URL`の例、App Routerの土台を追加する。
+- `frontend/docs/quality-and-nonfunctional-requirements.md`に従い、Vitest、Testing Library、Storybook Vitest addon、Playwright、Lighthouse CIの基盤とnpm scriptsを整備する。
+- 型検査、静的解析、単体・境界テスト、build、Storybook build、story・a11y検査を実行する`npm run check`とCIの必須ゲートを追加する。
+- ChromiumのブラウザE2E、Firefox・WebKitの互換性検査、production buildの性能計測を後続機能から利用できる状態にする。
+- nonce付きContent Security Policyと主要セキュリティヘッダー、`SPRING_API_BASE_URL`の例、App Routerの土台を追加する。
 - `@storybook/nextjs-vite`を導入し、デザインシステムの基礎トークン、共通UI、検索結果と在庫の代表パターンを確認できる状態にする。
 
 ## 確認方法
 - 新規環境で文書化された手順から依存関係を準備し、フロントエンドを起動できることを確認する。
-- 型検査、静的解析、ビルド、テストが成功することを確認する。
-- Storybookを起動およびbuildでき、360px、768px、1280px相当で代表storyを表示できることを確認する。
+- `npm run check`が成功し、各ゲートを同じnpm scriptで個別に再実行できることを確認する。
+- Storybookを起動およびbuildでき、360px、768px、1280px相当で代表storyを表示し、Chromiumでstoryとa11y検査が成功することを確認する。
+- production buildの代表ルートで性能予算を計測し、Lighthouseレポートを外部へ送信しないことを確認する。
+- production応答のCSPと主要セキュリティヘッダー、およびproductionへ開発専用CSP許可が含まれないことを確認する。
 - サーバー専用境界からローカルAPIへの疎通と代表コンポーネントの表示を確認する。
 - サーバー専用設定とモジュールがブラウザ成果物へ含まれないことを確認する。
 

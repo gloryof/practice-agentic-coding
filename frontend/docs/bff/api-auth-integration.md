@@ -90,7 +90,7 @@ Cookie名は実装時に一つの定数として定義する。属性は次を�
 - 状態を変更するRoute Handlerを追加する場合は、Origin検証だけに依存せずSynchronizer Token PatternのCSRFトークンを実装する。
 - GET、HEAD、OPTIONSで状態を変更しない。
 - Client Componentsへ渡す値を最小化し、未信頼HTMLを直接描画しない。
-- Content Security Policyは品質・非機能要件の設計で具体化し、導入前でもインラインスクリプトや危険なHTML APIの追加を避ける。
+- `MUST` [フロントエンド品質・非機能要件](../quality-and-nonfunctional-requirements.md)のnonce付きContent Security Policyとセキュリティヘッダーを適用し、インラインスクリプト、危険なHTML API、未承認の第三者scriptを追加しない。
 
 ## Spring Boot API契約
 ### 維持する契約
@@ -155,6 +155,7 @@ BFFは少なくとも次へ分類する。
 - BFF、セッションストア、APIの障害を注入し、トレースIDから主要障害領域を10分以内に特定できることを確認する。
 
 ## 実装責務
+- 品質ゲート、対応ブラウザ、性能、ログ、セキュリティヘッダー、依存関係は[フロントエンド品質・非機能要件](../quality-and-nonfunctional-requirements.md)を適用する。
 - Next.js基盤、サーバー専用設定、セッションストアの土台は`task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`で実装する。
 - BFF認証、Cookie、APIクライアント、Spring Boot APIのログアウト、イベント責務分離、型同期、エラー、トレース、認証E2Eは`task/todo/2026-07-20-08-implement-bff-auth-api-integration.md`で実装する。
 - 登録・ログイン画面は`task/todo/2026-07-20-09-implement-frontend-registration-and-login.md`で実装する。

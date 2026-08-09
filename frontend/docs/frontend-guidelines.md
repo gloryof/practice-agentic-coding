@@ -15,8 +15,8 @@
 - `MUST` BFFを変更する場合は[BFFアーキテクチャ](bff/architecture.md)を参照する。
 - `MUST` Client Componentsまたはブラウザ側を変更する場合は[Clientアーキテクチャ](client/architecture.md)を参照する。
 - `MUST` BFFとClientの両境界を変更する場合は、両方のアーキテクチャを参照する。
-- 現在はアーキテクチャ、ツールチェーン、API・認証連携、状態・イベント管理、デザインシステムまで決定済みで、アプリケーションは未構築である。
-- 品質・非機能要件は、対応するactive TODOで決定後に責務の合う詳細文書へ記録し、本ガイドから参照する。
+- 現在はアーキテクチャ、ツールチェーン、API・認証連携、状態・イベント管理、デザインシステム、品質・非機能要件まで決定済みで、アプリケーションは未構築である。
+- `MUST` テスト、CI、アクセシビリティ検査、対応ブラウザ、性能、可観測性、セキュリティヘッダー、依存関係には[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を適用する。
 
 ## アーキテクチャ
 
@@ -37,7 +37,7 @@
 - `MUST` `package.json`の`engines`とリポジトリのNode.jsバージョン指定をNode.js 24系に揃える。
 - `MUST` CIおよび再現可能なローカル準備では`npm ci`を使用する。
 - `MUST` パッケージの解決結果を`package-lock.json`へ固定してコミットする。
-- `MUST` 対象ブラウザとpolyfill方針を品質・非機能要件の正本で決定するまで、ブラウザ互換性を狭める機能を無検証で導入しない。
+- `MUST` [フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)の対応ブラウザとpolyfill方針を適用し、互換性を狭める機能を無検証で導入しない。
 
 ### ルーティング
 - `MUST` URL、レイアウト、ローディング、エラー境界をApp Routerの規約に従って`app/`配下へ配置する。
@@ -85,6 +85,11 @@ frontend/
 - `MUST` 初期テーマをライトテーマ、日本語表示とし、実画面確認後の視覚調整を意味トークンへ集約する。
 - `MUST` Markdownを規則の正本、Storybookを実行可能なコンポーネント状態例として維持する。
 
+## 品質・非機能要件
+- `MUST` [フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)をテスト層、CIゲート、アクセシビリティ検査、ブラウザE2E、対応ブラウザ、性能予算、可観測性、セキュリティヘッダー、依存関係の詳細な正本として適用する。
+- `MUST` 高速で決定的なゲートをすべてのフロントエンド変更へ適用し、実API E2E、性能、複数ブラウザを対象変更と機能完成の段階で追加する。
+- `MUST` async Server Components、BFF、Cookie、Spring Boot API、DBをまたぐ利用者フローを単体テストだけで保証しない。
+
 ## ローカル実行とビルド
 アプリケーション構築後は、`frontend/package.json`のnpm scriptsをコマンドの正本とする。
 
@@ -94,9 +99,16 @@ frontend/
 | `npm run dev` | Next.js開発サーバーだけを起動する |
 | `npm run typecheck` | TypeScriptと生成したAPI型を検査する |
 | `npm run lint` | 静的解析を実行する |
-| `npm run test` | 単体・コンポーネントテストを実行する |
+| `npm run test` | 単体テストとAPI境界テストを実行する |
 | `npm run build` | Node.js実行用の成果物を生成する |
 | `npm run start` | ビルド成果物をローカルで実行する |
+| `npm run build:storybook` | Storybookの静的成果物を生成する |
+| `npm run test:storybook` | storyの描画、interaction、a11y検査を実行する |
+| `npm run test:e2e` | Chromiumで実APIブラウザE2Eを実行する |
+| `npm run test:e2e:cross-browser` | Chromium、Firefox、WebKitで対象フローを実行する |
+| `npm run test:performance` | production buildの性能予算を検査する |
+| `npm run audit:high` | CriticalとHighの既知脆弱性を検査する |
+| `npm run check` | すべてのフロントエンド変更に必要な高速ゲートを実行する |
 
 - `MUST NOT` `npm run dev`からSpring Boot API、DB、Gradleタスクを起動しない。
 - `MUST` Next.jsとSpring Boot APIを別プロセスとして起動し、ブラウザの接続先はNext.jsだけとする。
@@ -109,19 +121,6 @@ frontend/
 - `MUST` BFFとSpring Boot APIでトレースIDを相関できるようにする。
 - `SHOULD` 代表的な障害シナリオで主要障害領域を10分以内に一次特定できることを確認する。
 
-## 依存関係
-- `MUST` 依存関係の通常更新は手動で行い、DependabotまたはRenovateを初期導入しない。
-- `MUST` 新しい依存関係を追加する場合、標準Web APIまたは既存依存で代替できない理由を示す。
-- `MUST` 新しい依存関係の追加時、および対象機能へ着手する前に、既知の脆弱性と保守状態を確認する。
-- `MUST` CriticalまたはHighの既知脆弱性がある依存を、影響評価と明示的なリスク対応なしに採用または維持しない。
-- `MUST` major更新は破壊的変更、移行手順、ビルドと主要フローへの影響を個別に確認する。
-- デプロイまたは実利用を開始する場合は、依存関係の自動更新と継続的な脆弱性検査を再評価する。
-
-## テレメトリ
-- 現在はデプロイせず実利用者データを扱わないため、外部テレメトリSDK、収集設定、送信基盤を初期構成へ追加しない。
-- `MUST NOT` メールアドレス、Cookie、Bearerアクセストークン、パスワード、API本文をブラウザまたはサーバーログへ出力しない。
-- デプロイまたは実利用を開始する場合は、画面エラー、主要操作、画面性能、BFFとAPIの相関識別子の観測方針を再評価する。
-
 ## 文書の管理
 - `MUST` 本ガイドをフロントエンド規則の単一の入口として維持する。
 - `MUST` BFFまたはClientのみに属する詳細文書を、それぞれの`bff/`または`client/`配下へ配置する。
@@ -132,7 +131,6 @@ frontend/
 - [ADR-0001: React Router SPAをフロントエンドの初期アーキテクチャに採用する（置換済み）](ADR/0001-adopt-react-router-spa-architecture.md)
 - [ADR-0002: Next.js BFFをフロントエンドアーキテクチャに採用する](ADR/0002-adopt-nextjs-bff-architecture.md)
 
-## 決定を後続TODOへ委ねる事項
-- 品質・非機能要件: `task/todo/2026-07-20-05-define-frontend-quality-and-nonfunctional-requirements.md`
+## 実装を後続TODOへ委ねる事項
 - Next.js基盤構築: `task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`
 - BFF認証・API連携実装: `task/todo/2026-07-20-08-implement-bff-auth-api-integration.md`
