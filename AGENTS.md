@@ -13,11 +13,15 @@
 
 | 依頼種別 | 最初に参照するフロー |
 |---|---|
-| ユーザーストーリーの作成、仕様の作成・更新・Q&A | `agents/flows/user-story-creation-flow.md` |
-| 機能追加、バグ修正、リファクタリング、実装設計、実装レビュー | `agents/flows/implementation-task-flow.md` |
+| ユーザーストーリー、ユーザー価値・業務上の振る舞い・データの意味や有効状態・受け入れ条件を扱うプロダクト仕様の作成・更新・Q&A | `agents/flows/user-story-creation-flow.md` |
+| サーバー、フロントエンド、両方にまたがる機能追加、バグ修正、リファクタリング、技術仕様、実装設計、実装レビュー | `agents/flows/implementation-task-flow.md` |
+
+- `agents/flows/implementation-task-flow.md`を実装依頼の共通入口とし、対象領域に応じてサーバー実装フロー、フロントエンド実装フロー、または両方へルーティングする。
+- 依頼名に「仕様」または「設計」が含まれていても、ユーザー価値、業務上の振る舞い、データの意味または有効状態、受け入れ条件を決定せず、技術規則だけで判断できる場合は実装フローから開始する。
 
 ### 作業条件に応じた追加参照
 - `api/` 配下で作業する場合は、`api/AGENTS.md` を追加で適用し、API 開発ルールの入口として `api/docs/backend-guidelines.md` を参照する。
+- `frontend/` 配下で作業する場合は、`frontend/AGENTS.md` を追加で適用し、フロントエンド開発ルールの入口として `frontend/docs/frontend-guidelines.md` を参照する。
 - 実装中に設計方針レビューの適用条件を判定する場合は、`agents/flows/design-policy-review-checks.md` を参照する。
 - アーキテクチャ、セキュリティ、DB の設計またはレビューを行う場合は、横断的な運用・非機能前提の正本として `product/operational-nonfunctional-baseline.md` を参照する。通常の機能実装、文言修正、テストのみの変更では必須参照としない。
 - ユーザー価値、ユースケース、ドメインモデル、ドメインイベントを探索する場合は、`product/domain-context/README.md` の探索規約に従う。
