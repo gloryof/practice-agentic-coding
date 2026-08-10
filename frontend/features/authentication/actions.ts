@@ -9,12 +9,7 @@ import { type BffSession } from "@/shared/auth/server/bff-session-store";
 import { clearSessionCookie, calculateSessionExpiry, createSessionId, deleteSession, getBffSessionStore, readCurrentSession, setSessionCookie } from "@/shared/auth/server/session";
 import { loginRateLimiter, logoutRateLimiter } from "@/shared/auth/server/rate-limiter";
 
-export type LoginActionState =
-  | { status: "idle" }
-  | { status: "success" }
-  | { status: "error"; code: "invalid_input" | "invalid_credentials" | "rate_limited" | "temporarily_unavailable" | "unexpected"; fieldErrors?: Readonly<Record<string, ReadonlyArray<string>>>; retryAfterSeconds?: number };
-
-export const initialLoginActionState: LoginActionState = { status: "idle" };
+import type { LoginActionState } from "./action-state";
 
 export async function loginAction(_previous: LoginActionState, formData: FormData): Promise<LoginActionState> {
   const email = String(formData.get("email") ?? "");
