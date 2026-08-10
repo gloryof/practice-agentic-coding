@@ -7,7 +7,7 @@ import { SkipLink } from "@/shared/ui/skip-link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "コミュニティ図書館",
+  title: "Book Vista",
   description: "本から思いがけない知識との出会いをつくる図書館サービス",
 };
 
@@ -20,7 +20,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <SkipLink href="#main-content">本文へ移動</SkipLink>
         <header className="border-b border-border bg-surface">
           <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
-            <p className="text-lg font-semibold">コミュニティ図書館</p>
+            <p className="text-lg font-semibold">Book Vista</p>
           </div>
         </header>
         {children}
