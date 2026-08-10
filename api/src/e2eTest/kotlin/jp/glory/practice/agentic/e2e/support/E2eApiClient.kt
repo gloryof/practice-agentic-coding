@@ -33,6 +33,14 @@ internal object E2eApiClient {
                 ),
             ).post("/api/v1/auth/login")
 
+    fun logout(accessToken: String) =
+        given()
+            .baseUri(baseUrl)
+            .disableCsrf()
+            .accept(ContentType.JSON)
+            .header("Authorization", "Bearer $accessToken")
+            .post("/api/v1/auth/logout")
+
     fun searchBookItems(
         accessToken: String,
         isbn: String,

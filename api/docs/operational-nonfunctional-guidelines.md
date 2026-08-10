@@ -34,7 +34,6 @@
 - ブラウザはAPIへ直接接続せず、Next.js BFFからのサーバー間通信を受け付ける。
 - 保護対象APIは既存の`Authorization`ヘッダーによるBearer認証を維持する。
 - フロントエンド向けCORS許可を追加しない。
-- BFFから受け取るトレースIDはAPI境界で形式と長さを検証する。
 - Bearer、パスワード、メールアドレス、Cookie、API本文をログへ記録しない。
 - 詳細な連携契約は`frontend/docs/bff/api-auth-integration.md`を参照する。
 

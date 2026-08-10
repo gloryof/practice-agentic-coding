@@ -128,7 +128,6 @@ npm run check
 ## 障害境界とローカル切り分け
 - `MUST` 失敗をブラウザ、Next.jsレンダリング、Server ActionまたはRoute Handler、BFFセッションストア、Spring Boot API、DBに分類可能にする。
 - `MUST` API呼び出し失敗をキャンセル、タイムアウト、ネットワーク、HTTP、API契約、BFF内部エラーに分類可能な共通表現へ変換する。
-- `MUST` BFFとSpring Boot APIでトレースIDを相関できるようにする。
 - `SHOULD` 代表的な障害シナリオで主要障害領域を10分以内に一次特定できることを確認する。
 
 ## 文書の管理

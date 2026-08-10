@@ -13,7 +13,7 @@ Next.js BFFとSpring Boot APIの信頼境界、認証セッション、API契約
 |---|---|---|
 | ブラウザからBFF | なし | Cookie、フォーム、URL、ヘッダー、Server Action入力 |
 | BFF内部 | 検証済み設定とセッションストアから取得した値 | Client Componentsから渡された認証・認可情報 |
-| BFFからSpring Boot API | BFFが生成した`Authorization`と検証済みトレースID | 上流から未検証で転送されたヘッダー |
+| BFFからSpring Boot API | BFFが生成した`Authorization` | 上流から未検証で転送されたヘッダー |
 | Spring Boot API | API自身が検証したBearerと認可結果 | BFFの画面状態や利用者IDの申告 |
 
 ## 認証フロー
@@ -102,7 +102,6 @@ Cookie名は実装時に一つの定数として定義する。属性は次を�
 ### 追加する契約
 - 現在のBearerを失効させる`POST /api/v1/auth/logout`を追加する。
 - ログアウトは`Authorization: Bearer <access-token>`を必須とし、失効成功時は`204 No Content`、無効または期限切れのBearerには既存の認証エラー形式で`401 Unauthorized`を返す。
-- 認証秘密をドメインイベントへ含めずにセッションを保存できるよう、ログイン処理のイベントと技術的セッション永続化の責務を分離する。
 - ログイン、ログアウトには濫用対策を追加し、具体的なしきい値を実装TODOで決定する。
 
 ### CORS
@@ -122,7 +121,6 @@ Cookie名は実装時に一つの定数として定義する。属性は次を�
 ### Spring Boot APIエラー
 - 安定した`code`を分岐に使用し、`message`を分岐条件にしない。
 - `details`は同じエラー種別内の入力項目や理由の表示にだけ使用する。
-- `trace_id`は利用者向けの問い合わせ識別子として保持する。
 
 ### BFFエラー
 BFFは少なくとも次へ分類する。
@@ -133,17 +131,14 @@ BFFは少なくとも次へ分類する。
 | 未認証・期限切れ | ログイン導線を示す |
 | 業務エラー | APIの安定コードに対応する理由と次の操作を示す |
 | タイムアウト・接続失敗 | 再試行可能な一時エラーとして示す |
-| API契約不一致 | 一般的な障害表示と問い合わせ識別子を示す |
-| BFF内部エラー | 内部情報を隠し、一般的な障害表示と問い合わせ識別子を示す |
+| API契約不一致 | 一般的な障害表示を示す |
+| BFF内部エラー | 内部情報を隠し、一般的な障害表示を示す |
 
 - Spring Boot APIの内部URL、スタックトレース、Cookie、Bearer、設定値をブラウザへ返さない。
 - 更新操作を自動再試行しない。読み取りの再試行も、回数と対象エラーを明示した場合だけ許可する。
 
-## トレースとログ
-- BFFは受信した`X-Trace-Id`を小文字の正準UUID文字列として検証し、不正または未指定ならUUID v4を生成する。
-- 検証済みトレースIDをSpring Boot APIの`X-Trace-Id`へ伝播し、応答とログを相関する。
-- Spring Boot API側でも受信トレースIDを検証する。
-- ログには操作名、結果、エラー分類、依存先、所要時間、トレースIDを記録してよい。
+## ログ
+- ログには操作名、結果、エラー分類、依存先、所要時間を記録してよい。
 - Cookie、Bearer、パスワード、メールアドレス、API本文、`Set-Cookie`、`Authorization`をログへ記録しない。
 
 ## 検証要件
@@ -152,10 +147,10 @@ BFFは少なくとも次へ分類する。
 - セッション固定化、Cookie改ざん、期限切れ、API認証失敗、CSRF、XSS出力の代表的な異常系を自動テストする。
 - Spring Boot APIのログアウト後に同じBearerを再利用できないことをAPI E2Eで検証する。
 - OpenAPI生成物のドリフト検査をCIで実行する。
-- BFF、セッションストア、APIの障害を注入し、トレースIDから主要障害領域を10分以内に特定できることを確認する。
+- BFF、セッションストア、APIの障害を注入し、ログとエラー分類から主要障害領域を10分以内に特定できることを確認する。
 
 ## 実装責務
 - 品質ゲート、対応ブラウザ、性能、ログ、セキュリティヘッダー、依存関係は[フロントエンド品質・非機能要件](../quality-and-nonfunctional-requirements.md)を適用する。
 - Next.js基盤、サーバー専用設定、セッションストアの土台は`task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`で実装する。
-- BFF認証、Cookie、APIクライアント、Spring Boot APIのログアウト、イベント責務分離、型同期、エラー、トレース、認証E2Eは`task/todo/2026-07-20-08-implement-bff-auth-api-integration.md`で実装する。
+- BFF認証、Cookie、APIクライアント、Spring Boot APIのログアウト、型同期、エラー、ログ、認証E2Eは`task/todo/2026-07-20-08-implement-bff-auth-api-integration.md`で実装する。
 - 登録・ログイン画面は`task/todo/2026-07-20-09-implement-frontend-registration-and-login.md`で実装する。

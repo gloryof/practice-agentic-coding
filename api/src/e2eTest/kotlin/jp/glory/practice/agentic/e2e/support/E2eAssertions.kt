@@ -35,6 +35,19 @@ internal object E2eAssertions {
         )
     }
 
+    fun assertLogoutSucceeded(response: Response) {
+        assertEquals(204, response.statusCode)
+        assertTrue(response.body.asString().isEmpty(), "logout response body should be empty")
+    }
+
+    fun assertLoginRequired(response: Response) {
+        assertApiError(
+            response = response,
+            expectedStatus = 401,
+            expectedCode = "LOGIN_REQUIRED",
+        )
+    }
+
     fun assertDuplicateEmailRejected(response: Response) {
         assertApiError(
             response = response,

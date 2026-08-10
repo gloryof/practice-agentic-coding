@@ -21,7 +21,7 @@
 
 ## フロー
 1. 現在のログインセッションを特定する。
-2. 対象セッションを失効させる。
+2. [ログアウトイベント](../domain/event/logged-out.md)を発行し、対象セッションを失効させる。
 3. 同じセッションによる認証が必要な機能の利用を拒否する。
 
 ## 制約
@@ -31,6 +31,7 @@
 
 ## 関連モデル・イベント
 - [認証されたアカウント](../domain/model/auth-account.md)
+- [ログアウトイベント](../domain/event/logged-out.md)
 
 ## 用語
 - [図書館利用者](../../../ubiquitous/terms/term-library-user.md)

@@ -126,12 +126,11 @@
 
 ## 可観測性と障害切り分け
 - 現在はデプロイせず実利用者データを扱わないため、外部テレメトリSDK、収集設定、送信基盤を初期構成へ追加しない。
-- `MUST` BFFの構造化ログに時刻、level、イベント名、HTTP method、URL値を含まないroute template、結果、処理時間、エラー分類、検証済みtrace IDを含める。
+- `MUST` BFFの構造化ログに時刻、level、イベント名、HTTP method、URL値を含まないroute template、結果、処理時間、エラー分類を含める。
 - `MUST NOT` メールアドレス、Cookie、セッションID、Bearerアクセストークン、パスワード、要求・応答本文、URL queryをブラウザまたはサーバーログへ出力しない。
-- `MUST` ブラウザで表示できる検証済みtrace IDと、BFFからSpring Boot APIへ伝播するtrace IDを相関できるようにする。
-- `MUST` ブラウザE2Eで未処理例外と予期しないconsole errorを失敗にし、BFF、セッションストア、Spring Boot API、DBの代表障害をtrace IDとエラー分類から区別できることを確認する。
+- `MUST` ブラウザE2Eで未処理例外と予期しないconsole errorを失敗にし、BFF、セッションストア、Spring Boot API、DBの代表障害をログとエラー分類から区別できることを確認する。
 - `MUST` 代表障害シナリオで、収集したartifactとログから主要障害領域を10分以内に一次特定できることを確認する。
-- デプロイまたは実利用を開始する場合は、画面エラー、主要操作の試行数・成功率・処理時間、Core Web Vitals、trace ID欠落率を観測対象へ追加し、保持期間、通知、同意、マスキング、費用を決定する。
+- デプロイまたは実利用を開始する場合は、画面エラー、主要操作の試行数・成功率・処理時間、Core Web Vitalsを観測対象へ追加し、保持期間、通知、同意、マスキング、費用を決定する。
 
 ## セキュリティヘッダー
 - `MUST` production応答へリクエスト単位の予測困難なnonceを使うContent Security Policyを設定する。

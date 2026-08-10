@@ -19,7 +19,7 @@ class AccessTokenAuthenticator(
         val token = extractBearerToken(authorizationHeader) ?: return null
         val session = store.find(token) ?: return null
         val now = clock.instant()
-        if (session.expiresAt.isBefore(now)) {
+        if (!session.expiresAt.isAfter(now)) {
             store.remove(token)
             return null
         }

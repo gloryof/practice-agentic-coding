@@ -76,5 +76,28 @@ class AccessTokenAuthenticatorTest {
 
             verify(exactly = 1) { store.remove("token-123") }
         }
+
+        @Test
+        fun `given token expiring now when require valid token then throws and removes token`() {
+            val store = mockk<AccessTokenStore>()
+            val session =
+                AccessTokenSession(
+                    token = "token-123",
+                    libraryUserId = "user-id",
+                    expiresAt = now,
+                )
+            every { store.find("token-123") } returns session
+            every { store.remove("token-123") } returns Unit
+
+            val sut = AccessTokenAuthenticator(store, clock)
+
+            val exception =
+                assertFailsWith<AuthenticationApiException> {
+                    sut.requireValidToken("Bearer token-123")
+                }
+
+            assertEquals(AuthenticationApiErrorCode.LOGIN_REQUIRED, exception.errorCode)
+            verify(exactly = 1) { store.remove("token-123") }
+        }
     }
 }

@@ -8,7 +8,7 @@
 ## 適用範囲
 - `MUST` 本文書を図書館利用者向けフロントエンドのトークン、共通UI、機能UI、Storybookへ適用する。
 - `MUST` 状態の所有、非同期処理、二重送信、エラー回復には[状態・イベント管理設計](state-and-event-management.md)を併せて適用する。
-- `MUST` APIエラーの分類と問い合わせ識別子には[API・認証連携設計](bff/api-auth-integration.md)を適用する。
+- `MUST` APIエラーの分類には[API・認証連携設計](bff/api-auth-integration.md)を適用する。
 - 本文書は画面の業務フロー、API契約、テストのCIゲートを決定しない。テストのCIゲートは[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を正本とする。
 
 ## 設計原則
@@ -125,7 +125,6 @@ Tailwind theme variablesの仕様は[Theme variables](https://tailwindcss.com/do
 - `MUST` label、ボタン、リンクだけで目的が分かる文言を使用し、「こちら」「実行」のように文脈へ依存する名称を避ける。
 - `MUST` 入力エラーで修正対象と要件を示し、業務エラーで成立しなかった理由と次の操作を示す。
 - `MUST NOT` 例外名、スタックトレース、API内部コード、秘密情報を表示する。
-- `MAY` 予期しないエラーで、API・認証連携設計に従って検証済みの問い合わせ識別子を表示してよい。
 
 ## アクセシビリティ
 - `MUST` [WCAG 2.2](https://www.w3.org/TR/WCAG22/)のLevel AとLevel AAを画面の設計・実装基準とする。
