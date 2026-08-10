@@ -8,6 +8,9 @@
   },
   "overrides": {
     "nanoid": "3.3.17",
+    "@redocly/openapi-core": {
+      "js-yaml": "4.3.1"
+    },
     "sharp": "0.35.0",
     "tmp": "0.2.7",
     "uuid": "11.1.1"
@@ -17,6 +20,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run --config vitest.config.ts",
+    "api:types:generate": "node scripts/generate-openapi-types.mjs",
+    "api:types:check": "node scripts/check-openapi-types.mjs",
     "build": "next build --webpack && node scripts/check-client-bundle.mjs",
     "start": "next start",
     "storybook": "storybook dev -p 6006",
@@ -52,6 +57,7 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.0",
     "jsdom": "30.0.1",
+    "openapi-typescript": "7.13.0",
     "postcss": "8.5.25",
     "storybook": "10.5.5",
     "tailwindcss": "4.3.3",

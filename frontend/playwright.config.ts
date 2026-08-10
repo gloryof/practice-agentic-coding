@@ -26,6 +26,7 @@ export default defineConfig({
       url: baseURL,
       env: {
         SPRING_API_BASE_URL: "http://127.0.0.1:8080",
+        BFF_PUBLIC_ORIGIN: "http://127.0.0.1:3000",
       },
       reuseExistingServer: false,
       timeout: 60_000,
