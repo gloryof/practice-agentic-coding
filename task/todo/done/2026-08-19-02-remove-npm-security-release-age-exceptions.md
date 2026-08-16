@@ -1,7 +1,8 @@
 # npmのセキュリティ修正版向け公開待機例外を解除する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-08-16 - 公開待機例外を解除し、依存関係の再現性と署名を確認
 - Updated: 2026-08-09 - 起票
 
 ## 背景
@@ -18,6 +19,12 @@
 ## 確認方法
 - `.npmrc`に`min-release-age=7`だけが有効な状態でロックファイルを再現できることを確認する。
 - Registry署名と来歴証明が成功し、承認していないCriticalまたはHighの既知脆弱性がないことを確認する。
+
+## 対応結果
+- `.npmrc`からすべての`min-release-age-exclude[]`を削除した。
+- Node.js 24で`npm ci`が成功し、`min-release-age=7`だけでロックファイルを再現できることを確認した。
+- `npm run audit:signatures`で873パッケージのRegistry署名を確認した。
+- `npm run audit:high`で検出した既存のHigh脆弱性は、Lighthouse CI、Storybook、Next.jsの各active TODOで継続管理する。
 
 ## 期限 / 優先度
 - 期限: 2026-08-16以降、最初の依存関係更新時

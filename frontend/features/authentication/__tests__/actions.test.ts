@@ -4,12 +4,15 @@ import { BffApiError } from "@/shared/api/server/api-errors";
 
 const mocks = vi.hoisted(() => ({
   revalidatePath: vi.fn(),
+  redirect: vi.fn(),
   loginWithSpringApi: vi.fn(),
   logoutWithSpringApi: vi.fn(),
   logBffEvent: vi.fn(),
   readCurrentSession: vi.fn(),
   clearSessionCookie: vi.fn(),
-  calculateSessionExpiry: vi.fn((now: Date, seconds: number) => new Date(now.getTime() + seconds * 1_000)),
+  calculateSessionExpiry: vi.fn(
+    (now: Date, seconds: number) => new Date(now.getTime() + seconds * 1_000),
+  ),
   createSessionId: vi.fn(() => "new-session-id"),
   deleteSession: vi.fn(),
   getBffSessionStore: vi.fn(),
@@ -19,6 +22,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
+vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
 vi.mock("@/shared/api/server/spring-api-client", () => ({
   loginWithSpringApi: mocks.loginWithSpringApi,
   logoutWithSpringApi: mocks.logoutWithSpringApi,
@@ -68,41 +72,64 @@ describe("authentication actions", () => {
   });
 
   it("ログイン成功時にセッションとCookieを設定する", async () => {
-    mocks.loginWithSpringApi.mockResolvedValue({ access_token: "server-token", expires_in_seconds: 300 });
+    mocks.loginWithSpringApi.mockResolvedValue({
+      access_token: "server-token",
+      expires_in_seconds: 300,
+    });
 
-    await expect(loginAction({ status: "idle" }, validForm())).resolves.toEqual({ status: "success" });
-    expect(mocks.getBffSessionStore().create).toHaveBeenCalledWith("new-session-id", expect.objectContaining({ accessToken: "server-token" }));
+    await expect(loginAction({ status: "idle" }, validForm())).resolves.toBeUndefined();
+    expect(mocks.getBffSessionStore().create).toHaveBeenCalledWith(
+      "new-session-id",
+      expect.objectContaining({ accessToken: "server-token" }),
+    );
     expect(mocks.setSessionCookie).toHaveBeenCalledWith("new-session-id", expect.any(Date));
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/", "layout");
+    expect(mocks.redirect).toHaveBeenCalledWith("/");
   });
 
   it("認証失敗を資格情報エラーへ変換する", async () => {
-    mocks.loginWithSpringApi.mockRejectedValue(new BffApiError("http", "unauthorized", { status: 401 }));
+    mocks.loginWithSpringApi.mockRejectedValue(
+      new BffApiError("http", "unauthorized", { status: 401 }),
+    );
 
-    await expect(loginAction({ status: "idle" }, validForm())).resolves.toEqual({ status: "error", code: "invalid_credentials" });
+    await expect(loginAction({ status: "idle" }, validForm())).resolves.toEqual({
+      status: "error",
+      code: "invalid_credentials",
+    });
   });
 
   it("レート制限時はAPIを呼ばない", async () => {
     mocks.loginConsume.mockReturnValue({ allowed: false, retryAfterSeconds: 7 });
 
-    await expect(loginAction({ status: "idle" }, validForm())).resolves.toEqual({ status: "error", code: "rate_limited", retryAfterSeconds: 7 });
+    await expect(loginAction({ status: "idle" }, validForm())).resolves.toEqual({
+      status: "error",
+      code: "rate_limited",
+      retryAfterSeconds: 7,
+    });
     expect(mocks.loginWithSpringApi).not.toHaveBeenCalled();
   });
 
   it("セッションがないログアウトでもCookieを破棄して成功する", async () => {
-    await expect(logoutAction()).resolves.toEqual({ status: "success" });
+    await expect(logoutAction()).resolves.toBeUndefined();
     expect(mocks.clearSessionCookie).toHaveBeenCalledOnce();
     expect(mocks.logoutWithSpringApi).not.toHaveBeenCalled();
+    expect(mocks.redirect).toHaveBeenCalledWith("/login?logged_out=1");
   });
 
   it("ログアウト時はローカル状態を破棄し、API失敗でも成功する", async () => {
-    const current = { id: "current-session", session: { accessToken: "server-token", expiresAt: new Date() } };
+    const current = {
+      id: "current-session",
+      session: { accessToken: "server-token", expiresAt: new Date() },
+    };
     mocks.readCurrentSession.mockResolvedValue(current);
     mocks.logoutWithSpringApi.mockRejectedValue(new BffApiError("network", "unavailable"));
 
-    await expect(logoutAction()).resolves.toEqual({ status: "success" });
+    await expect(logoutAction()).resolves.toBeUndefined();
     expect(mocks.deleteSession).toHaveBeenCalledWith("current-session");
     expect(mocks.logoutWithSpringApi).toHaveBeenCalledWith("server-token");
-    expect(mocks.logBffEvent).toHaveBeenCalledWith(expect.objectContaining({ event: "logout_remote_revocation", result: "failure" }));
+    expect(mocks.logBffEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ event: "logout_remote_revocation", result: "failure" }),
+    );
+    expect(mocks.redirect).toHaveBeenCalledWith("/login?logged_out=1");
   });
 });

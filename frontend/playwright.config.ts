@@ -16,13 +16,13 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: "../.codex/skills/run-api-e2e/scripts/run.sh start",
+      command: "./scripts/start-e2e-api.sh",
       url: "http://127.0.0.1:8080/actuator/health",
       reuseExistingServer: false,
       timeout: 120_000,
     },
     {
-      command: "npm run start",
+      command: "./scripts/start-e2e-bff.sh",
       url: baseURL,
       env: {
         SPRING_API_BASE_URL: "http://127.0.0.1:8080",

@@ -15,7 +15,7 @@
 
 | 段階 | 必須事項 | 再評価事項 |
 |---|---|---|
-| すべてのフロントエンド変更 | 型検査、静的解析、単体・境界テスト、build、Storybook build、story・a11y検査 | なし |
+| すべてのフロントエンド変更 | 整形検査、型検査、静的解析、単体・境界テスト、build、Storybook build、story・a11y検査 | なし |
 | BFF、認証、API契約、利用者機能の変更 | 上記に加えてChromiumの実APIブラウザE2E | 対象変更に応じた性能、複数ブラウザ |
 | 各画面機能の完了または互換性へ影響する変更 | Firefox、WebKit、手動アクセシビリティ、性能予算 | 視覚差分検査 |
 | デプロイまたは実利用開始 | フィールド性能、画面エラー、主要操作成功率、通知と保持 | 外部テレメトリ、依存関係自動更新、常時の複数ブラウザ検査 |
@@ -69,6 +69,8 @@
 
 | コマンド | 責務 |
 |---|---|
+| `npm run format` | Markdownと生成物を除くフロントエンドファイルをPrettierで整形する |
+| `npm run format:check` | Markdownと生成物を除くフロントエンドファイルの整形状態を検査する |
 | `npm run test` | 単体テストとAPI境界テストを1回実行する |
 | `npm run test:storybook` | Chromiumで全storyの描画、interaction、a11y検査を実行する |
 | `npm run build:storybook` | Storybookの静的成果物を生成する |
@@ -77,7 +79,7 @@
 | `npm run test:performance` | production buildへLighthouse CIと主要操作の性能検査を実行する |
 | `npm run audit:signatures` | npm Registryの署名と来歴証明を検査する |
 | `npm run audit:high` | CriticalとHighの既知脆弱性を検査する |
-| `npm run check` | 型検査、静的解析、単体・境界テスト、build、Storybook build、story・a11y検査を順に実行する |
+| `npm run check` | 整形検査、型検査、静的解析、単体・境界テスト、build、Storybook build、story・a11y検査を順に実行する |
 
 - `MUST` フロントエンドを変更するすべてのPRで`npm ci`の後に`npm run check`を成功させる。
 - `MUST` BFF、認証、API契約、利用者機能を変更するPRで、実APIブラウザE2Eを成功させる。

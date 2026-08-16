@@ -24,4 +24,4 @@ US-0004を実現するAPIは存在するが、図書館利用者が検索結果�
 
 ## 期限 / 優先度
 - 優先度: 11
-- 依存関係: `2026-07-20-10-implement-frontend-book-search-and-availability.md`
+- 依存関係: `2026-08-18-01-implement-frontend-book-search-and-availability.md`

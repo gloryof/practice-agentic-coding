@@ -21,7 +21,10 @@ export class TokenBucketRateLimiter {
       this.tokens -= 1;
       return { allowed: true, retryAfterSeconds: 0 };
     }
-    return { allowed: false, retryAfterSeconds: Math.max(1, Math.ceil((1 - this.tokens) / this.refillPerSecond)) };
+    return {
+      allowed: false,
+      retryAfterSeconds: Math.max(1, Math.ceil((1 - this.tokens) / this.refillPerSecond)),
+    };
   }
 }
 

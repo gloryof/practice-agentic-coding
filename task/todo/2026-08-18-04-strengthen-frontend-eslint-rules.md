@@ -29,4 +29,4 @@
 
 ## 期限 / 優先度
 - 優先度: 13
-- 依存関係: `2026-07-20-12-document-frontend-directory-responsibilities.md`
+- 依存関係: `2026-08-18-03-document-frontend-directory-responsibilities.md`

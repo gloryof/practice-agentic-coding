@@ -16,10 +16,7 @@ export function createRequestNonce(randomUuid: () => string = crypto.randomUUID)
   return Buffer.from(randomUuid(), "utf8").toString("base64");
 }
 
-export function buildContentSecurityPolicy(
-  nonce: string,
-  environment: CspEnvironment,
-): string {
+export function buildContentSecurityPolicy(nonce: string, environment: CspEnvironment): string {
   const scriptDevelopment = environment.development ? " 'unsafe-eval'" : "";
   const styleDevelopment = environment.development ? " 'unsafe-inline'" : "";
   const directives = [

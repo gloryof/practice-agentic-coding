@@ -8,7 +8,9 @@ test("基盤ページと公開ヘルスチェックが応答する", async ({ pa
   page.on("pageerror", (error) => browserErrors.push(error.message));
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "図書館の本を、もっと見つけやすく。" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "図書館の本を、もっと見つけやすく。" }),
+  ).toBeVisible();
   const health = await request.get("/api/health");
   expect(health.status()).toBe(200);
   await expect(health.json()).resolves.toEqual({ status: "up" });

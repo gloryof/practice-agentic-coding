@@ -19,9 +19,11 @@ export function configureBffLogSink(nextSink: LogSink): void {
 }
 
 export function logBffEvent(event: BffLogEvent): void {
-  sink(JSON.stringify({
-    timestamp: new Date().toISOString(),
-    level: event.result === "failure" ? "warn" : "info",
-    ...event,
-  }));
+  sink(
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: event.result === "failure" ? "warn" : "info",
+      ...event,
+    }),
+  );
 }

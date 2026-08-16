@@ -1,7 +1,8 @@
 # BFF認証・API連携を実装する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-08-16 - 認証画面の実APIブラウザE2Eと型ドリフト検査を完了
 - Updated: 2026-08-10 - Spring Boot APIのログアウトとBearer期限境界を実装し、横断トレース要件を対象外へ変更
 - Updated: 2026-08-10 - BFF共通基盤を実装し、認証ブラウザE2Eを後続の画面実装へ引き継ぎ
 - Updated: 2026-08-09 - 構築済みのセッションストア、サーバー設定、実API E2E基盤を利用する前提へ更新
@@ -41,3 +42,9 @@ Next.js BFFを介してSpring Boot APIのBearer認証契約を利用する方針
 - Spring Boot APIのログアウト、現在Bearerだけの失効、期限一致時の失効判定、API単体テスト、API E2E、動作確認スクリプトは実装済み。
 - BFF認証、Cookie、APIクライアント、型同期、エラー変換、秘密情報を除外したログ、BFF全体の濫用対策は実装済み。
 - 登録・ログイン画面完成後に、ブラウザ再起動相当、期限切れ、ログアウト、CSRF、Cookie改ざん、Bearer非露出を実API E2Eで検証する。
+
+## 完了内容
+- BFFセッション、Cookie、Server Action、Spring Boot APIクライアント、ログアウトと現在Bearerの失効、OpenAPI型同期、エラー変換、構造化ログを実装した。
+- Chromiumのproduction build実API E2Eでセッション固定化対策、ブラウザ再起動相当、期限切れ、Cookie改ざん、CSRF、ログアウト、Bearer非露出を確認した。
+- FirefoxとWebKitでも登録・ログイン・ログアウトの主要フローを確認した。
+- Spring Boot API E2Eでログアウト後のBearer再利用拒否を確認し、動的OpenAPIとコミット済み生成型に差分がないことを確認した。

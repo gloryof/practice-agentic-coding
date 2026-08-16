@@ -26,4 +26,4 @@
 
 ## 期限 / 優先度
 - 優先度: 12
-- 依存関係: `2026-07-20-11-implement-frontend-reservation.md`
+- 依存関係: `2026-08-18-02-implement-frontend-reservation.md`

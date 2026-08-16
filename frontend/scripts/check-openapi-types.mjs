@@ -11,14 +11,20 @@ const committed = path.join(frontendRoot, "..", "shared", "api", "generated", "o
 const schemaUrl = process.env.OPENAPI_SCHEMA_URL ?? "http://127.0.0.1:8080/v3/api-docs";
 
 try {
-  execFileSync(path.join(frontendRoot, "..", "node_modules", ".bin", "openapi-typescript"), [schemaUrl, "--output", generated], {
-    cwd: path.join(frontendRoot, ".."),
-    stdio: "inherit",
-  });
+  execFileSync(
+    path.join(frontendRoot, "..", "node_modules", ".bin", "openapi-typescript"),
+    [schemaUrl, "--output", generated],
+    {
+      cwd: path.join(frontendRoot, ".."),
+      stdio: "inherit",
+    },
+  );
   const expected = readFileSync(committed, "utf8");
   const actual = readFileSync(generated, "utf8");
   if (expected !== actual) {
-    console.error("OpenAPI generated types differ from the committed file. Run npm run api:types:generate.");
+    console.error(
+      "OpenAPI generated types differ from the committed file. Run npm run api:types:generate.",
+    );
     process.exitCode = 1;
   }
 } finally {

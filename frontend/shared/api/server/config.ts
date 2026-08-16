@@ -59,18 +59,37 @@ export function readServerConfig(
   if (!(publicOrigin.protocol === "http:" || publicOrigin.protocol === "https:")) {
     throw new InvalidServerConfigError("BFF_PUBLIC_ORIGIN must use HTTP or HTTPS.");
   }
-  if (publicOrigin.username || publicOrigin.password || publicOrigin.search || publicOrigin.hash || publicOrigin.pathname !== "/") {
-    throw new InvalidServerConfigError("BFF_PUBLIC_ORIGIN must not contain credentials, query parameters, fragments, or a path.");
+  if (
+    publicOrigin.username ||
+    publicOrigin.password ||
+    publicOrigin.search ||
+    publicOrigin.hash ||
+    publicOrigin.pathname !== "/"
+  ) {
+    throw new InvalidServerConfigError(
+      "BFF_PUBLIC_ORIGIN must not contain credentials, query parameters, fragments, or a path.",
+    );
   }
   if (publicOrigin.protocol === "http:" && !isLoopbackHost(publicOrigin.hostname)) {
-    throw new InvalidServerConfigError("HTTP BFF_PUBLIC_ORIGIN is allowed only for localhost or loopback hosts.");
+    throw new InvalidServerConfigError(
+      "HTTP BFF_PUBLIC_ORIGIN is allowed only for localhost or loopback hosts.",
+    );
   }
 
-  return Object.freeze({ springApiBaseUrl, publicOrigin, cookieSecure: publicOrigin.protocol === "https:" });
+  return Object.freeze({
+    springApiBaseUrl,
+    publicOrigin,
+    cookieSecure: publicOrigin.protocol === "https:",
+  });
 }
 
 function isLoopbackHost(hostname: string): boolean {
-  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "[::1]" || hostname === "::1";
+  return (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "[::1]" ||
+    hostname === "::1"
+  );
 }
 
 export function getServerConfig(): ServerConfig {

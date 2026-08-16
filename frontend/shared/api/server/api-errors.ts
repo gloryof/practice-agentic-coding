@@ -1,12 +1,6 @@
 import "server-only";
 
-export type BffErrorKind =
-  | "cancelled"
-  | "timeout"
-  | "network"
-  | "http"
-  | "contract"
-  | "internal";
+export type BffErrorKind = "cancelled" | "timeout" | "network" | "http" | "contract" | "internal";
 
 export type ApiErrorPayload = Readonly<{
   code: string;
@@ -41,7 +35,13 @@ export class BffApiError extends Error {
 }
 
 export function parseApiError(value: unknown): ApiErrorPayload | null {
-  if (!isRecord(value) || typeof value.code !== "string" || typeof value.message !== "string" || typeof value.trace_id !== "string" || !Array.isArray(value.details)) {
+  if (
+    !isRecord(value) ||
+    typeof value.code !== "string" ||
+    typeof value.message !== "string" ||
+    typeof value.trace_id !== "string" ||
+    !Array.isArray(value.details)
+  ) {
     return null;
   }
   const details = value.details.filter(isApiErrorDetail);

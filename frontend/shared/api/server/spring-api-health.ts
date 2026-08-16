@@ -28,12 +28,7 @@ export async function checkSpringApiHealth(
     }
 
     const body: unknown = await response.json();
-    if (
-      typeof body === "object" &&
-      body !== null &&
-      "status" in body &&
-      body.status === "UP"
-    ) {
+    if (typeof body === "object" && body !== null && "status" in body && body.status === "UP") {
       return { status: "up" };
     }
   } catch {

@@ -15,7 +15,7 @@
 - `MUST` BFFを変更する場合は[BFFアーキテクチャ](bff/architecture.md)を参照する。
 - `MUST` Client Componentsまたはブラウザ側を変更する場合は[Clientアーキテクチャ](client/architecture.md)を参照する。
 - `MUST` BFFとClientの両境界を変更する場合は、両方のアーキテクチャを参照する。
-- 現在はアーキテクチャ、ツールチェーン、API・認証連携、状態・イベント管理、デザインシステム、品質・非機能要件を決定し、Next.js BFFの実行可能な基盤まで構築済みである。登録、認証、蔵書検索、在庫確認、予約の利用者機能は未実装である。
+- 現在はNext.js BFF基盤に加え、利用登録、ログイン、ログアウト、認証セッションを実装済みである。蔵書検索、在庫確認、予約の利用者機能は未実装である。
 - `MUST` テスト、CI、アクセシビリティ検査、対応ブラウザ、性能、可観測性、セキュリティヘッダー、依存関係には[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を適用する。
 
 ## アーキテクチャ
@@ -106,6 +106,8 @@ npm run check
 |---|---|
 | `npm ci` | ロックファイルどおりに依存関係を準備する |
 | `npm run dev` | Next.js開発サーバーだけを起動する |
+| `npm run format` | Markdownと生成物を除くフロントエンドファイルをPrettierで整形する |
+| `npm run format:check` | Markdownと生成物を除くフロントエンドファイルの整形状態を検査する |
 | `npm run typecheck` | TypeScriptと生成したAPI型を検査する |
 | `npm run lint` | 静的解析を実行する |
 | `npm run test` | 単体テストとAPI境界テストを実行する |
@@ -120,7 +122,7 @@ npm run check
 | `npm run test:performance` | production buildの性能予算を検査する |
 | `npm run audit:signatures` | Registry署名と来歴証明を検査する |
 | `npm run audit:high` | CriticalとHighの既知脆弱性を検査する |
-| `npm run check` | すべてのフロントエンド変更に必要な高速ゲートを実行する |
+| `npm run check` | 整形検査を含む、すべてのフロントエンド変更に必要な高速ゲートを実行する |
 
 - `MUST NOT` `npm run dev`からSpring Boot API、DB、Gradleタスクを起動しない。
 - `MUST` Next.jsとSpring Boot APIを別プロセスとして起動し、ブラウザの接続先はNext.jsだけとする。
@@ -143,4 +145,5 @@ npm run check
 - [ADR-0002: Next.js BFFをフロントエンドアーキテクチャに採用する](ADR/0002-adopt-nextjs-bff-architecture.md)
 
 ## 実装を後続TODOへ委ねる事項
-- BFF認証・API連携実装: `task/todo/2026-07-20-08-implement-bff-auth-api-integration.md`
+- 蔵書検索・在庫確認: `task/todo/2026-08-18-01-implement-frontend-book-search-and-availability.md`
+- 予約: `task/todo/2026-08-18-02-implement-frontend-reservation.md`

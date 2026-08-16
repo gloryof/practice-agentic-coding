@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes, Ref } from "react";
 
 type TextFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "type"> &
   Readonly<{
@@ -7,6 +7,7 @@ type TextFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "type">
     type?: "text" | "email" | "password" | "search";
     hint?: string;
     error?: string;
+    inputRef?: Ref<HTMLInputElement>;
   }>;
 
 export function TextField({
@@ -15,6 +16,7 @@ export function TextField({
   type = "text",
   hint,
   error,
+  inputRef,
   className = "",
   ...props
 }: TextFieldProps) {
@@ -34,6 +36,7 @@ export function TextField({
       ) : null}
       <input
         {...props}
+        ref={inputRef}
         id={id}
         type={type}
         aria-describedby={describedBy}

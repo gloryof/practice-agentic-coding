@@ -14,7 +14,9 @@ export const BFF_SESSION_COOKIE = "book_vista_session";
 const BFF_MAX_SESSION_MS = 24 * 60 * 60 * 1_000;
 const SESSION_ID_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 
-const globalStore = globalThis as typeof globalThis & { __bookVistaBffSessionStore?: BffSessionStore };
+const globalStore = globalThis as typeof globalThis & {
+  __bookVistaBffSessionStore?: BffSessionStore;
+};
 const sessionStore = globalStore.__bookVistaBffSessionStore ?? new InMemoryBffSessionStore();
 globalStore.__bookVistaBffSessionStore = sessionStore;
 
@@ -35,7 +37,9 @@ export function isValidSessionId(value: string): boolean {
   return SESSION_ID_PATTERN.test(value);
 }
 
-export async function readCurrentSession(now = new Date()): Promise<Readonly<{ id: string; session: BffSession }> | null> {
+export async function readCurrentSession(
+  now = new Date(),
+): Promise<Readonly<{ id: string; session: BffSession }> | null> {
   const cookieStore = await cookies();
   const id = cookieStore.get(BFF_SESSION_COOKIE)?.value;
   if (!id || !isValidSessionId(id)) return null;
@@ -68,5 +72,11 @@ export async function clearSessionCookie(): Promise<void> {
 
 export async function deleteSession(id: string): Promise<void> {
   await sessionStore.delete(id);
-  logBffEvent({ event: "bff_session_delete", method: "INTERNAL", route: "session-store", dependency: "session-store", result: "success" });
+  logBffEvent({
+    event: "bff_session_delete",
+    method: "INTERNAL",
+    route: "session-store",
+    dependency: "session-store",
+    result: "success",
+  });
 }

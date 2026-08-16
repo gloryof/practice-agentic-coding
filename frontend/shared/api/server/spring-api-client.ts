@@ -23,48 +23,152 @@ export async function requestSpringApi<T>(request: SpringApiRequest): Promise<T>
   if (request.accessToken) headers.set("Authorization", `Bearer ${request.accessToken}`);
 
   try {
-    const response = await fetcher(new URL(request.path.replace(/^\//, ""), getServerConfig().springApiBaseUrl), {
-      method: request.method,
-      headers,
-      body: request.body === undefined ? undefined : JSON.stringify(request.body),
-      cache: "no-store",
-      signal: AbortSignal.timeout(timeoutMilliseconds),
-    });
-    const rawBody: unknown = response.status === 204 ? undefined : await response.json().catch(() => undefined);
+    const response = await fetcher(
+      new URL(request.path.replace(/^\//, ""), getServerConfig().springApiBaseUrl),
+      {
+        method: request.method,
+        headers,
+        body: request.body === undefined ? undefined : JSON.stringify(request.body),
+        cache: "no-store",
+        signal: AbortSignal.timeout(timeoutMilliseconds),
+      },
+    );
+    const rawBody: unknown =
+      response.status === 204 ? undefined : await response.json().catch(() => undefined);
     if (!response.ok) {
       const apiError = parseApiError(rawBody);
-      const error = new BffApiError(apiError ? "http" : "contract", apiError?.message ?? "Spring API returned an invalid error response.", {
-        status: response.status,
-        apiCode: apiError?.code,
-        details: apiError?.details,
+      const error = new BffApiError(
+        apiError ? "http" : "contract",
+        apiError?.message ?? "Spring API returned an invalid error response.",
+        {
+          status: response.status,
+          apiCode: apiError?.code,
+          details: apiError?.details,
+        },
+      );
+      logBffEvent({
+        event: "spring_api_request",
+        method: request.method,
+        route: request.path,
+        dependency: "spring-api",
+        result: "failure",
+        durationMs: Date.now() - startedAt,
+        errorClass: error.kind,
       });
-      logBffEvent({ event: "spring_api_request", method: request.method, route: request.path, dependency: "spring-api", result: "failure", durationMs: Date.now() - startedAt, errorClass: error.kind });
       throw error;
     }
-    logBffEvent({ event: "spring_api_request", method: request.method, route: request.path, dependency: "spring-api", result: "success", durationMs: Date.now() - startedAt });
+    logBffEvent({
+      event: "spring_api_request",
+      method: request.method,
+      route: request.path,
+      dependency: "spring-api",
+      result: "success",
+      durationMs: Date.now() - startedAt,
+    });
     return rawBody as T;
   } catch (error) {
     if (error instanceof BffApiError) throw error;
     const kind = isAbortError(error) ? "timeout" : "network";
     const bffError = new BffApiError(kind, "Spring API request failed.", { cause: error });
-    logBffEvent({ event: "spring_api_request", method: request.method, route: request.path, dependency: "spring-api", result: "failure", durationMs: Date.now() - startedAt, errorClass: bffError.kind });
+    logBffEvent({
+      event: "spring_api_request",
+      method: request.method,
+      route: request.path,
+      dependency: "spring-api",
+      result: "failure",
+      durationMs: Date.now() - startedAt,
+      errorClass: bffError.kind,
+    });
     throw bffError;
   }
 }
 
-export type LoginApiResponse = Readonly<Required<Pick<components["schemas"]["LoginResponse"], "access_token" | "token_type" | "expires_in_seconds">> & { token_type: "Bearer" }>;
+export type LoginApiResponse = Readonly<
+  Required<
+    Pick<
+      components["schemas"]["LoginResponse"],
+      "access_token" | "token_type" | "expires_in_seconds"
+    >
+  > & { token_type: "Bearer" }
+>;
 
-export async function loginWithSpringApi(email: string, password: string, fetcher: typeof fetch = fetch): Promise<LoginApiResponse> {
-  const response = await requestSpringApi<unknown>({ method: "POST", path: "/api/v1/auth/login", body: { email, password }, fetcher });
-  const expiresInSeconds = isRecord(response) ? response.expires_in_seconds : undefined;
-  if (!isRecord(response) || typeof response.access_token !== "string" || response.token_type !== "Bearer" || typeof expiresInSeconds !== "number" || !Number.isSafeInteger(expiresInSeconds) || expiresInSeconds <= 0) {
-    throw new BffApiError("contract", "Spring API returned an invalid login response.");
+export type RegistrationApiResponse = Readonly<
+  Required<
+    Pick<
+      components["schemas"]["RegisterLibraryUserResponse"],
+      "library_user_id" | "email" | "registered_at"
+    >
+  >
+>;
+
+export async function registerWithSpringApi(
+  email: string,
+  password: string,
+  fetcher: typeof fetch = fetch,
+): Promise<RegistrationApiResponse> {
+  const response = await requestSpringApi<unknown>({
+    method: "POST",
+    path: "/api/v1/library-users/registrations",
+    body: { email, password },
+    fetcher,
+  });
+  if (
+    !isRecord(response) ||
+    typeof response.library_user_id !== "string" ||
+    response.library_user_id.length === 0 ||
+    typeof response.email !== "string" ||
+    response.email.length === 0 ||
+    typeof response.registered_at !== "string" ||
+    Number.isNaN(Date.parse(response.registered_at))
+  ) {
+    throw new BffApiError("contract", "Spring API returned an invalid registration response.");
   }
-  return { access_token: response.access_token, token_type: "Bearer", expires_in_seconds: expiresInSeconds };
+  return {
+    library_user_id: response.library_user_id,
+    email: response.email,
+    registered_at: response.registered_at,
+  };
 }
 
-export async function logoutWithSpringApi(accessToken: string, fetcher: typeof fetch = fetch): Promise<void> {
-  await requestSpringApi<undefined>({ method: "POST", path: "/api/v1/auth/logout", accessToken, fetcher });
+export async function loginWithSpringApi(
+  email: string,
+  password: string,
+  fetcher: typeof fetch = fetch,
+): Promise<LoginApiResponse> {
+  const response = await requestSpringApi<unknown>({
+    method: "POST",
+    path: "/api/v1/auth/login",
+    body: { email, password },
+    fetcher,
+  });
+  const expiresInSeconds = isRecord(response) ? response.expires_in_seconds : undefined;
+  if (
+    !isRecord(response) ||
+    typeof response.access_token !== "string" ||
+    response.token_type !== "Bearer" ||
+    typeof expiresInSeconds !== "number" ||
+    !Number.isSafeInteger(expiresInSeconds) ||
+    expiresInSeconds <= 0
+  ) {
+    throw new BffApiError("contract", "Spring API returned an invalid login response.");
+  }
+  return {
+    access_token: response.access_token,
+    token_type: "Bearer",
+    expires_in_seconds: expiresInSeconds,
+  };
+}
+
+export async function logoutWithSpringApi(
+  accessToken: string,
+  fetcher: typeof fetch = fetch,
+): Promise<void> {
+  await requestSpringApi<undefined>({
+    method: "POST",
+    path: "/api/v1/auth/logout",
+    accessToken,
+    fetcher,
+  });
 }
 
 function isAbortError(error: unknown): boolean {

@@ -17,6 +17,12 @@ Next.js BFFとSpring Boot APIの信頼境界、認証セッション、API契約
 | Spring Boot API | API自身が検証したBearerと認可結果 | BFFの画面状態や利用者IDの申告 |
 
 ## 認証フロー
+### 利用登録
+1. ブラウザはメールアドレスとパスワードをServer Actionへ送信する。
+2. Server Actionは入力を検証し、Spring Boot APIの利用登録APIを呼び出す。
+3. BFFは登録結果を実行時検証し、成功時は資格情報をURLへ含めずログイン画面へ遷移する。
+4. 入力エラー、メールアドレス重複、一時障害を安全な画面状態へ変換し、パスワードだけを画面から消去する。
+
 ### ログイン
 1. ブラウザはメールアドレスとパスワードをServer Actionへ送信する。
 2. Server Actionは入力を検証し、Spring Boot APIのログインAPIを呼び出す。
@@ -44,7 +50,7 @@ Next.js BFFとSpring Boot APIの信頼境界、認証セッション、API契約
 3. API呼び出しの成功・失敗にかかわらず、BFFは現在のセッションを削除してCookieを失効させる。
 4. ログアウトは現在のセッションだけを対象とする。
 
-Spring Boot APIのログアウトAPIが実装されるまで、BFF側の失効だけではAPI側Bearerが有効期限まで残る。BFF認証実装と同じTODOでAPI側失効を実装し、この移行状態を完成状態として扱わない。
+Spring Boot APIのログアウトAPIと現在Bearerだけの失効を実装済みである。BFFはAPI側失効に失敗した場合もローカルセッションとCookieの失効を完了し、失敗を秘密情報なしで記録する。
 
 ## セッション
 ### 抽象
@@ -161,11 +167,12 @@ BFFは少なくとも次へ分類する。
 - BFF、セッションストア、APIの障害を注入し、ログとエラー分類から主要障害領域を10分以内に特定できることを確認する。
 
 ### 現在の実装範囲
-- BFFのServer Action、セッション、Cookie、APIクライアント、エラー変換、OpenAPI生成型、構造化ログ、濫用制限は共通基盤として実装する。
-- 登録・ログイン画面を追加するまで、認証専用のブラウザE2E（ブラウザ再起動相当、期限切れ、ログアウト、CSRF、Cookie改ざんを含む）は画面実装TODOで実施する。
+- BFFの利用登録・ログイン・ログアウトServer Action、セッション、Cookie、APIクライアント、エラー変換、OpenAPI生成型、構造化ログ、ログイン・ログアウト濫用制限を実装済みである。
+- 登録・ログイン画面と、ブラウザ再起動相当、期限切れ、ログアウト、CSRF、Cookie改ざん、Bearer非露出を確認する実APIブラウザE2Eを実装済みである。
+- 認証済み検索、予約、API認証失敗、XSS出力の各シナリオは、対応する利用者機能の実装時に追加する。
 
 ## 実装責務
 - 品質ゲート、対応ブラウザ、性能、ログ、セキュリティヘッダー、依存関係は[フロントエンド品質・非機能要件](../quality-and-nonfunctional-requirements.md)を適用する。
 - Next.js基盤、サーバー専用設定、セッションストアの土台は`task/todo/2026-07-20-07-scaffold-nextjs-bff-foundation.md`で実装する。
-- BFF認証、Cookie、APIクライアント、Spring Boot APIのログアウト、型同期、エラー、ログ、認証E2Eは`task/todo/2026-07-20-08-implement-bff-auth-api-integration.md`で実装する。
-- 登録・ログイン画面は`task/todo/2026-07-20-09-implement-frontend-registration-and-login.md`で実装する。
+- BFF認証、Cookie、APIクライアント、Spring Boot APIのログアウト、型同期、エラー、ログ、認証E2Eは`task/todo/done/2026-07-20-08-implement-bff-auth-api-integration.md`で実装した。
+- 登録・ログイン画面は`task/todo/done/2026-07-20-09-implement-frontend-registration-and-login.md`で実装した。
