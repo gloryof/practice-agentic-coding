@@ -1,0 +1,7 @@
+interface:
+  display_name: "Agentワークフローベンチマーク"
+  short_description: "固定シナリオでAgentのコンテキスト選択状況を計測"
+  default_prompt: "$agent-workflow-benchmark を使ってコンテキストのベンチマークを実行してください。"
+
+policy:
+  allow_implicit_invocation: true
