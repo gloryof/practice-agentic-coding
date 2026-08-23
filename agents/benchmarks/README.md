@@ -11,15 +11,16 @@
 | ID | 系列 | シナリオ | 主な計測対象 | 状態 |
 |---|---|---|---|---|
 | `01-code-investigation` | 軽量 | コード調査 | 読み取り専用調査のルーティングとコード探索 | 定義済み |
-| `02-minor-change` | 軽量 | 軽微変更 | 小規模変更で省略できる文書、レビュー、検証 | 未定義 |
-| `03-user-story-creation` | 主系列 | ユーザーストーリー作成 | `po-story`、プロダクト前提、受け入れ条件 | 未定義 |
-| `04-domain-model-specification` | 主系列 | ドメインモデル仕様作成 | `po-spec`、ドメイン探索、仕様正本の更新 | 未定義 |
-| `05-api-implementation` | 主系列 | API実装 | 固定仕様からのサーバー実装、レビュー、検証 | 未定義 |
-| `06-frontend-implementation` | 主系列 | フロントエンド実装 | 固定仕様からの画面・BFF実装、レビュー、検証 | 未定義 |
-| `07-api-architecture-policy` | 技術方針文書 | APIアーキテクチャ方針変更 | 設計判断、非機能前提、設計方針レビュー | 未定義 |
-| `08-frontend-architecture-policy` | 技術方針文書 | フロントエンドアーキテクチャ方針変更 | 境界設計、非機能前提、条件付き設計方針レビュー | 未定義 |
+| `02-minor-change` | 軽量 | 軽微変更 | 小規模変更で省略できる文書、レビュー、検証 | 定義済み |
+| `03-user-story-creation` | 主系列 | ユーザーストーリー作成 | `po-story`、プロダクト前提、受け入れ条件 | 定義済み |
+| `04-domain-model-specification` | 主系列 | ドメインモデル仕様作成 | `po-spec`、ドメイン探索、仕様正本の更新 | 定義済み |
+| `05-api-implementation` | 主系列 | API実装 | 固定仕様からのサーバー実装、レビュー、検証 | 定義済み |
+| `06-frontend-implementation` | 主系列 | フロントエンド実装 | 固定仕様からの画面・BFF実装、レビュー、検証 | 定義済み |
+| `07-api-architecture-policy` | 技術方針文書 | APIアーキテクチャ方針変更 | 設計判断、非機能前提、設計方針レビュー | 定義済み |
+| `08-frontend-architecture-policy` | 技術方針文書 | フロントエンドアーキテクチャ方針変更 | 境界設計、非機能前提、条件付き設計方針レビュー | 定義済み |
 
 - 主系列の後段には、直前のベンチマーク実行で生成した成果物を渡さない。シナリオで固定したユーザーストーリーまたは仕様スナップショットを使用し、実行ごとの生成差分を後段へ伝播させない。
+- シナリオ内の固定仕様や業務判断はベンチマーク入力であり、プロダクト仕様の正本へ採用済みであることを意味しない。`pre-work`では正本へ反映せず、`full-run`の変更は隔離した一時worktree内だけで扱う。
 - 技術方針文書系列は、文言修正や意味を変えない構成整理ではなく、設計方針を意味のある形で変更する依頼とする。
 - 技術方針文書系列では、対象コミット時点の実装フローに基づいて分類、適用スキル、レビューを選択し、その結果と根拠を記録する。
 
@@ -206,3 +207,13 @@
 ## 初回シナリオ
 - 固定入力: [コード調査](scenarios/01-code-investigation.md)
 - 初回は`pre-work`で計測手順と結果テンプレートを検証する試運転とし、手順変更が必要な場合は基準値として確定する前に修正して再実行する。
+
+## シナリオ一覧
+- [コード調査](scenarios/01-code-investigation.md)
+- [軽微変更](scenarios/02-minor-change.md)
+- [ユーザーストーリー作成](scenarios/03-user-story-creation.md)
+- [ドメインモデル仕様作成](scenarios/04-domain-model-specification.md)
+- [API実装](scenarios/05-api-implementation.md)
+- [フロントエンド実装](scenarios/06-frontend-implementation.md)
+- [APIアーキテクチャ方針変更](scenarios/07-api-architecture-policy.md)
+- [フロントエンドアーキテクチャ方針変更](scenarios/08-frontend-architecture-policy.md)
