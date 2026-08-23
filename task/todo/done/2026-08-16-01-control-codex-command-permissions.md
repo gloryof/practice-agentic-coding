@@ -1,7 +1,9 @@
 # Codexの許可コマンドをプロジェクト単位で制御する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-08-23 - shellの文字列実行、ssh、scp、rsyncを明示的な拒否へ変更
+- Updated: 2026-08-23 - プロジェクトRules、固定APIテストラッパー、外部書き込み拒否方針を実装
 - Updated: 2026-08-16 - 起票
 
 ## 背景
@@ -14,7 +16,7 @@ APIテストでは`./gradlew test --tests <クラスまたはメソッド>`の�
 
 ## 対応案
 - リポジトリで使用するGradle、npm、Git、Docker、開発スクリプトを棚卸しし、`allow`、`prompt`、`forbidden`へ分類する。
-- `.codex/config.toml`の`approval_policy = "on-request"`を維持し、明示的な許可に一致しないsandbox外コマンドは承認対象とする。
+- `.codex/config.toml`にgranular approval policyを設定し、明示的な`allow`に一致しないsandbox外コマンドの承認要求を自動拒否する。
 - 反復する非破壊検証だけを、実行ファイルとサブコマンドまで限定したプロジェクトRulesで許可する。
 - Gradleテストは`pattern = ["./gradlew", "test"]`を基本候補とし、後続の`--tests`で指定するクラス、メソッド、ワイルドカードごとのRules追加を不要にする。
 - `prefix_rule`は前方一致であり、`test`より後ろに追加した別タスクやオプションも一致し得ることを踏まえ、過剰許可にならない呼び出し規約または固定ラッパーの必要性を評価する。
@@ -30,6 +32,15 @@ APIテストでは`./gradlew test --tests <クラスまたはメソッド>`の�
 - npm、Git、Docker、リポジトリスクリプトの代表的な許可・非許可コマンドを`match`と`not_match`で検証する。
 - 許可コマンドと未許可コマンドを組み合わせた複合コマンドが、未許可部分を迂回して自動許可されないことを確認する。
 - Codex再起動後に代表コマンドを実行し、不要な承認と過剰な権限がないことを確認する。
+
+## 実施結果
+- 固定APIテストラッパーを追加し、引数なしまたは`--tests`と1つのフィルターだけを受理するようにした。
+- プロジェクトRulesでは固定APIテストラッパーと`git add`だけを`allow`とし、直接のGradle、npm、Docker、E2E、Git変更、`curl`、`wget`を`prompt`とした。
+- 通常の引数順で記述されたGit、npm Registry、Docker Registryへの明確な外部書き込みを`forbidden`とした。
+- `bash`、`zsh`、`sh`の`-c`・`-lc`による文字列実行は、一般的な絶対パスと`env`経由を含めて`forbidden`とし、`ssh`、`scp`、`rsync`も用途や転送方向にかかわらず`forbidden`とした。
+- ユーザー層の`pattern = ["./gradlew"]`という広い許可を削除し、プロジェクトRulesを共有可能な正本とした。
+- `prefix_rule`では任意位置のURLや引数の意味を完全に判定できないため、外部書き込みと断定できないコマンドは未一致または`prompt`とし、granular approval policyによって自動拒否する構成にした。
+- 固定ラッパーとGradle build、テストコードはワークスペース内コードとして信頼する。この信頼境界は`.codex/rules/README.md`へ記録した。
 
 ## 期限 / 優先度
 - 優先度: 01

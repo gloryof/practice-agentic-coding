@@ -1,4 +1,4 @@
-approval_policy = "on-request"
+approval_policy = { granular = { sandbox_approval = false, rules = false, mcp_elicitations = true, request_permissions = false, skill_approval = false } }
 approvals_reviewer = "user"
 sandbox_mode = "workspace-write"
 plan_mode_reasoning_effort = "high"

@@ -1,5 +1,279 @@
 prefix_rule(
     pattern = ["git", "add"],
     decision = "allow",
-    justification = "Allow staging explicitly selected files in this repository without repeated approval",
+    justification = "このリポジトリで明示的に選択したファイルを繰り返し承認せずステージングできるようにする",
+    match = [
+        "git add README.md",
+        "git add -- api/README.md",
+    ],
+    not_match = [
+        "git status",
+        "git commit",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", ["-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env"]],
+    decision = "prompt",
+    justification = "Gitのグローバルオプションがサブコマンド単位の判定を迂回しないよう承認を必要とする",
+    match = [
+        "git -C . push",
+        "git -c credential.helper= push",
+        "git --git-dir .git status",
+    ],
+    not_match = [
+        "git add README.md",
+        "git push origin main",
+    ],
+)
+
+prefix_rule(
+    pattern = ["./scripts/run-api-tests.sh"],
+    decision = "allow",
+    justification = "引数を検証する固定入口からAPIのtestタスクだけを実行できるようにする",
+    match = [
+        "./scripts/run-api-tests.sh",
+        "./scripts/run-api-tests.sh --tests jp.glory.practice.agentic.auth.command.domain.model.EmailTest",
+        "./scripts/run-api-tests.sh --tests '*RepositoryTest'",
+    ],
+    not_match = [
+        "./api/gradlew -p api test",
+        "./scripts/check-no-local-paths.sh",
+    ],
+)
+
+prefix_rule(
+    pattern = [["./gradlew", "./api/gradlew"]],
+    decision = "prompt",
+    justification = "直接のGradle実行は起動、DB変更、生成、整形などの副作用を含み得るため承認を必要とする",
+    match = [
+        "./gradlew test",
+        "./gradlew bootRun",
+        "./api/gradlew -p api flywayMigrate",
+    ],
+    not_match = [
+        "./scripts/run-api-tests.sh",
+        "gradle test",
+    ],
+)
+
+prefix_rule(
+    pattern = [["npm", "npx"]],
+    decision = "prompt",
+    justification = "npmとnpxのsandbox外実行は依存取得、任意スクリプト、生成、サーバー起動を含み得るため承認を必要とする",
+    match = [
+        "npm ci",
+        "npm run check",
+        "npx playwright test",
+    ],
+    not_match = [
+        "node --version",
+        "./scripts/run-api-tests.sh",
+    ],
+)
+
+prefix_rule(
+    pattern = ["npm", ["publish", "unpublish", "deprecate"]],
+    decision = "forbidden",
+    justification = "npm Registryの外部状態を変更しない。必要な場合はRulesの変更を明示的にレビューする",
+    match = [
+        "npm publish",
+        "npm unpublish community-library-frontend",
+        "npm deprecate community-library-frontend@0.1.0 obsolete",
+    ],
+    not_match = [
+        "npm ci",
+        "npm audit --audit-level=high",
+    ],
+)
+
+prefix_rule(
+    pattern = ["npm", ["dist-tag", "owner"], ["add", "rm"]],
+    decision = "forbidden",
+    justification = "npm Registryのタグまたは所有者を変更しない。必要な場合はRulesの変更を明示的にレビューする",
+    match = [
+        "npm dist-tag add community-library-frontend@0.1.0 latest",
+        "npm dist-tag rm community-library-frontend latest",
+        "npm owner add example community-library-frontend",
+        "npm owner rm example community-library-frontend",
+    ],
+    not_match = [
+        "npm dist-tag ls community-library-frontend",
+        "npm view community-library-frontend",
+    ],
+)
+
+prefix_rule(
+    pattern = ["npm", "access", "set"],
+    decision = "forbidden",
+    justification = "npm Registryのパッケージアクセス設定を変更しない。必要な場合はRulesの変更を明示的にレビューする",
+    match = [
+        "npm access set status=public community-library-frontend",
+    ],
+    not_match = [
+        "npm access get status community-library-frontend",
+        "npm audit",
+    ],
+)
+
+prefix_rule(
+    pattern = ["npm", "token", ["create", "revoke"]],
+    decision = "forbidden",
+    justification = "npm Registryの認証トークンを変更しない。必要な場合はRulesの変更を明示的にレビューする",
+    match = [
+        "npm token create",
+        "npm token revoke token-id",
+    ],
+    not_match = [
+        "npm token list",
+        "npm audit signatures",
+    ],
+)
+
+prefix_rule(
+    pattern = ["docker"],
+    decision = "prompt",
+    justification = "Dockerのsandbox外実行はローカルのコンテナ、イメージ、volumeを変更し得るため承認を必要とする",
+    match = [
+        "docker version",
+        "docker compose up -d",
+        "docker system prune",
+    ],
+    not_match = [
+        "podman ps",
+        "npm run check",
+    ],
+)
+
+prefix_rule(
+    pattern = ["docker", "push"],
+    decision = "forbidden",
+    justification = "外部Registryへイメージを送信しない。必要な場合はRulesの変更を明示的にレビューする",
+    match = [
+        "docker push example/community-library:latest",
+    ],
+    not_match = [
+        "docker pull postgres:latest",
+        "docker build .",
+    ],
+)
+
+prefix_rule(
+    pattern = ["docker", "compose", "push"],
+    decision = "forbidden",
+    justification = "外部RegistryへComposeサービスのイメージを送信しない。必要な場合はRulesの変更を明示的にレビューする",
+    match = [
+        "docker compose push",
+        "docker compose push api",
+    ],
+    not_match = [
+        "docker compose pull",
+        "docker compose up -d",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", ["commit", "fetch", "pull", "merge", "rebase", "reset", "clean", "restore", "switch", "checkout", "cherry-pick", "revert", "tag", "remote"]],
+    decision = "prompt",
+    justification = "Gitの履歴、参照、作業ツリー、リモート情報を変更し得る操作は承認を必要とする",
+    match = [
+        "git commit -m change",
+        "git fetch origin",
+        "git reset --hard HEAD",
+    ],
+    not_match = [
+        "git add README.md",
+        "git status",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", ["push", "send-email"]],
+    decision = "forbidden",
+    justification = "リポジトリの内容を外部へ送信しない。必要な場合はRulesの変更を明示的にレビューする",
+    match = [
+        "git push",
+        "git push origin main",
+        "git send-email HEAD~1",
+    ],
+    not_match = [
+        "git fetch origin",
+        "git log --oneline",
+    ],
+)
+
+prefix_rule(
+    pattern = [["./.codex/skills/run-api-e2e/scripts/run.sh", "../.codex/skills/run-api-e2e/scripts/run.sh"]],
+    decision = "prompt",
+    justification = "API E2EランナーはローカルDBの再作成、migration、seed、サーバー起動を行うため承認を必要とする",
+    match = [
+        "./.codex/skills/run-api-e2e/scripts/run.sh start",
+        "./.codex/skills/run-api-e2e/scripts/run.sh e2e",
+        "../.codex/skills/run-api-e2e/scripts/run.sh stop",
+    ],
+    not_match = [
+        "./scripts/run-api-tests.sh",
+        "./scripts/check-no-local-paths.sh",
+    ],
+)
+
+prefix_rule(
+    pattern = [["bash", "zsh", "sh", "/bin/bash", "/bin/zsh", "/bin/sh", "/usr/bin/bash", "/usr/bin/zsh", "/usr/bin/sh"], ["-c", "-lc"]],
+    decision = "forbidden",
+    justification = "文字列で渡したshell commandは実行しない。必要な処理は直接コマンドまたは引数を検証する固定スクリプトとして実行する",
+    match = [
+        "bash -lc 'npm run check'",
+        "zsh -c 'git add README.md && git push'",
+        "/bin/sh -c 'git status'",
+    ],
+    not_match = [
+        "bash script.sh",
+        "./scripts/run-api-tests.sh",
+    ],
+)
+
+prefix_rule(
+    pattern = [["env", "/usr/bin/env"], ["bash", "zsh", "sh"], ["-c", "-lc"]],
+    decision = "forbidden",
+    justification = "env経由で文字列のshell commandを実行しない。必要な処理は直接コマンドまたは引数を検証する固定スクリプトとして実行する",
+    match = [
+        "env bash -c 'git status'",
+        "/usr/bin/env zsh -lc 'npm run check'",
+    ],
+    not_match = [
+        "env npm run check",
+        "bash script.sh",
+    ],
+)
+
+prefix_rule(
+    pattern = [["ssh", "scp", "rsync", "/usr/bin/ssh", "/usr/bin/scp", "/usr/bin/rsync"]],
+    decision = "forbidden",
+    justification = "ssh、scp、rsyncは使用しない。必要な外部接続またはファイル操作はレビュー済みの別手段で実行する",
+    match = [
+        "ssh example.com",
+        "scp README.md example.com:/tmp/README.md",
+        "rsync -av ./ example.com:/tmp/project/",
+        "/usr/bin/ssh example.com",
+        "/usr/bin/scp example.com:/tmp/file ./file",
+        "/usr/bin/rsync -av ./ /tmp/copy/",
+    ],
+    not_match = [
+        "curl https://example.com",
+        "cp README.md /tmp/README.md",
+    ],
+)
+
+prefix_rule(
+    pattern = [["curl", "wget"]],
+    decision = "prompt",
+    justification = "送信先と読み書きを前方一致だけでは確定できない外部クライアントは承認を必要とする",
+    match = [
+        "curl http://localhost:8080/actuator/health",
+        "wget https://example.com/file",
+    ],
+    not_match = [
+        "npm ci",
+        "git fetch origin",
+    ],
 )

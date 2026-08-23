@@ -44,8 +44,13 @@ docker version
 ```
 
 ## 実行例
-- 通常実行:
-  - `./gradlew test`
+- リポジトリルートから通常実行:
+  - `./scripts/run-api-tests.sh`
+- リポジトリルートから対象を限定して実行:
+  - `./scripts/run-api-tests.sh --tests jp.glory.practice.agentic.auth.command.domain.model.EmailTest`
+  - `./scripts/run-api-tests.sh --tests '*RepositoryTest'`
+
+固定ラッパーはAPIの`test`タスクだけを実行し、`--tests`以外の追加引数を拒否する。`check`、`ktlintFormat`、`bootRun`、Flywayなど、他のGradleタスクは従来どおり目的に応じて直接実行する。
 
 ## トラブルシュート
 - `Could not find a valid Docker environment` が表示された場合は、`/var/run/docker.sock` の symlink を再確認する。
