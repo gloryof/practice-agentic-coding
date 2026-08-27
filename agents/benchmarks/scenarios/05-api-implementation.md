@@ -1,5 +1,7 @@
 # API実装依頼
 
+Scenario ID: `05-api-implementation`
+
 既存の蔵書検索`GET /api/v1/book-items`へページングを追加してください。
 
 固定する仕様は次のとおりです。

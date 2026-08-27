@@ -1,5 +1,7 @@
 # 軽微リファクタリング依頼
 
+Scenario ID: `02-minor-change`
+
 `frontend/shared/api/server/spring-api-client.ts`の`requestSpringApi`で使用している既定タイムアウト`5_000`を、同じモジュール内の非公開定数`DEFAULT_SPRING_API_TIMEOUT_MILLISECONDS`へ抽出してください。
 
 次の条件を維持してください。

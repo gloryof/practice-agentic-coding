@@ -1,5 +1,7 @@
 # フロントエンドアーキテクチャ方針変更依頼
 
+Scenario ID: `08-frontend-architecture-policy`
+
 認証済みの検索・一覧画面について、URL、Server Components、Client Components、BFFが所有する状態の境界をフロントエンド方針へ追加してください。
 
 固定する要件と制約は次のとおりです。

@@ -1,5 +1,7 @@
 # フロントエンド実装依頼
 
+Scenario ID: `06-frontend-implementation`
+
 ログイン済みの図書館利用者が蔵書を検索できる`/catalog/search`画面を実装してください。Spring Boot APIは変更しません。
 
 固定する画面と契約は次のとおりです。

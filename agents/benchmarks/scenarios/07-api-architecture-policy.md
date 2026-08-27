@@ -1,5 +1,7 @@
 # APIアーキテクチャ方針変更依頼
 
+Scenario ID: `07-api-architecture-policy`
+
 Spring Boot APIのコマンド処理について、DBトランザクションとドメインイベントハンドラーの実行境界を明文化してください。
 
 現在の前提と解決したい問題は次のとおりです。

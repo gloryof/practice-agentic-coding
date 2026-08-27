@@ -13,6 +13,7 @@
 | 正式基準値への採否 | `候補` / `採用` / `不採用`（理由を併記） |
 | 対象コミット | |
 | 作業ツリーの状態 | |
+| 隔離worktree | `not_applicable` / `$TMPDIR/agent-workflow-benchmark-full-run/<scenario-id>` |
 | 隔離worktreeの後片付け | `not_applicable` / 完了 / 未完了（理由と環境変数による位置を併記） |
 | シナリオ入力のSHA-256 | |
 | モデル | |
