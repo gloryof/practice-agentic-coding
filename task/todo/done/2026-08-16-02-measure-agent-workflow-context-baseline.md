@@ -1,7 +1,8 @@
 # Agentワークフローのコンテキスト基準値を計測する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-09-06 - ユーザー指示により完了として整理
 - Updated: 2026-08-27 - 全8シナリオを独立worktreeで`full-run`できる計測契約へ拡張
 - Updated: 2026-08-27 - `full-run`用の固定契約と隔離worktreeのライフサイクルを追加
 - Updated: 2026-08-27 - `full-run`用の固定計測報告契約が未定義で実行を開始できない欠陥を記録
