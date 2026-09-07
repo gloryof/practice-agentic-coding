@@ -5,103 +5,196 @@
 - PO スコープと実装スコープを分離し、判断の再現性を確保する。
 
 ## 適用範囲
-- 対象: 依頼分類、スキル/エージェント選択、成果物の出力要件確認。
-- 非対象: 実装タスクの設計/実装判断。実装依頼は `agents/flows/implementation-task-flow.md` を参照する。
+- 対象: ユーザーストーリーの新規作成、および本フロー内のレビュー結果に基づく修正。
+- 非対象: 既存のプロダクト仕様の更新・Q&A、実装の設計・変更・レビュー。
 
-## 前提
-- 参照ロール: `agents/roles/po.md`
-- 仕様探索の規約: `product/domain-context/README.md`
-- 仕様更新の規約: `agents/rules/specification-update-rules.md`
-- 参照スキル:
-  - `.codex/skills/po-story/SKILL.md`
-  - `.codex/skills/po-spec/SKILL.md`
-  - `.codex/skills/product-designer/SKILL.md`
-  - `.codex/skills/server-architecture-reviewer/SKILL.md`
-  - `.codex/skills/security-engineer-reviewer/SKILL.md`
-  - `.codex/skills/qa-test-reviewer/SKILL.md`
-  - `.codex/skills/dba-reviewer/SKILL.md`
+## 適用可能ロール
+- `agents/roles/po.md`
+- `agents/roles/server-architecture-reviewer.md`
+- `agents/roles/security-engineer-reviewer.md`
 
-## フロー
-### 1. 入力を分類する
-- `story_request`: ユーザーストーリー作成依頼
-- `spec_change_request`: ユーザー価値、業務上の振る舞い、データの意味または有効状態、受け入れ条件を決定・変更するプロダクト仕様依頼
-- `spec_qa_request`: 上記プロダクト仕様の意図、要件、受け入れ条件、制約に関するQ&A
-- `implementation_request`: プロダクト仕様を決定しない技術仕様、アーキテクチャ、API・DB・クラス設計、画面・導線・UI実装設計、テスト方式、コード変更
+## ステップ
 
-依頼名の「仕様」「設計」だけで分類せず、必要な意思決定で分類する。技術規則と既存のプロダクト仕様だけで判断できる場合は`implementation_request`とし、`po-spec`を使用しない。複合依頼はPO判断と技術判断へ分割し、各論点を一意に分類する。
+### 1. ユーザーストーリーを作成する
 
-### 2. PO判断の要否を判定する
-- 次のいずれかを新たに決定、変更、明確化する場合だけ、`spec_change_request`または`spec_qa_request`として扱う。
-  - ユーザー価値。
-  - 業務上の振る舞い。
-  - データの意味または業務上の有効状態。
-  - 受け入れ条件。
-- 関連するプロダクト仕様を技術判断の制約として参照するだけでは、`po-spec`の発動条件を満たさない。
-- 複合依頼ではPO判断を先に確定し、その結果を入力として技術判断を実装フローへ渡す。
+#### 実行条件
+常に実行する。
 
-### 3. 分類ごとにルーティングする
-- `story_request` の場合: `po-story` を使用する。
-- `spec_change_request` の場合: `po-spec` を使用する。
-- `spec_qa_request` の場合: `po-spec` を使用する。
-- `implementation_request` の場合: 本フローの対象外として扱い、`agents/flows/implementation-task-flow.md`を共通入口としてサーバー、フロントエンド、両方にまたがる変更へルーティングする。
-- `story_request` / `spec_change_request` / `spec_qa_request` では、判断前に `product/product-foundation.md`、関連する `task/user-stories`、`product/domain-context` を確認する。
+#### 実行ロール
+`agents/roles/po.md`
 
-### 4. 必要時のみ専門スキルとレビューエージェントを追加する
-- `po-story` または `po-spec` の検討中に、以下の観点が必要な場合のみ追加する。
-- 画面構成、導線、インタラクション、UI状態、レスポンシブ構成が論点: `product-designer`
-- サーバー構成の妥当性が論点: `server-architecture-reviewer`
-- セキュリティ要件・脅威分析が論点: `security-engineer-reviewer`
-- テスト戦略やテスト品質が論点: `qa-test-reviewer`
-- DB スキーマ・移行・性能が論点: `dba-reviewer`
-- 追加レビューは PO 判断を代替しない。最終的な仕様/ストーリー判断は PO スコープで確定する。
+#### 必須の入力
+なし
 
-### 5. 出力契約を満たす
-- `po-story` を使った場合は以下を必須出力とする。
-  - `User Benefit`
-  - `User Story`（As a ..., I want ..., so that ...）
-  - `Acceptance Criteria`
-  - `Non-Goals`
-  - `Open Questions`
-- `po-spec` を使った場合は以下を必須出力とする。
-  - `User Benefit`
-  - `Decision`（Adopt / Revise / Reject / Answer）
-  - `Specification`
-  - `Rationale`
-  - `Scope Boundary`
-  - `Escalation`（実装レベルのフォローが必要な場合のみ）
+#### 参照コンテキスト
+なし
 
-### 6. 仕様文書を更新する
-- `agents/rules/specification-update-rules.md` を適用し、PO スコープで決定した仕様の更新を完了する。
-- 実装レベルの決定が必要な事項は `Escalation` に明記して実装タスクへ引き継ぐ。
+#### 参照スキル
+- `po-story`
 
-## 例示シナリオ
-1. 依頼: 「新機能のユーザーストーリーを作って」
-- 分類: `story_request`
-- ルーティング: `po-story`
-- 出力: User Story テンプレート一式を返す。
+#### ステップ詳細
+POとしてユーザーストーリーを作成する。
 
-2. 依頼: 「貸出中の本を検索結果へ含めるか決めたい」
-- 分類: `spec_change_request`
-- ルーティング: `po-spec`
-- 出力: 仕様更新案を返す。DB 変更が主論点なら `dba-reviewer` を追加する。
+#### 成果物
+- ユーザストーリー（ `task/user-stories` )
+- ユビキタス言語（ `product/ubiquitous` )
 
-3. 依頼: 「この API 実装のクラス設計を決めて」
-- 分類: `implementation_request`
-- ルーティング: 本フロー対象外
-- 出力: `agents/flows/implementation-task-flow.md` への参照を返す。
+### 2. サーバサイドレビュー
 
-4. 依頼: 「検索画面の構成と導線を設計して」
-- 分類: `implementation_request`
-- ルーティング: 本フロー対象外
-- 出力: `agents/flows/implementation-task-flow.md`からフロントエンド実装フローへ進み、`product-designer`を使用する。
+#### 実行条件
+常に実行する。
 
-5. 依頼: 「検索条件を保存するDBと画面を設計して」
-- 分類: 検索条件を保存するユーザー価値と振る舞いは`spec_change_request`、DBと画面の方式は`implementation_request`
-- ルーティング: `po-spec`でPO判断を確定後、実装フローへ進む。
+#### 実行ロール
+`agents/roles/server-architecture-reviewer.md`
 
-## 完了条件
-- 依頼内の各論点が`story_request` / `spec_change_request` / `spec_qa_request` / `implementation_request`のいずれかに一意に分類される。
-- 技術規則だけで判断できる論点では`po-spec`が使用されない。
-- 分類ごとのスキル/エージェント選択が決まる。
-- `po-story` または `po-spec` の必須出力項目を満たした成果物が作成される。
-- 仕様変更がある場合、`agents/rules/specification-update-rules.md` で特定した正本文書が更新対象に含まれる。
+#### 必須の入力
+- ユーザーストーリー
+
+#### 参照コンテキスト
+- `api/docs/architecture.md`
+- `api/docs/operational-nonfunctional-guidelines.md`
+
+#### 参照スキル
+- `server-architecture-reviewer`
+
+#### ステップ詳細
+サーバサイドとしてユーザーストーリーを実現するにあたって懸念点がないかレビューをする。  
+指摘、判断根拠、推奨対応をまとめて提出し、ステップ4のPO判断へ渡す。  
+指摘がない場合も、その旨を記録する。
+
+#### 成果物
+- サーバサイドレビュー結果
+
+### 3. セキュリティレビュー
+
+#### 実行条件
+常に実行する。
+
+#### 実行ロール
+`agents/roles/security-engineer-reviewer.md`
+
+#### 必須の入力
+- ユーザーストーリー
+
+#### 参照コンテキスト
+- `api/docs/architecture.md`
+- `api/docs/operational-nonfunctional-guidelines.md`
+
+#### 参照スキル
+- `security-engineer-reviewer`
+
+#### ステップ詳細
+セキュリティエンジニアとしてユーザーストーリーを実現するにあたって懸念点がないかレビューをする。  
+指摘、判断根拠、推奨対応をまとめて提出し、ステップ4のPO判断へ渡す。  
+指摘がない場合も、その旨を記録する。
+
+#### 成果物
+- セキュリティレビュー結果
+
+### 4. レビュー結果を判断・反映する
+
+#### 実行条件
+常に実行する。
+
+#### 実行ロール
+`agents/roles/po.md`
+
+#### 必須の入力
+- ユーザーストーリー
+- サーバサイドレビュー結果
+- セキュリティレビュー結果
+
+#### 参照コンテキスト
+- `task/todo/README.md`
+- `task/todo/TEMPLATE.md`（TODOを起票する場合）
+- 仕様の参照・更新は`po-story`所定の手順に従う。
+
+#### 参照スキル
+- `po-story`
+
+#### ステップ詳細
+- POが各指摘を「反映・見送り・保留」に整理し、理由を記録する。
+- 採用した指摘をまとめてユーザーストーリーへ反映し、変更内容と再レビューが必要な観点を記録する。
+- 未解決事項は重大度にかかわらず共通TODO規則に従って既存TODOと照合し、必要な場合に`Status: Proposed`で起票する。
+- 指摘がない場合は修正せず、ステップ6へ進む。見送り・保留のみで修正しない場合も、判断結果をステップ6へ渡す。
+
+#### 成果物
+- ユーザーストーリー（`task/user-stories`。修正がある場合は修正後の内容）
+- 仕様更新ルールに従って更新した関連文書（変更がある場合）
+- 指摘ごとのPO判断と理由
+- 変更内容と再レビューが必要な観点
+- 未解決事項と関連TODO（ある場合）
+
+### 5. 修正内容を再レビューする
+
+#### 実行条件
+ステップ4でユーザーストーリーまたは関連文書を修正した場合に、影響する観点だけ実行する。
+
+#### 実行ロール
+修正の影響に応じて、以下から選択する。
+- `agents/roles/server-architecture-reviewer.md`
+- `agents/roles/security-engineer-reviewer.md`
+
+#### 必須の入力
+- 修正後のユーザーストーリーと、変更した関連文書
+- 変更内容と再レビューが必要な観点
+- 初回レビュー結果と指摘ごとのPO判断・理由
+
+#### 参照コンテキスト
+初回レビューで確認した資料とステップ4の成果物を引き継ぐ。  
+追加参照は修正の確認に必要な箇所に限定する。
+
+#### 参照スキル
+- `server-architecture-reviewer`（サーバサイドの観点を再レビューする場合）
+- `security-engineer-reviewer`（セキュリティの観点を再レビューする場合）
+
+#### ステップ詳細
+- 各担当の再レビューは、本フローの1回の実行につき最大1回とする。
+- 採用した指摘の解消と、修正によって生じた問題だけを確認する。
+- 新しい改善提案は後続課題として分離し、再レビューの繰り返し理由にしない。ただし、完成を妨げる問題は未解決事項として明示する。
+- 指摘の解消状況、新たな問題、後続課題をまとめてステップ6へ渡す。
+
+#### 成果物
+- 再レビュー結果（指摘の解消状況と修正によって生じた問題）
+- 後続課題（ある場合）
+
+### 6. 結果を確定して終了する
+
+#### 実行条件
+ステップ5が完了した場合、または再レビューが不要な場合に、常に実行する。
+
+#### 実行ロール
+`agents/roles/po.md`
+
+#### 必須の入力
+- 最終のユーザーストーリーと関連文書
+- 初回レビュー結果と指摘ごとのPO判断・理由
+- 再レビュー結果（実行した場合）
+- 未解決事項、後続課題、関連TODO（ある場合）
+
+#### 参照コンテキスト
+- `task/todo/README.md`
+- `task/todo/TEMPLATE.md`（TODOを起票する場合）
+
+#### ステップ詳細
+- POが再レビューの結果を含めて各指摘の判断と理由、残る論点を整理し、以下の終了条件に従って「完成」または「草案・確認待ち」を報告する。
+- 未解決事項と後続課題は共通TODO規則に従って記録する。TODOの起票だけでは完成扱いにしない。
+- 完成を妨げる問題が残る場合は、必要なユーザー判断・確認事項を明記して終了する。
+- 再レビュー後は自動で修正工程へ戻らず、回数上限を回避するために別のフロー実行を自動で開始しない。
+
+#### 成果物
+- 最終結果（完成、または草案・確認待ち）と判断理由
+- ユーザーストーリーと関連文書への参照
+- 各指摘の判断・理由と再レビューの実施結果（省略した場合はその理由）
+- 残る論点、必要なユーザー判断・確認事項、関連TODO（ある場合）
+
+## 終了条件
+
+### 完成
+以下をすべて満たす場合に、ユーザーストーリーを完成とする。
+- すべての指摘にPOの判断と理由が記録されている。
+- 必要な再レビューが、各担当につき最大1回の範囲で完了している。
+- ユーザー価値・受け入れ条件の確定を妨げる未解決事項が残っていない。
+
+### 草案・確認待ち
+完成条件を満たせない場合は、ユーザーストーリーを草案として残し、確認待ちとしてフローを終了する。再レビューの回数上限への到達は、問題の解消や承認を意味しない。
