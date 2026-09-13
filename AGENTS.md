@@ -25,6 +25,7 @@
 |---|-------------------------------------------------------|
 | ユーザーストーリー作成フロー | `product/user-story-creation-flow.md`    |
 | ドメインモデル実装フロー | `product/domain-model-implementation.md` |
+| アダプター実装フロー | `server-side/adaptor-implementation-flow.md` |
 
 ### ワークフローを適用しない場合
 
