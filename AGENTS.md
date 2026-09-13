@@ -19,11 +19,12 @@
 ### 定義済みワークフロー
 
 以下の一覧を、ユーザーが選択できるワークフローの正本とする。
+ベースディレクトリは `agents/flows/`
 
-| タイトル | 定義文書 |
-|---|---|
-| ユーザーストーリー作成フロー | `agents/flows/user-story-creation-flow.md` |
-| ドメインモデル実装フロー | `agents/flows/domain-model-implementation.md` |
+| タイトル | 定義文書                                                  |
+|---|-------------------------------------------------------|
+| ユーザーストーリー作成フロー | `product/user-story-creation-flow.md`    |
+| ドメインモデル実装フロー | `product/domain-model-implementation.md` |
 
 ### ワークフローを適用しない場合
 
