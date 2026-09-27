@@ -21,12 +21,23 @@
 以下の一覧を、ユーザーが選択できるワークフローの正本とする。
 ベースディレクトリは `agents/flows/`
 
+#### プロダクト共通
+
 | タイトル | 定義文書                                                  |
 |---|-------------------------------------------------------|
 | ユーザーストーリー作成フロー | `product/user-story-creation-flow.md`    |
 | ドメインモデル実装フロー | `product/domain-model-implementation.md` |
+
+#### サーバサイド
+
+| タイトル | 定義文書 |
+|---|---|
 | アダプター実装フロー | `server-side/adaptor-implementation-flow.md` |
 | 設計方針変更レビューフロー | `server-side/change-design-policy.md` |
+
+#### フロントエンド
+
+- TODO: フロントエンド向けの定義済みフローを整理して一覧に追加する。
 
 ### ワークフローを適用しない場合
 
