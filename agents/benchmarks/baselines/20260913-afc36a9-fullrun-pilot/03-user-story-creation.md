@@ -213,7 +213,7 @@ Coordinatorのベンチマークスキル使用・評価用参照は計測から
 - 主な重複コンテキスト：運用ベースライン再取得2件。ただし省略補完という理由があり、実表示の重複量は未観測。
 - 見落としたガードレール：Mainがフロー選択確認前に詳細を読んだ。Coordinatorからの選択転送は起動時の固定入力だけという条件を外れる。
 - 計測上の制約：トークン・表示行数・区間時間・初期自動入力は観測できない。Mainとレビュー担当の自己報告を採用し、Coordinatorの参照は除外。
-- 次回比較時の注意：選択引き渡し契約を整合して新Baseline IDで再実行する。既存の `task/todo/2026-09-07-01-fix-benchmark-workflow-selection-contract.md`（Proposed）と原因・影響が同じため、新規TODO・既存TODO変更なし。
+- 次回比較時の注意：選択引き渡し契約を整合して新Baseline IDで再実行する。既存の `task/todo/done/2026-09-07-01-fix-benchmark-workflow-selection-contract.md`（当時Proposed）と原因・影響が同じため、新規TODO・既存TODO変更なし。
 - PO補足：登録名の完全一致（著者1名以上）、空欄同士の一致除外、対象館内、表示項目、同順位内の順序保証なしを明記。固定前提に反せず、実装・API設計を決めていない。
 - 実行済み：`03-user-story-creation`。スキップ・起動失敗シナリオ：なし。
 

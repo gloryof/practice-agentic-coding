@@ -7,7 +7,7 @@
 - Updated: 2026-08-16 - 起票
 
 ## 背景
-コンテキスト選択、Review Context Package、タスク規模分類、回帰検査を追加すると、`AGENTS.md`、`agents/flows`、`.codex/skills`、`agents/roles`、実装規則、ドメイン文書へ同じ条件や手順を重複して記載する可能性がある。
+コンテキスト選択、工程間の成果物と必須入力による引き継ぎ、任意のワークフロー選択、回帰検査を追加すると、`AGENTS.md`、`agents/flows`、`.codex/skills`、`agents/roles`、実装規則、ドメイン文書へ同じ条件や手順を重複して記載する可能性がある。
 
 ロールとスキルの責務分担は`task/todo/done/2026-07-18-07-deduplicate-role-and-skill-guidance.md`で整理済みであり、仕様探索と更新責務も既存フローで条件化済みである。今回必要なのはそれらの再設計ではなく、新しい選択成果物を追加した後の責務逸脱と重複の監査である。
 
@@ -26,7 +26,7 @@
   - `agents/roles`: どの専門視点と責務境界で判断するか。
   - 実装規則: 成果物が満たすべき技術制約。
   - ドメイン文書: 業務上の事実、制約、用語。
-- 新しいルーティング条件、Review Context Package、分類条件、回帰ケースの正本を一つずつ特定し、他文書は必要最小限の参照へ置き換える。
+- 新しいルーティング条件、工程間の引き継ぎ、レビューの選択条件、回帰ケースの正本を一つずつ特定し、他文書は必要最小限の参照へ置き換える。
 - 参照グラフの循環、リンク切れ、同じ規範条件の重複、詳細文書からフローへの逆流を確認する。
 - サーバサイド実装フローを選択一覧へ登録する際は、共通入口への依存と残る旧入口参照を整理する。新しいフロントエンド実装フローと横断する場合の確認担当と実行順序も監査する。
 - 既存のロール・スキル責務分担、仕様更新ルール、各領域の実装規則を変更する場合は、コンテキスト最適化に必要な差分だけに限定する。
@@ -42,4 +42,4 @@
 
 ## 期限 / 優先度
 - 優先度: 7
-- 依存関係: `task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`2026-08-16-04-pass-review-context-packages.md`、`2026-08-16-05-classify-task-size-and-select-workflow.md`、`2026-08-16-06-add-agent-workflow-regression-tests.md`
+- 依存関係: `task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`2026-08-16-06-add-agent-workflow-regression-tests.md`

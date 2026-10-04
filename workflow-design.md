@@ -64,14 +64,14 @@ AIはユーザーが指定または選択したワークフローについて、
 
 # 関連TODO
 
-`task/todo`直下の`Status: Proposed`から、上記の課題に関連するTODOを抜粋する。
+`task/todo`直下の`Status: Proposed`と、関連する完了済みTODOから、上記の課題に関連するTODOを抜粋する。
 掲載順は実施順を意味しない。
 具体的な対応案、依存関係、完了条件は各TODOを参照する。
 
 | 関連TODO | 課題との関係 |
 |---|---|
-| [Review Context Packageの引き渡し](task/todo/2026-08-16-04-pass-review-context-packages.md) | Main Agentとレビュアーの共通資料の再探索を減らす |
-| [タスク規模に応じたワークフローとレビュー選択](task/todo/2026-08-16-05-classify-task-size-and-select-workflow.md) | 変更範囲とリスクに応じて工程を選ぶ |
+| [レビューへの工程間引き継ぎ（完了）](task/todo/done/2026-08-16-04-pass-review-context-packages.md) | 前工程の成果物をレビュー工程の必須入力として渡す |
+| [ワークフローとレビューの選択（完了）](task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md) | 任意のフロー選択と変更影響に応じたレビュー判定を用いる |
 | [ワークフローごとの検証選択](task/todo/2026-08-16-11-define-workflow-specific-verification.md) | 過剰な検証と重複実行を減らし、結果を共有する |
 | [選択結果の回帰テスト](task/todo/2026-08-16-06-add-agent-workflow-regression-tests.md) | 最適化による必須文書・レビュー・検証の欠落を防ぐ |
 | [ワークフロー文書の責務監査](task/todo/2026-08-16-07-audit-agent-workflow-responsibilities.md) | 選択規則の重複と参照構造の不整合を防ぐ |
