@@ -1,8 +1,15 @@
 # 実装コンテキストの軽量ルーティングを追加する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-10-04 - 既存の領域別ガイドと共通規則で文書選択が可能なことを確認し、ユーザー判断で完了
 - Updated: 2026-08-16 - 起票
+
+## 完了判断
+- APIは`api/AGENTS.md`を入口とし、`api/docs/backend-guidelines.md`が変更条件ごとの詳細文書を示している。
+- フロントエンドは`frontend/AGENTS.md`を入口とし、`frontend/docs/frontend-guidelines.md`がBFF、Client、API・認証連携、状態、UI、品質の参照条件を示している。
+- 横断的な仕様影響と運用・非機能の参照条件は`AGENTS.md`と`agents/rules/specification-update-rules.md`で扱う。新たな共通索引や選択結果の固定形式は追加せず、既存の正本を利用する。
+- 当初の追加契約・新規索引・基準値比較は実施していない。既存の仕組みで文書を選択できるため、本TODOの追加実装は不要と判断した。
 
 ## 背景
 現行の実装フローは、対象領域と仕様影響を分類し、`api/docs/backend-guidelines.md`では詳細文書の参照条件も定義している。一方、フロー、`AGENTS.md`、領域別ガイドに分散した選択結果を一つの軽量なルーティング情報として再利用する契約はなく、必要文書を決めるまでに前提文書や参照先を連鎖的に読む可能性がある。

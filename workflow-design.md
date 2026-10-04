@@ -70,7 +70,6 @@ AIはユーザーが指定または選択したワークフローについて、
 
 | 関連TODO | 課題との関係 |
 |---|---|
-| [実装コンテキストの軽量ルーティング](task/todo/2026-08-16-03-add-lightweight-implementation-context-routing.md) | 必要な文書を詳細の読み込み前に選択する |
 | [Review Context Packageの引き渡し](task/todo/2026-08-16-04-pass-review-context-packages.md) | Main Agentとレビュアーの共通資料の再探索を減らす |
 | [タスク規模に応じたワークフローとレビュー選択](task/todo/2026-08-16-05-classify-task-size-and-select-workflow.md) | 変更範囲とリスクに応じて工程を選ぶ |
 | [ワークフローごとの検証選択](task/todo/2026-08-16-11-define-workflow-specific-verification.md) | 過剰な検証と重複実行を減らし、結果を共有する |

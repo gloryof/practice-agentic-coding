@@ -29,4 +29,4 @@
 
 ## 期限 / 優先度
 - 優先度: 6
-- 依存関係: `2026-08-16-03-add-lightweight-implementation-context-routing.md`、`2026-08-16-04-pass-review-context-packages.md`、`2026-08-16-05-classify-task-size-and-select-workflow.md`
+- 依存関係: `task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`2026-08-16-04-pass-review-context-packages.md`、`2026-08-16-05-classify-task-size-and-select-workflow.md`

@@ -37,5 +37,5 @@
 ## 期限 / 優先度
 - 優先度: 4
 - 効果の大きさ: 高。複数レビュアーを使用する変更では共通資料の再探索を繰り返すため、Main Agentだけの軽量化より削減余地が大きい。
-- 実施順: 4を維持する。軽量ルーティングが選択したコンテキストを入力に使うため、優先度3の完了後に着手する。
-- 依存関係: `2026-08-16-03-add-lightweight-implementation-context-routing.md`
+- 実施順: 4を維持する。領域別ガイドと共通規則から選択したコンテキストを入力に使う。
+- 依存関係: `task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）
