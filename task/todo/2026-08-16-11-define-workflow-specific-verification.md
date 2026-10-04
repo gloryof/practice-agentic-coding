@@ -2,6 +2,7 @@
 
 ## ステータス
 - Status: Proposed
+- Updated: 2026-10-04 - フロントエンド検証規則の参照先を新実装フローに更新
 - Updated: 2026-08-16 - 起票
 
 ## 背景
@@ -12,7 +13,7 @@
 現状は領域ごとに検証条件の粒度が異なる。
 
 - APIでは`api/AGENTS.md`と`api/docs/backend-guidelines.md`が、実装またはレビュー結果の共有前に、変更種別を区別せず`./gradlew check`を必須としている。
-- フロントエンドでは`agents/flows/frontend-implementation-flow.md`に変更条件別の検証表があるが、`frontend/`の実装変更すべてに対する`npm ci`と`npm run check`、E2E、性能、複数ブラウザ、手動確認の選択と再実行範囲を、タスク規模分類やレビュー担当の責務と接続していない。
+- フロントエンドでは`agents/flows/front/implementation.md`が`frontend/docs/quality-and-nonfunctional-requirements.md`を検証条件の正本として参照するが、`npm ci`と`npm run check`、E2E、性能、複数ブラウザ、手動確認の選択と再実行範囲を、タスク規模分類やレビュー担当の責務と接続していない。
 - リポジトリ共通変更、プロダクト仕様・ユーザーストーリー、技術方針文書では、対象文書固有の検査とルートの文書検査をどこで選択するかがワークフローごとに揃っていない。
 - Main Agentと複数のレビュー担当が、同じ全体検証を個別に再実行するか、既存結果を共有するかの所有境界がない。
 

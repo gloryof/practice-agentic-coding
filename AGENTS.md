@@ -37,7 +37,10 @@
 
 #### フロントエンド
 
-- TODO: フロントエンド向けの定義済みフローを整理して一覧に追加する。
+| タイトル | 定義文書 |
+|---|---|
+| フロントエンド実装フロー | `front/implementation.md` |
+| フロントエンド設計方針変更レビューフロー | `front/change-design-policy.md` |
 
 ### ワークフローを適用しない場合
 
@@ -50,7 +53,6 @@
 ### 作業条件に応じた追加参照
 - `api/` 配下で作業する場合は、`api/AGENTS.md` を追加で適用し、API 開発ルールの入口として `api/docs/backend-guidelines.md` を参照する。
 - `frontend/` 配下で作業する場合は、`frontend/AGENTS.md` を追加で適用し、フロントエンド開発ルールの入口として `frontend/docs/frontend-guidelines.md` を参照する。
-- 実装中に設計方針レビューの適用条件を判定する場合は、`agents/flows/design-policy-review-checks.md` を参照する。
 - アーキテクチャ、セキュリティ、DB の設計またはレビューを行う場合は、横断的な運用・非機能前提の正本として `product/operational-nonfunctional-baseline.md` を参照する。通常の機能実装、文言修正、テストのみの変更では必須参照としない。
 - ユーザー価値、ユースケース、ドメインモデル、ドメインイベントを探索する場合は、`product/domain-context/README.md` の探索規約に従う。
 - フローで使用するスキルが決まった場合は、`.codex/skills/` 配下にある該当スキルの `SKILL.md` を参照する。

@@ -26,7 +26,7 @@ AI側で検知したリスクや対応すべき事案は、`task/todo` 配下に
 - `Dropped`: 対応不要・見送り。
 
 ## 実装作業開始前のactive TODO確認
-- `MUST` `agents/flows/implementation-task-flow.md` に従う実装依頼では、依頼を分類した後、詳細調査や実装へ進む前に対象領域のactive TODOを確認する。
+- `MUST` 実装依頼では、対象領域を把握した後、詳細調査や実装へ進む前に対象領域のactive TODOを確認する。ワークフローを選択した場合も同様とする。
 - active TODOは、`task/todo`直下に配置され、`Status: Proposed`である事案とする。`README.md`と`TEMPLATE.md`は事案ではないため除外する。
 
 ### 検索手順
