@@ -10,13 +10,13 @@
 
 ## レンダリングと実行境界
 - `MUST NOT` Server Components、Server Actions、Route Handlers、サーバー専用モジュールから認証秘密やサーバー専用設定をClient Componentsへ渡す。
-- `MUST NOT` Static Exportを使用する。
+- `MUST NOT` Static Exportを使用する。  
   BFFを提供するNode.js実行時を配布単位とする。
 - `MUST` 読み取り処理をServer Componentsからサーバー専用のデータアクセス境界へ委譲する。
 - `MUST` ブラウザ起点の更新処理にServer Actionsを既定として使用する。
 - `MAY` 外部クライアント向けHTTP契約、Webhook、ファイル応答、または明示的なHTTP境界が必要な場合にRoute Handlersを使用してよい。
 - `MUST` Server ActionsとRoute Handlersを公開エンドポイントとして扱い、入力検証、認証、認可を各操作で実施する。
-- `MUST NOT` `proxy.ts`だけで認証・認可を完結させる。
+- `MUST NOT` `proxy.ts`だけで認証・認可を完結させる。  
   `proxy.ts`は楽観的なリダイレクトにのみ使用する。
 
 ## 依存方向

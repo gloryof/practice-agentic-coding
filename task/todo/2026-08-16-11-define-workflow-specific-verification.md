@@ -9,7 +9,7 @@
 - 依存関係: `task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`task/todo/done/2026-08-16-06-add-agent-workflow-regression-tests.md`（追加実装なしで終了）、`task/todo/done/2026-08-16-07-audit-agent-workflow-responsibilities.md`（追加の網羅的監査なしで終了）、`2026-08-16-09-standardize-markdown-writing-and-incremental-lint.md`
 
 ## 背景
-`AGENTS.md`ではワークフロー選択を任意とし、各フローは変更の影響に応じてレビューを選択する。
+`AGENTS.md`ではワークフロー選択を任意とし、各フローは変更の影響に応じてレビューを選択する。  
 一方、選択後の各ワークフローが、変更範囲とリスクから必要な検証、実行主体、再実行条件を返す共通契約は定義されていない。
 
 現状は領域ごとに検証条件の粒度が異なる。
@@ -19,15 +19,15 @@
 - リポジトリ共通変更、プロダクト仕様・ユーザーストーリー、技術方針文書では、対象文書固有の検査とルートの文書検査をどこで選択するかがワークフローごとに揃っていない。
 - Main Agentと複数のレビュー担当が、同じ全体検証を個別に再実行するか、既存結果を共有するかの所有境界がない。
 
-`agents/benchmarks/baselines/20260830-dd4b1f6-fullrun-official/07-api-architecture-policy.md`では、APIアーキテクチャ方針文書とTODOだけの変更に対して、Main Agentと複数のレビュー担当が`./gradlew check`を実行した。
-変更と無関係なPostgreSQLテスト17件がDocker client不在で失敗し、失敗原因の調査と再実行が発生した。
+`agents/benchmarks/baselines/20260830-dd4b1f6-fullrun-official/07-api-architecture-policy.md`では、APIアーキテクチャ方針文書とTODOだけの変更に対して、Main Agentと複数のレビュー担当が`./gradlew check`を実行した。  
+変更と無関係なPostgreSQLテスト17件がDocker client不在で失敗し、失敗原因の調査と再実行が発生した。  
 これはGradle固有の問題ではなく、ワークフロー選択と検証選択、検証結果の引き渡しが分離していることによる一例である。
 
 ## 課題
-低リスクまたは文書だけの変更へ広いビルド、テスト、E2E、性能検査、手動確認を適用すると、完了時間、計算資源、Agentのコンテキストとトークン使用量が増える。
+低リスクまたは文書だけの変更へ広いビルド、テスト、E2E、性能検査、手動確認を適用すると、完了時間、計算資源、Agentのコンテキストとトークン使用量が増える。  
 環境依存の検証を変更条件と無関係に実行すると、成果物起因ではない失敗の調査やTODO起票が増え、本来の変更リスクが埋もれる。
 
-一方、検証を個別判断だけで省略すると、Kotlin、TypeScript、DB、認証、HTTP契約、画面、アクセシビリティ、ブラウザ互換性などへの影響に必要な品質ゲートが欠落する可能性がある。
+一方、検証を個別判断だけで省略すると、Kotlin、TypeScript、DB、認証、HTTP契約、画面、アクセシビリティ、ブラウザ互換性などへの影響に必要な品質ゲートが欠落する可能性がある。  
 差分の大きさだけで検証を決めると、小さな認可変更やmigration変更のように、差分は小さくても高リスクな変更を軽く扱う危険もある。
 
 ## 完了条件

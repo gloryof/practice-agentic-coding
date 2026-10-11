@@ -12,14 +12,14 @@
 ./.codex/skills/run-api-e2e/scripts/run.sh start
 ```
 
-このコマンドはローカルの`agentic`データベースを削除して再作成し、migrationと標準seedを適用してからAPIを起動する。
+このコマンドはローカルの`agentic`データベースを削除して再作成し、migrationと標準seedを適用してからAPIを起動する。  
 既存のローカルデータを残す必要がある場合は実行しない。
 
 ### 起動後のURL
 - APIベースURL: `http://localhost:8080`
 - health: `http://localhost:8080/actuator/health`
 
-APIを停止する場合は起動中のターミナルで`Ctrl-C`を入力する。
+APIを停止する場合は起動中のターミナルで`Ctrl-C`を入力する。  
 その後、PostgreSQLコンテナとローカルデータを削除する場合は、リポジトリルートの別ターミナルで次を実行する。
 
 ```bash
@@ -52,7 +52,7 @@ docker version
   - `./scripts/run-api-tests.sh --tests jp.glory.practice.agentic.auth.command.domain.model.EmailTest`
   - `./scripts/run-api-tests.sh --tests '*RepositoryTest'`
 
-固定ラッパーはAPIの`test`タスクだけを実行し、`--tests`以外の追加引数を拒否する。
+固定ラッパーはAPIの`test`タスクだけを実行し、`--tests`以外の追加引数を拒否する。  
 `check`、`ktlintFormat`、`bootRun`、Flywayなど、他のGradleタスクは従来どおり目的に応じて直接実行する。
 
 ## トラブルシュート

@@ -25,7 +25,7 @@
 - `MUST NOT` `shared` の公開契約へ、特定コンテキストのDomain、Usecase、Web、Infraの型を露出する。
 - `MUST` 複数コンテキストの更新を同期的に連携する場合、利用者操作を所有するUsecaseが公開契約を介して調停し、同一トランザクションが必要な更新はそのトランザクション内で完了させる。
 - `MUST NOT` 平文パスワードなどの機密入力をドメインイベント、ログ、例外メッセージ、永続化データへ含める。
-- `MAY` `shared.spring` はComposition Rootとして各コンテキストの型を参照してよい。
+- `MAY` `shared.spring` はComposition Rootとして各コンテキストの型を参照してよい。  
   ただし、業務処理やコンテキスト間の値変換を配置しない。
 
 ## Domain

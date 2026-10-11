@@ -14,7 +14,7 @@ description: Review security in both system design and implementation with expli
 
 ## ワークフロー
 1. `agents/roles/security-engineer-reviewer.md` を読み、そのミッションと判断ルールに従う。
-2. ユーザー向け振る舞い、業務ルール、データの意味または有効状態、受け入れ条件がレビュー基準になるかを判定する。
+2. ユーザー向け振る舞い、業務ルール、データの意味または有効状態、受け入れ条件がレビュー基準になるかを判定する。  
    該当する場合または不明な場合のみ、`product/domain-context/README.md` の探索規約に従って関連するユーザーストーリーとドメイン仕様を読む。
 3. タスクを、セキュリティ設計レビュー、セキュアコーディングレビュー、複合レビューのいずれかに分類する。
 4. `references/review-checklist.md` を使用して指摘事項を評価する。

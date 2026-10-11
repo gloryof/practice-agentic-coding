@@ -6,7 +6,7 @@
 - Updated: 2026-08-09 - 起票
 
 ## 背景
-Next.js BFF基盤の構築時点では型検査、静的解析、単体・境界テスト、production build、Storybook build、story・a11y検査を個別に確認した。
+Next.js BFF基盤の構築時点では型検査、静的解析、単体・境界テスト、production build、Storybook build、story・a11y検査を個別に確認した。  
 一方、利用者画面が未実装であるため、ユーザー承認の例外として`npm run check`の一括実行を省略し、初回機能実装で問題があれば修正する方針とした。
 
 ## 影響

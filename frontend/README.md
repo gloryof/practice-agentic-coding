@@ -31,7 +31,7 @@ npm run dev
 停止する場合は起動中のターミナルで`Ctrl-C`を入力する。
 
 ## Storybook
-Storybookだけを確認する場合、Spring Boot APIの起動は不要である。
+Storybookだけを確認する場合、Spring Boot APIの起動は不要である。  
 `frontend/`で次を実行する。
 
 ```bash

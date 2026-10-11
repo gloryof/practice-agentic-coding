@@ -1,0 +1,2 @@
+# Markdownの表示改行に使う行末の半角スペース2個を許可する。
+*.md whitespace=-blank-at-eol

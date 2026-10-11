@@ -5,7 +5,7 @@
 - Updated: 2026-06-27 - DB統合テスト成功により完了
 
 ## 背景
-US-0004 の予約申込実装では、`reservations` テーブル、`book_item_stock_status` の `RESERVED` 追加、蔵書確保の排他制御を追加した。
+US-0004 の予約申込実装では、`reservations` テーブル、`book_item_stock_status` の `RESERVED` 追加、蔵書確保の排他制御を追加した。  
 作業途中では Docker/Testcontainers の PostgreSQL コンテナを起動できず、DB統合テストが未完了だった。
 
 ## 影響
@@ -15,7 +15,7 @@ Docker 起動後に `api` ディレクトリで `./gradlew test --tests jp.glory
 対応済み。
 
 ## 確認方法
-`ReservationDaoTest` の成功を確認済み。
+`ReservationDaoTest` の成功を確認済み。  
 最終確認として `./gradlew check` でも回帰を確認する。
 
 ## 期限 / 優先度

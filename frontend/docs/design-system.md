@@ -9,7 +9,7 @@
 - `MUST` 本文書を図書館利用者向けフロントエンドのトークン、共通UI、機能UI、Storybookへ適用する。
 - `MUST` 状態の所有、非同期処理、二重送信、エラー回復には[状態・イベント管理設計](state-and-event-management.md)を併せて適用する。
 - `MUST` APIエラーの分類には[API・認証連携設計](bff/api-auth-integration.md)を適用する。
-- 本文書は画面の業務フロー、API契約、テストのCIゲートを決定しない。
+- 本文書は画面の業務フロー、API契約、テストのCIゲートを決定しない。  
   テストのCIゲートは[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を正本とする。
 
 ## 設計原則
@@ -26,9 +26,9 @@
 - `MUST` Tailwind CSS v4を使用する。
 - `MUST` 基礎値をCSSカスタムプロパティ、機能から利用する意味トークンをTailwindのtheme variablesとして定義する。
 - `MUST` 機能コードから基礎色を直接参照せず、`canvas`、`text`、`action`、`danger`のように利用目的を表す意味トークンを使用する。
-- `MUST NOT` 色、文字サイズ、余白、角丸にTailwindのarbitrary valueを使用する。
+- `MUST NOT` 色、文字サイズ、余白、角丸にTailwindのarbitrary valueを使用する。  
   必要な値がない場合は、再利用性を確認して本文書とトークンを先に更新する。
-- `MAY` 要素数に依存するgrid定義など、デザイン値では表せない局所的なレイアウト計算に限りarbitrary valueを使用してよい。
+- `MAY` 要素数に依存するgrid定義など、デザイン値では表せない局所的なレイアウト計算に限りarbitrary valueを使用してよい。  
   その場合はコンポーネントの近くに理由を記録する。
 
 Tailwind theme variablesの仕様は[Theme variables](https://tailwindcss.com/docs/theme)を参照する。
@@ -69,7 +69,7 @@ Tailwind theme variablesの仕様は[Theme variables](https://tailwindcss.com/do
 - `MUST` `0.25rem`を余白の基準とし、`0.25rem`、`0.5rem`、`0.75rem`、`1rem`、`1.5rem`、`2rem`、`3rem`、`4rem`を使用する。
 - `MUST` 角丸を`0.25rem`、`0.5rem`、`0.75rem`、完全な丸形に限定する。
 - `MUST` 通常境界を1px、強調境界を2pxとする。
-- `SHOULD` 面の区別には影より背景と境界を優先する。
+- `SHOULD` 面の区別には影より背景と境界を優先する。  
   影を使う場合は小さな1段階に限定する。
 
 ### フォーカスと動き
@@ -102,7 +102,7 @@ Tailwind theme variablesの仕様は[Theme variables](https://tailwindcss.com/do
 
 - `MUST` 遷移にはリンク、処理実行にはbuttonを使用する。
 - `MUST` 同一操作のpending中は再送を無効化するが、ページ全体の無関係な操作を一律に無効化しない。
-- `MUST NOT` 初期構成へ汎用トースト、独自select、dialog、popoverを追加しない。
+- `MUST NOT` 初期構成へ汎用トースト、独自select、dialog、popoverを追加しない。  
   必要になった時点でネイティブHTMLの不足とアクセシビリティ要件を確認し、Headless UIを個別評価する。
 
 ### 機能が所有するパターン
@@ -139,7 +139,7 @@ Tailwind theme variablesの仕様は[Theme variables](https://tailwindcss.com/do
 - `MUST` ページ言語、見出し階層、landmark、label、name、role、valueをネイティブHTMLから判定可能にする。
 - `MUST` 200%の文字拡大と400%相当のreflowで情報や操作を失わせない。
 - `MUST` 自動検査を補助として使用し、キーボード、フォーカス、拡大、読み上げ、文言の手動確認を省略しない。
-- WCAG適合は完成したページと一連の利用者フローで評価する。
+- WCAG適合は完成したページと一連の利用者フローで評価する。  
   コンポーネントまたはStorybook単体では適合を宣言しない。
 
 ## Storybook
@@ -148,7 +148,7 @@ Tailwind theme variablesの仕様は[Theme variables](https://tailwindcss.com/do
 - `MUST` 共通UIの全variantと必須状態を個別のstoryで表示する。
 - `MUST` 登録・ログイン、検索結果と在庫、予約を代表パターンとして表示し、APIやServer Actionへ接続せず純粋な表示propsで状態を再現する。
 - `MUST` 360px、768px、1280px相当のviewportで、長いタイトル、複数著者、長いエラー文言を確認する。
-- `MUST` Storybookのa11y検査結果を実装中に確認し、[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)に従ってstoryとa11y検査をCIの必須ゲートにする。
+- `MUST` Storybookのa11y検査結果を実装中に確認し、[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)に従ってstoryとa11y検査をCIの必須ゲートにする。  
   視覚差分検査は初期導入せず、同文書の条件で再評価する。
 
 StorybookとNext.jsの統合方式は[Storybook for Next.js with Vite](https://storybook.js.org/docs/get-started/frameworks/nextjs-vite/)を参照する。

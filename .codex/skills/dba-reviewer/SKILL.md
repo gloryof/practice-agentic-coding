@@ -14,7 +14,7 @@ description: Review database design and change plans with explicit risk tradeoff
 
 ## ワークフロー
 1. `agents/roles/dba-reviewer.md` を読み、そのミッションと判断ルールに従う。
-2. ユーザー向け振る舞い、業務ルール、データの意味または有効状態、受け入れ条件がレビュー基準になるかを判定する。
+2. ユーザー向け振る舞い、業務ルール、データの意味または有効状態、受け入れ条件がレビュー基準になるかを判定する。  
    該当する場合または不明な場合のみ、`product/domain-context/README.md` の探索規約に従って関連するユーザーストーリーとドメイン仕様を読む。
 3. タスクを、スキーマ設計レビュー、マイグレーション安全性レビュー、データベースリスクの再評価のいずれかに分類する。
 4. `references/review-checklist.md` を使用して指摘事項を評価する。

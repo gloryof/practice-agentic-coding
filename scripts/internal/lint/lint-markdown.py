@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lint Japanese sentence boundaries in Markdown prose (MDJ001)."""
+"""Lint Japanese sentence boundaries and visible breaks in Markdown prose."""
 
 import argparse
 from pathlib import Path
@@ -12,6 +12,9 @@ QUOTE = re.compile(r"^(\s*>\s*)+")
 URL = re.compile(r"(?:https?://|file:///)[^\s<>。]+")
 AUTOLINK = re.compile(r"<[^>\n]+>")
 CLOSERS = "」』）)]}】〉》”’\"'*_~"
+SENTENCE_END = re.compile(r"。[" + re.escape(CLOSERS) + r"]*$")
+HEADING = re.compile(r"^ {0,3}#{1,6}(?:\s|$)")
+BLOCK_START = re.compile(r"^ {0,3}(?:#{1,6}(?:\s|$)|(?:[-*_]\s*){3,}$|(?:=+|-+)\s*$)")
 
 
 def prose_lines(source):
@@ -123,6 +126,36 @@ def violation(line):
     return None
 
 
+def needs_hard_break(current, following):
+    """True when a sentence continues in the same Markdown paragraph."""
+    current_quote = QUOTE.match(current)
+    following_quote = QUOTE.match(following)
+    if bool(current_quote) != bool(following_quote):
+        return False
+    if current_quote and current_quote.group(0).count(">") != following_quote.group(0).count(">"):
+        return False
+    current_body = current[current_quote.end():] if current_quote else current
+    following_body = following[following_quote.end():] if following_quote else following
+    if HEADING.match(current_body) or BLOCK_START.match(following_body):
+        return False
+    if LIST.match(following_body) or re.match(r"^ {0,3}\[[^]]+\]:", following_body):
+        return False
+    if re.match(r"^ {0,3}</?[A-Za-z][^>]*>", following_body):
+        return False
+    return bool(SENTENCE_END.search(visible(current_body).rstrip()))
+
+
+def hard_break_violations(lines):
+    """Find prose lines whose sentence break would render as a soft break."""
+    eligible = dict(prose_lines(lines))
+    for number, current in eligible.items():
+        if number + 1 not in eligible or not lines[number - 1].endswith("\n"):
+            continue
+        if needs_hard_break(current, eligible[number + 1]):
+            if len(current) - len(current.rstrip(" ")) != 2:
+                yield number
+
+
 def lint(path):
     lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
     failures = []
@@ -133,8 +166,13 @@ def lint(path):
     return failures
 
 
+def lint_hard_breaks(path):
+    lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
+    return list(hard_break_violations(lines))
+
+
 def fix(path):
-    """Split safe prose lines without changing block or inline Markdown boundaries."""
+    """Split safe prose lines and make sentence breaks visible."""
     lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
     eligible = {number for number, _ in prose_lines(lines)}
     output = []
@@ -163,18 +201,23 @@ def fix(path):
             line = prefix + line[end:].lstrip()
         if fragments:
             newline = "\r\n" if original.endswith("\r\n") else "\n"
-            output.append(newline.join([*fragments, line]) + newline)
+            output.append(newline.join([*(fragment + "  " for fragment in fragments), line]) + newline)
         else:
             output.append(original)
-    changed = "".join(output) != "".join(lines)
+    output_lines = "".join(output).splitlines(keepends=True)
+    for number in hard_break_violations(output_lines):
+        raw = output_lines[number - 1]
+        newline = "\r\n" if raw.endswith("\r\n") else "\n"
+        output_lines[number - 1] = raw.rstrip("\r\n").rstrip(" ") + "  " + newline
+    changed = "".join(output_lines) != "".join(lines)
     if changed:
-        path.write_text("".join(output), encoding="utf-8")
+        path.write_text("".join(output_lines), encoding="utf-8")
     return changed
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--fix", action="store_true", help="split safe prose lines")
+    parser.add_argument("--fix", action="store_true", help="split safe prose lines and add hard breaks")
     parser.add_argument("paths", nargs="+", type=Path)
     args = parser.parse_args()
     failed = False
@@ -185,6 +228,9 @@ def main():
             fix(path)
         for number in lint(path):
             print(f"{path}:{number}: MDJ001: 句点「。」の後で改行してください。")
+            failed = True
+        for number in lint_hard_breaks(path):
+            print(f"{path}:{number}: MDJ002: 続く文を表示上も改行するため、行末に半角スペース2個を入れてください。")
             failed = True
     return int(failed)
 

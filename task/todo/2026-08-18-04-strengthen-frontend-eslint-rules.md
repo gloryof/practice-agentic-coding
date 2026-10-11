@@ -7,11 +7,11 @@
 - 依存関係: `2026-08-18-03-document-frontend-directory-responsibilities.md`
 
 ## 背景
-現在のフロントエンドは`eslint-config-next/core-web-vitals`と`eslint-config-next/typescript`を適用しているが、プロジェクト固有のディレクトリ依存方向、Client／Server境界、ログ、Promise、テスト品質の規則は文書とレビューで確認している。
+現在のフロントエンドは`eslint-config-next/core-web-vitals`と`eslint-config-next/typescript`を適用しているが、プロジェクト固有のディレクトリ依存方向、Client／Server境界、ログ、Promise、テスト品質の規則は文書とレビューで確認している。  
 利用者機能の実装とディレクトリ責務の確定後に、繰り返し発生し得る違反を自動検査する必要がある。
 
 ## 課題
-標準プリセットだけでは、`features`から`app`への依存、異なる機能間の直接依存、Client Componentからサーバー専用モジュールへの参照、未処理Promise、不適切なログ、テスト固有の不備を変更統合前に一貫して検出できない。
+標準プリセットだけでは、`features`から`app`への依存、異なる機能間の直接依存、Client Componentからサーバー専用モジュールへの参照、未処理Promise、不適切なログ、テスト固有の不備を変更統合前に一貫して検出できない。  
 一方、実装実態のない段階でルールを増やすと、誤検出、例外設定、lint実行時間、依存パッケージの保守負担が増える。
 
 ## 完了条件

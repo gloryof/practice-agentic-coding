@@ -4,12 +4,12 @@
 
 - `Docker daemon is unavailable`: Rancher DesktopなどのDocker実行環境を起動し、`docker version`で確認する。
 - `Docker Compose is unavailable`: Compose v2プラグインを含むDockerディストリビューションをインストールする。
-- JavaまたはGradle toolchainの失敗: `java -version`を確認する。
+- JavaまたはGradle toolchainの失敗: `java -version`を確認する。  
   APIビルドはGradle toolchainを通じてJava 24を選択する。
 
 ## ポート8080が使用中である
 
-ランナーはデータベースを削除する前にポート`8080`を確認する。
+ランナーはデータベースを削除する前にポート`8080`を確認する。  
 既存のリスナープロセスは停止しない。
 
 1. `lsof -nP -iTCP:8080 -sTCP:LISTEN`でリスナープロセスを特定する。
@@ -29,7 +29,7 @@
 - `docker compose -f api/docker-compose.yml ps`でPostgreSQLのhealthを確認する。
 - 次のコマンドでクリーンな状態に戻す:
   `./.codex/skills/run-api-e2e/scripts/run.sh stop`
-- `e2e`を再実行する。
+- `e2e`を再実行する。  
   seedは新しいデータベースを作成した後にだけ投入される。
 
 ## API起動またはE2Eに失敗する

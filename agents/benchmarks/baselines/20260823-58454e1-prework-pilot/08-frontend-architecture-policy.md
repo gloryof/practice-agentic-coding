@@ -133,7 +133,7 @@
 
 ## 実行結果
 
-- 判定: 成果物品質は合格。
+- 判定: 成果物品質は合格。  
   pilotのため正式基準値には不採用。
 - 成果物要約: URLが確定検索条件・sort・pageを所有し、Server ComponentがURLからBFF境界を呼び、Clientは未送信下書き等だけを所有する横断方針を`state-and-event-management.md`へ集約する。
 - 主な不要コンテキスト: なし。

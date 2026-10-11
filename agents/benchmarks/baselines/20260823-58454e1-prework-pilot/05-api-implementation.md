@@ -135,9 +135,9 @@
 
 ## 実行結果
 
-- 判定: 成果物品質は合格。
+- 判定: 成果物品質は合格。  
   pilotのため正式基準値には不採用。
-- 成果物要約: Web境界で文字列を検証し、QueryでCOUNTとID昇順のpage取得を行い、Usecaseでmetadataを構成する。
+- 成果物要約: Web境界で文字列を検証し、QueryでCOUNTとID昇順のpage取得を行い、Usecaseでmetadataを構成する。  
   OpenAPI・生成型・Unit・DB・HTTP E2Eを同期する。
 - 主な不要コンテキスト: なし。
 - 主な重複コンテキスト: なし。

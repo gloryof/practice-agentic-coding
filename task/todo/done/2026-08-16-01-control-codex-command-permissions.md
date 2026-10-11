@@ -7,14 +7,14 @@
 - Updated: 2026-08-16 - 起票
 
 ## 背景
-Codexは`.codex/rules/*.rules`の`prefix_rule`により、sandbox外で確認なしに実行できるコマンドを制御できる。
+Codexは`.codex/rules/*.rules`の`prefix_rule`により、sandbox外で確認なしに実行できるコマンドを制御できる。  
 現在のプロジェクトRulesは`git add`だけを許可する一方、ユーザー層の`$CODEX_HOME/rules/default.rules`では`./gradlew`全体を許可しているため、テスト以外のGradleタスクも同じ権限で実行できる。
 
-APIテストでは`./gradlew test --tests <クラスまたはメソッド>`の対象を実装ごとに変更する。
+APIテストでは`./gradlew test --tests <クラスまたはメソッド>`の対象を実装ごとに変更する。  
 テスト対象ごとにRulesを追加せず、任意のテストフィルターを一つの安全な許可方針で扱う必要がある。
 
 ## 影響
-許可範囲が広すぎると、サーバー起動、DB変更、公開などの副作用を持つタスクまで確認なしにsandbox外で実行される可能性がある。
+許可範囲が広すぎると、サーバー起動、DB変更、公開などの副作用を持つタスクまで確認なしにsandbox外で実行される可能性がある。  
 反対に許可範囲が細かすぎると、テストクラスを変更するたびに承認が発生し、実装と検証の反復性が低下する。
 
 ## 対応案
@@ -43,7 +43,7 @@ APIテストでは`./gradlew test --tests <クラスまたはメソッド>`の�
 - `bash`、`zsh`、`sh`の`-c`・`-lc`による文字列実行は、一般的な絶対パスと`env`経由を含めて`forbidden`とし、`ssh`、`scp`、`rsync`も用途や転送方向にかかわらず`forbidden`とした。
 - ユーザー層の`pattern = ["./gradlew"]`という広い許可を削除し、プロジェクトRulesを共有可能な正本とした。
 - `prefix_rule`では任意位置のURLや引数の意味を完全に判定できないため、外部書き込みと断定できないコマンドは未一致または`prompt`とし、granular approval policyによって自動拒否する構成にした。
-- 固定ラッパーとGradle build、テストコードはワークスペース内コードとして信頼する。
+- 固定ラッパーとGradle build、テストコードはワークスペース内コードとして信頼する。  
   この信頼境界は`.codex/rules/README.md`へ記録した。
 
 ## 期限 / 優先度

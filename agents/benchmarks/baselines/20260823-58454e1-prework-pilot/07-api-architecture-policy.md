@@ -131,7 +131,7 @@
 
 ## 実行結果
 
-- 判定: 成果物品質は合格。
+- 判定: 成果物品質は合格。  
   pilotのため正式基準値には不採用。
 - 成果物要約: public Command Usecaseが単一DB transactionを所有し、必須DB更新は同期in-transaction handlerで全体rollback、外部I/O等は将来のafter-commitへ分離する。
 - 主な不要コンテキスト: 仕様更新規則37行。

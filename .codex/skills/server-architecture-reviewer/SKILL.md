@@ -14,7 +14,7 @@ description: Design and review backend architecture with explicit tradeoffs acro
 
 ## ワークフロー
 1. `agents/roles/server-architecture-reviewer.md` を読み、そのミッションとルールに判断を合わせる。
-2. ユーザー向け振る舞い、業務ルール、データの意味または有効状態、受け入れ条件がレビュー基準になるかを判定する。
+2. ユーザー向け振る舞い、業務ルール、データの意味または有効状態、受け入れ条件がレビュー基準になるかを判定する。  
    該当する場合または不明な場合のみ、`product/domain-context/README.md` の探索規約に従って関連するユーザーストーリーとドメイン仕様を読む。
 3. タスクを、アーキテクチャ設計、アーキテクチャレビュー、インシデント後の再評価のいずれかに分類する。
 4. サービス境界、データフロー、所有境界、障害ドメインを整理する。

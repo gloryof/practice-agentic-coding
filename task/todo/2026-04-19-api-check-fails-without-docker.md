@@ -10,7 +10,7 @@
 `api/docs/backend-guidelines.md` の更新確認として `./api/gradlew -p api check` を実行したところ、`PostgreSqlTestBase.kt` 初期化で Testcontainers の Docker 検出に失敗し、`test` タスクが失敗した。
 
 ## 課題
-Docker未起動時に利用できる検証条件と代替手順が明文化されていない。
+Docker未起動時に利用できる検証条件と代替手順が明文化されていない。  
 ローカル環境で Docker が利用できない場合、ドキュメント変更のみでも `check` の完走確認ができず、作業完了判断が不安定になる。
 
 ## 完了条件

@@ -6,7 +6,7 @@
 - Updated: 2026-05-17 - 完了（PostgreSqlTestBase の接続ウォームアップ追加と JaCoCo 除外設定の修正で `check` 安定化）
 
 ## 背景
-`./api/gradlew -p api check` 実行時に `AuthCredentialDaoTest` が失敗した。
+`./api/gradlew -p api check` 実行時に `AuthCredentialDaoTest` が失敗した。  
 失敗時の主な例外は `CannotGetJdbcConnectionException` で、内部原因として `org.postgresql.util.PSQLException` と `java.net.ConnectException` が発生している。
 
 ## 影響

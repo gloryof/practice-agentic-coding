@@ -6,7 +6,7 @@
 - Updated: 2026-08-09 - 起票
 
 ## 背景
-既知脆弱性を解消したNext.js 16.3.0、`eslint-config-next` 16.3.0と推移的依存の修正版を直ちに採用するため、`.npmrc`の`min-release-age-exclude[]`へ`next`、`eslint-config-next`、`@next/*`、`nanoid`、`postcss`、`sharp`、`tmp`、`uuid`を指定した。
+既知脆弱性を解消したNext.js 16.3.0、`eslint-config-next` 16.3.0と推移的依存の修正版を直ちに採用するため、`.npmrc`の`min-release-age-exclude[]`へ`next`、`eslint-config-next`、`@next/*`、`nanoid`、`postcss`、`sharp`、`tmp`、`uuid`を指定した。  
 npm Registryの公開情報、ロックファイル、`npm audit`、`npm audit signatures`を確認したうえで、ユーザー承認によりセキュリティ修正版だけ公開後7日の待機対象から除外した。
 
 ## 影響

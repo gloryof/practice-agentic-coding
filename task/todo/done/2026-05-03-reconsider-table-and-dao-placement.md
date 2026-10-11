@@ -6,8 +6,8 @@
 - Updated: 2026-05-10 - 完了
 
 ## 背景
-現状は query/command ともに infra レイヤに格納している。
-同一テーブルを query/command の両方で参照する場合、テーブルクラスやDAOクラスの重複定義が発生しうる。
+現状は query/command ともに infra レイヤに格納している。  
+同一テーブルを query/command の両方で参照する場合、テーブルクラスやDAOクラスの重複定義が発生しうる。  
 また、`RepositoryImpl` の配置が不整合であり、command 側は `infra.adapter.persistence` 配下だが、
 query 側は `infra` 直下にあり、レイヤ構成の一貫性が取れていない。
 

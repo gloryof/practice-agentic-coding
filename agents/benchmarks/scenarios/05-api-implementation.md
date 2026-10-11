@@ -12,7 +12,7 @@ Scenario ID: `05-api-implementation`
 - 検索条件、認証、完全一致指定の既存動作は変更しない。
 - 検索結果は`book_product_id`の昇順で固定し、その後にページングを適用する。
 - 応答は既存の`book_items`に加え、`page`、`page_size`、`total_items`、`total_pages`を返す。
-- `total_items`はページング前の該当書誌数、`total_pages`は`total_items / page_size`の切り上げとする。
+- `total_items`はページング前の該当書誌数、`total_pages`は`total_items / page_size`の切り上げとする。  
   0件の場合は`0`とする。
 - 最終ページを超えた場合は`book_items`を空配列で返し、件数とページ情報は要求値および全件数に基づいて返す。
 - DBマイグレーションと新しい外部依存関係は追加しない。

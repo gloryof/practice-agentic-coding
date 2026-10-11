@@ -139,9 +139,9 @@
 
 ## 実行結果
 
-- 判定: 成果物品質は合格。
+- 判定: 成果物品質は合格。  
   正式基準値には初回試運転のため不採用。
-- 成果物要約: `TraceIdFilter`がヘッダー選択・UUID生成・MDC・レスポンスヘッダー・cleanupを担い、`GlobalExceptionHandler`がエラー本文と予期しない例外ログへMDC値を反映する。
+- 成果物要約: `TraceIdFilter`がヘッダー選択・UUID生成・MDC・レスポンスヘッダー・cleanupを担い、`GlobalExceptionHandler`がエラー本文と予期しない例外ログへMDC値を反映する。  
   Filter全体の統合証拠は不足している。
 - 主な不要コンテキスト: なし。
 - 主な重複コンテキスト: なし。
