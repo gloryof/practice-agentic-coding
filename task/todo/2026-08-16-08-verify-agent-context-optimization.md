@@ -6,7 +6,7 @@
 - Updated: 2026-08-23 - 着手前の全シナリオと代表シナリオの完全実行を分離して再計測する方針へ変更
 - Updated: 2026-08-16 - 起票
 - 優先度: 8
-- 依存関係: `2026-08-16-02-measure-agent-workflow-context-baseline.md`、`task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`task/todo/done/2026-08-16-06-add-agent-workflow-regression-tests.md`（追加実装なしで終了）、`2026-08-16-07-audit-agent-workflow-responsibilities.md`
+- 依存関係: `2026-08-16-02-measure-agent-workflow-context-baseline.md`、`task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`task/todo/done/2026-08-16-06-add-agent-workflow-regression-tests.md`（追加実装なしで終了）、`task/todo/done/2026-08-16-07-audit-agent-workflow-responsibilities.md`（追加の網羅的監査なしで終了）
 
 ## 背景
 コンテキスト選択、工程間の成果物と必須入力による引き継ぎ、ワークフローとレビューの選択を導入しても、改善前と同じ条件で再計測しなければ、コンテキスト使用量、重複探索、処理時間を減らしながら品質を維持できたか判断できない。
