@@ -6,12 +6,12 @@
 - Updated: 2026-08-23 - 着手前の全シナリオと代表シナリオの完全実行を分離して再計測する方針へ変更
 - Updated: 2026-08-16 - 起票
 - 優先度: 8
-- 依存関係: `2026-08-16-02-measure-agent-workflow-context-baseline.md`、`task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`2026-08-16-06-add-agent-workflow-regression-tests.md`、`2026-08-16-07-audit-agent-workflow-responsibilities.md`
+- 依存関係: `2026-08-16-02-measure-agent-workflow-context-baseline.md`、`task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`task/todo/done/2026-08-16-06-add-agent-workflow-regression-tests.md`（追加実装なしで終了）、`2026-08-16-07-audit-agent-workflow-responsibilities.md`
 
 ## 背景
 コンテキスト選択、工程間の成果物と必須入力による引き継ぎ、ワークフローとレビューの選択を導入しても、改善前と同じ条件で再計測しなければ、コンテキスト使用量、重複探索、処理時間を減らしながら品質を維持できたか判断できない。
 
-個別施策が局所的に読み込みを減らしても、選択用の索引、構造化出力、回帰検査が新たなオーバーヘッドとなり、全体では改善しない可能性がある。
+個別施策が局所的に読み込みを減らしても、選択用の索引や構造化出力が新たなオーバーヘッドとなり、全体では改善しない可能性がある。
 
 ## 課題
 効果が未確認のまま運用を固定すると、必要なガードレールを維持しただけで処理が複雑化したり、逆にトークン削減を優先して必要なレビューを欠落させたりする可能性がある。
@@ -26,7 +26,7 @@
 - `task/todo/2026-08-16-02-measure-agent-workflow-context-baseline.md`で定義した8シナリオについて、同一入力、区間、指標を使って`pre-work`を再計測する。
 - 比較対象として選択した一つ以上のシナリオを`full-run`で再計測し、成果物作成、レビュー、検証を含む改善前後の差分を確認する。全工程の比較が必要な場合は全8シナリオを対象にする。
 - `pre-work`では総コンテキスト、必要コンテキスト率、重複探索回数、呼び出したスキル、参照文書、予定したレビューと検証、処理時間、完了条件の見落とし有無を比較する。
-- `full-run`では予定と実際のスキル、レビュー、検証の差分、回帰検査結果、追加コンテキストを比較する。
+- `full-run`では予定と実際のスキル、レビュー、検証の差分、既存ベンチマークによる評価結果、追加コンテキストを比較する。
 - Main Agentと各レビュアーの使用量を分け、工程間の引き継ぎによって移動または増加したコストを全体値から隠さない。
 - 変更の影響範囲とワークフロー適用の有無ごとに、削減効果と品質維持の結果を整理する。
 - 必須文書、必須レビュー、必須検証の欠落がある施策は、トークン削減量にかかわらず不採用または修正する。

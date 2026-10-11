@@ -1,10 +1,14 @@
 # Agentワークフローの選択結果を回帰テストする
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-10-11 - 既存のベンチマークで固定シナリオの選択結果を記録・評価できるため、追加実装を行わず終了
 - Updated: 2026-08-16 - 起票
 - 優先度: 6
 - 依存関係: `task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）
+
+## 終了判断
+`agents/benchmarks/README.md`と`agents/benchmarks/RESULT_TEMPLATE.md`には、固定シナリオで参照文書、適用フロー、レビュー、検証を記録し、対象コミット時点の規則に照らして評価する手順がある。本TODOで提案した期待値の宣言形式と自動判定は追加していない。毎回の実タスクにおける遵守確認も、このベンチマークでは保証しない。既存の仕組みとの重複と目的の違いを確認し、ユーザー判断により追加実装を行わず終了する。
 
 ## 背景
 コンテキスト選択、任意のワークフロー選択、変更影響に応じたレビュー選択を行うと、不要な参照を減らせる一方、ルーティング規則の変更によって必要な文書やレビュアーを誤って除外する可能性がある。現状は代表例を人間が文書上で確認する方法が中心で、選択結果の回帰を継続的に検知する成果物がない。

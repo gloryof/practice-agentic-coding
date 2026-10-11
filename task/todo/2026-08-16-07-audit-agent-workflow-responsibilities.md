@@ -6,10 +6,10 @@
 - Updated: 2026-09-07 - ワークフロー選択入口の変更に伴う既存実装フローの移行事項を追記
 - Updated: 2026-08-16 - 起票
 - 優先度: 7
-- 依存関係: `task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`2026-08-16-06-add-agent-workflow-regression-tests.md`
+- 依存関係: `task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`task/todo/done/2026-08-16-06-add-agent-workflow-regression-tests.md`（追加実装なしで終了）
 
 ## 背景
-コンテキスト選択、工程間の成果物と必須入力による引き継ぎ、任意のワークフロー選択、回帰検査を追加すると、`AGENTS.md`、`agents/flows`、`.codex/skills`、`agents/roles`、実装規則、ドメイン文書へ同じ条件や手順を重複して記載する可能性がある。
+コンテキスト選択、工程間の成果物と必須入力による引き継ぎ、任意のワークフロー選択を追加すると、`AGENTS.md`、`agents/flows`、`.codex/skills`、`agents/roles`、実装規則、ドメイン文書へ同じ条件や手順を重複して記載する可能性がある。
 
 ロールとスキルの責務分担は`task/todo/done/2026-07-18-07-deduplicate-role-and-skill-guidance.md`で整理済みであり、仕様探索と更新責務も既存フローで条件化済みである。今回必要なのはそれらの再設計ではなく、新しい選択成果物を追加した後の責務逸脱と重複の監査である。
 

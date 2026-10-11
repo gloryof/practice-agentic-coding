@@ -6,7 +6,7 @@
 - Updated: 2026-08-16 - 起票
 - 優先度: 11
 - 実施条件: 現行の任意のワークフロー選択と変更影響による判定を前提に着手する。
-- 依存関係: `task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`2026-08-16-06-add-agent-workflow-regression-tests.md`、`2026-08-16-07-audit-agent-workflow-responsibilities.md`、`2026-08-16-09-standardize-markdown-writing-and-incremental-lint.md`
+- 依存関係: `task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`task/todo/done/2026-08-16-06-add-agent-workflow-regression-tests.md`（追加実装なしで終了）、`2026-08-16-07-audit-agent-workflow-responsibilities.md`、`2026-08-16-09-standardize-markdown-writing-and-incremental-lint.md`
 
 ## 背景
 `AGENTS.md`ではワークフロー選択を任意とし、各フローは変更の影響に応じてレビューを選択する。

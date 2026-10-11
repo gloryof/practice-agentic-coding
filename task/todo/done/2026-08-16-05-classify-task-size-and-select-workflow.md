@@ -15,7 +15,7 @@
 - `AGENTS.md`ではワークフロー選択が任意であり、軽微な変更はフローを選ばず、共通規則と変更内容に必要な検証で進められる。
 - フローを選んだ場合は変更の影響範囲から必要な専門レビューと検証を判断し、実装中に影響が広がった場合は再判定する。
 - `trivial`、`normal`、`complex`の追加分類は行わない。変更の規模だけで高リスク変更の扱いを決めず、実際の影響条件を用いる。
-- 検証選択の詳細化は`task/todo/2026-08-16-11-define-workflow-specific-verification.md`、選択結果の回帰確認は`task/todo/2026-08-16-06-add-agent-workflow-regression-tests.md`で扱う。
+- 検証選択の詳細化は`task/todo/2026-08-16-11-define-workflow-specific-verification.md`で扱う。選択結果の回帰テスト追加案は`task/todo/done/2026-08-16-06-add-agent-workflow-regression-tests.md`で終了判断を記録した。
 
 ## 影響
 軽微な変更へ過剰な探索、設計、レビュー、検証を適用すると処理時間とコンテキストが増える。複雑な変更を軽く扱うと、仕様、境界、セキュリティ、DB、テストへの影響を見落とす。
