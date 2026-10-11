@@ -1,12 +1,16 @@
 # Agentワークフロー文書の責務を監査する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-10-11 - 現行の入口と実装フローの照合結果を踏まえ、追加の網羅的監査を行わず終了
 - Updated: 2026-10-04 - フロントエンドの旧実装フロー廃止と新フロー登録に合わせて残る監査対象を明確化
 - Updated: 2026-09-07 - ワークフロー選択入口の変更に伴う既存実装フローの移行事項を追記
 - Updated: 2026-08-16 - 起票
 - 優先度: 7
 - 依存関係: `task/todo/done/2026-08-16-03-add-lightweight-implementation-context-routing.md`（完了）、`task/todo/done/2026-08-16-04-pass-review-context-packages.md`（完了）、`task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md`（完了）、`task/todo/done/2026-08-16-06-add-agent-workflow-regression-tests.md`（追加実装なしで終了）
+
+## 終了判断
+現行の`AGENTS.md`、API・フロントエンドの入口文書、実装フロー、ワークフロー選択スキルを照合した範囲では、互いに反する指示は確認できなかった。サーバサイドのアダプター実装フローも現行の選択一覧に登録されている。起票時の重複・不整合は具体的な発生箇所を示したものではなく、予防的な監査案だったため、ユーザー判断により終了する。全ての文書の重複、参照循環、リンク切れを網羅的に監査した結果ではない。以下の背景、完了条件、実装方法案は起票時の記録として残す。
 
 ## 背景
 コンテキスト選択、工程間の成果物と必須入力による引き継ぎ、任意のワークフロー選択を追加すると、`AGENTS.md`、`agents/flows`、`.codex/skills`、`agents/roles`、実装規則、ドメイン文書へ同じ条件や手順を重複して記載する可能性がある。
