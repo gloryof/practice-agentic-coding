@@ -4,10 +4,14 @@
 - `MUST` 本規約は、図書館利用者向けフロントエンドとBFFの構成と実装判断を統一し、変更容易性、運用性、セキュリティを維持する。
 
 ## 規範語
-- `MUST`: 必須。満たさない変更は受け入れない。
-- `MUST NOT`: 禁止。いかなる理由でも実施しない。
-- `SHOULD`: 強く推奨。満たさない場合は理由を説明する。
-- `MAY`: 任意。文脈に応じて選択できる。
+- `MUST`: 必須。
+  満たさない変更は受け入れない。
+- `MUST NOT`: 禁止。
+  いかなる理由でも実施しない。
+- `SHOULD`: 強く推奨。
+  満たさない場合は理由を説明する。
+- `MAY`: 任意。
+  文脈に応じて選択できる。
 
 ## 適用範囲と現在状態
 - `MUST` 本規約を`frontend/`配下へ適用する。
@@ -15,7 +19,8 @@
 - `MUST` BFFを変更する場合は[BFFアーキテクチャ](bff/architecture.md)を参照する。
 - `MUST` Client Componentsまたはブラウザ側を変更する場合は[Clientアーキテクチャ](client/architecture.md)を参照する。
 - `MUST` BFFとClientの両境界を変更する場合は、両方のアーキテクチャを参照する。
-- 現在はNext.js BFF基盤に加え、利用登録、ログイン、ログアウト、認証セッションを実装済みである。蔵書検索、在庫確認、予約の利用者機能は未実装である。
+- 現在はNext.js BFF基盤に加え、利用登録、ログイン、ログアウト、認証セッションを実装済みである。
+  蔵書検索、在庫確認、予約の利用者機能は未実装である。
 - `MUST` テスト、CI、アクセシビリティ検査、対応ブラウザ、性能、可観測性、セキュリティヘッダー、依存関係には[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を適用する。
 
 ## アーキテクチャ
@@ -60,7 +65,8 @@ frontend/
 
 - `MUST` 利用者機能を`features`配下へ配置し、UI、Server Actions、型、テストを変更単位の近くに置く。
 - `MUST` `app`から`features`と`shared`への依存を許可し、`features`から`app`への依存を禁止する。
-- `MUST NOT` 異なる機能間を直接依存させる。共有が必要な場合は、責務を確認して`shared`または画面合成へ移す。
+- `MUST NOT` 異なる機能間を直接依存させる。
+  共有が必要な場合は、責務を確認して`shared`または画面合成へ移す。
 - `MUST` `shared`には複数機能で実際に再利用する、業務機能を所有しない処理だけを配置する。
 - `MUST NOT` バックエンドのパッケージ構成を理由なく複製し、利用者画面の変更単位を分断しない。
 
@@ -91,7 +97,8 @@ frontend/
 - `MUST` async Server Components、BFF、Cookie、Spring Boot API、DBをまたぐ利用者フローを単体テストだけで保証しない。
 
 ## ローカル実行とビルド
-`frontend/package.json`のnpm scriptsをコマンドの正本とする。初回はNode.js 24を有効にし、`frontend/`で次を実行する。
+`frontend/package.json`のnpm scriptsをコマンドの正本とする。
+初回はNode.js 24を有効にし、`frontend/`で次を実行する。
 
 ```shell
 cp .env.example .env.local
@@ -100,7 +107,8 @@ npx playwright install chromium firefox webkit
 npm run check
 ```
 
-`.npmrc`で依存パッケージのライフサイクルスクリプトを無効化している。必要なブラウザ取得は上記の明示コマンドで行い、依存パッケージのインストール時に任意コードを実行させない。
+`.npmrc`で依存パッケージのライフサイクルスクリプトを無効化している。
+必要なブラウザ取得は上記の明示コマンドで行い、依存パッケージのインストール時に任意コードを実行させない。
 
 | コマンド | 責務 |
 |---|---|

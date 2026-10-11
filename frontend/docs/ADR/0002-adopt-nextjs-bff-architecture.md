@@ -10,11 +10,14 @@
 [ADR-0001](0001-adopt-react-router-spa-architecture.md) の React Router Framework Modeによる静的CSR SPAの決定を置き換える。
 
 ## 背景
-図書館利用者向けフロントエンドは、ログイン後の蔵書検索、在庫確認、予約を提供する。Spring Boot APIはログイン時にBearerアクセストークンを返し、保護対象APIでは`Authorization`ヘッダーを検証する。
+図書館利用者向けフロントエンドは、ログイン後の蔵書検索、在庫確認、予約を提供する。
+Spring Boot APIはログイン時にBearerアクセストークンを返し、保護対象APIでは`Authorization`ヘッダーを検証する。
 
-ブラウザJavaScriptがBearerアクセストークンをCookieやWeb Storageから読み取る構成では、XSSによって認証秘密を持ち出される範囲が広がる。`HttpOnly` Cookieを使用しながらSpring Boot APIのBearer契約を維持するには、ブラウザとAPIの間でセッションを終端するBFFが必要になる。
+ブラウザJavaScriptがBearerアクセストークンをCookieやWeb Storageから読み取る構成では、XSSによって認証秘密を持ち出される範囲が広がる。
+`HttpOnly` Cookieを使用しながらSpring Boot APIのBearer契約を維持するには、ブラウザとAPIの間でセッションを終端するBFFが必要になる。
 
-ADR-0001はBFFが必要になった場合を再評価条件としていた。フロントエンドの機能実装前であり、React Router SPAからの移行コストがまだ発生していないため、アプリケーション基盤とBFFをNext.jsへ統合する。
+ADR-0001はBFFが必要になった場合を再評価条件としていた。
+フロントエンドの機能実装前であり、React Router SPAからの移行コストがまだ発生していないため、アプリケーション基盤とBFFをNext.jsへ統合する。
 
 ## 決定
 - Next.js 16のApp Router、React、TypeScript strictを採用する。
@@ -64,7 +67,8 @@ Spring Boot API
 - BFF、セッションストア、APIの各失敗を分類し、主要障害領域を10分以内に一次特定できる診断情報を持つ。
 
 ## ロールバック
-フロントエンド機能実装前はADR-0001へ戻せる。ただし、BFF認証を利用する機能実装後はBearerのブラウザ保持を復活させず、BFFを別プロセスへ分離するロールフォワードを優先する。
+フロントエンド機能実装前はADR-0001へ戻せる。
+ただし、BFF認証を利用する機能実装後はBearerのブラウザ保持を復活させず、BFFを別プロセスへ分離するロールフォワードを優先する。
 
 ## 再評価条件
 - 複数インスタンス、Serverless、または実利用者データを扱う場合、共有セッションストア、暗号化、失効、可用性を再評価する。

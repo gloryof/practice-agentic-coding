@@ -10,7 +10,8 @@ agents/benchmarks/baselines/20260906-aa360db-fullrun-official
 実トークン数を取得できない場合は取得行数などを代替指標として用い、実トークン数と混同しない。
 
 # 解決すべき課題
-ワークフローの見直しにより解決すべき課題は下記。観測された不要な参照と、今後検証する改善余地を区別する。
+ワークフローの見直しにより解決すべき課題は下記。
+観測された不要な参照と、今後検証する改善余地を区別する。
 
 - 変更に不要な文書や、非適用スキルの詳細を読み込んでいる。
 - Main Agentとsubagentの共通資料の再探索・取得範囲に、削減余地がある。
@@ -81,5 +82,5 @@ AIはユーザーが指定または選択したワークフローについて、
 
 | 関連TODO | 課題との関係 |
 |---|---|
-| [Markdown記述ルールと変更ファイル限定Lint](task/todo/2026-08-16-09-standardize-markdown-writing-and-incremental-lint.md) | 部分参照を扱いやすくし、文書検査の対象と出力を絞る |
+| [Markdown記述ルールと変更ファイル限定Lint](task/todo/done/2026-08-16-09-standardize-markdown-writing-and-incremental-lint.md) | 部分参照を扱いやすくし、文書検査の対象と出力を絞る |
 | [フロントエンド品質文書の責務整理](task/todo/2026-08-20-01-refactor-frontend-quality-documentation.md) | 変更内容から必要な品質規則を選びやすくする |

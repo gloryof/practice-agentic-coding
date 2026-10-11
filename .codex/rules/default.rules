@@ -38,7 +38,7 @@ prefix_rule(
     ],
     not_match = [
         "./api/gradlew -p api test",
-        "./scripts/check-no-local-paths.sh",
+        "./scripts/internal/paths/check-no-local-paths.sh",
     ],
 )
 
@@ -213,7 +213,7 @@ prefix_rule(
     ],
     not_match = [
         "./scripts/run-api-tests.sh",
-        "./scripts/check-no-local-paths.sh",
+        "./scripts/internal/paths/check-no-local-paths.sh",
     ],
 )
 

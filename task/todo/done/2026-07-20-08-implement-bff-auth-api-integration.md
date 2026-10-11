@@ -13,7 +13,8 @@
 Next.js BFFを介してSpring Boot APIのBearer認証契約を利用する方針は決定したが、セッション、Cookie、APIクライアント、ログアウト、型同期、エラー、トレースは未実装である。
 
 ## 影響
-認証境界を画面機能と同時に実装すると、Bearerのブラウザ露出、期限切れやログアウトの不整合、API契約ドリフト、エラー処理の重複が発生しやすい。検索と予約の実装前に共通境界を検証可能にする必要がある。
+認証境界を画面機能と同時に実装すると、Bearerのブラウザ露出、期限切れやログアウトの不整合、API契約ドリフト、エラー処理の重複が発生しやすい。
+検索と予約の実装前に共通境界を検証可能にする必要がある。
 
 ## 対応案
 - `frontend/docs/bff/architecture.md`を入口として`frontend/docs/bff/api-auth-integration.md`に従い、構築済みの`BffSessionStore`と初期`InMemoryBffSessionStore`を認証フローへ組み込む。

@@ -10,7 +10,7 @@
 
 ## 必須検証
 - `MUST` 実装変更では `frontend/docs/frontend-guidelines.md` に定義された、変更対象に対応する検証を実行する。
-- `MUST` 文書変更ではルート `AGENTS.md` に従い、`./scripts/check-no-local-paths.sh` を実行する。
+- `MUST` 文書変更ではルート `AGENTS.md` に従い、`python3 scripts/check-docs.py` を実行する。
 
 ## レビュー要件
 - `MUST` フロントエンドの実装またはレビュー結果に、確認したルールを示す簡潔な準拠メモを含める。

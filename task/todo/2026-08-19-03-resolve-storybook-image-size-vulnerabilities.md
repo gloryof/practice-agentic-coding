@@ -7,10 +7,13 @@
 - 優先度: 高
 
 ## 背景
-`@storybook/nextjs-vite` 10.5.5から`vite-plugin-storybook-nextjs`を経由して利用される`image-size` 2.0.2以下に、ICNS、JXL、HEIF解析時の無限ループによるサービス不能のHigh脆弱性が2件ある。2026-08-09時点でnpm auditが提示する修正版はない。Storybookは開発・build時だけ使用し、リポジトリ管理下の画像だけを入力する補完統制により、ユーザー承認のもと2026-08-23まで期限付きで受容した。
+`@storybook/nextjs-vite` 10.5.5から`vite-plugin-storybook-nextjs`を経由して利用される`image-size` 2.0.2以下に、ICNS、JXL、HEIF解析時の無限ループによるサービス不能のHigh脆弱性が2件ある。
+2026-08-09時点でnpm auditが提示する修正版はない。
+Storybookは開発・build時だけ使用し、リポジトリ管理下の画像だけを入力する補完統制により、ユーザー承認のもと2026-08-23まで期限付きで受容した。
 
 ## 課題
-信頼できないICNS、JXL、HEIF画像をStorybookの処理対象へ入れると、開発環境またはCIの処理が停止する可能性がある。production依存と利用者入力の処理経路には含まれない。
+信頼できないICNS、JXL、HEIF画像をStorybookの処理対象へ入れると、開発環境またはCIの処理が停止する可能性がある。
+production依存と利用者入力の処理経路には含まれない。
 
 ## 完了条件
 - Storybookの依存関係から、対象の`image-size`既知脆弱性が解消されている。

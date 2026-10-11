@@ -19,4 +19,4 @@ Codexを使ってAgentic Codingの連取をする場所。
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 
 ## Checks
-- ローカル絶対パス参照の検知: `./scripts/check-no-local-paths.sh`
+- 文書の変更ファイル限定検査（句点改行・リンク先・ローカル絶対パス）: `python3 scripts/check-docs.py`
