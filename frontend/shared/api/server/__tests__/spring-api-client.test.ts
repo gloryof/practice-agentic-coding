@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { BffApiError } from "../api-errors";
+import { BFF_ACTION, startBffAction } from "../logger";
 import {
   loginWithSpringApi,
   logoutWithSpringApi,
@@ -24,7 +25,7 @@ describe("spring-api-client", () => {
     );
 
     await expect(
-      registerWithSpringApi("reader@example.com", "ValidPassword1!", fetcher),
+      registerWithSpringApi("reader@example.com", "ValidPassword1!", { fetcher }),
     ).resolves.toEqual({
       library_user_id: "user-1",
       email: "reader@example.com",
@@ -53,7 +54,7 @@ describe("spring-api-client", () => {
     );
 
     await expect(
-      registerWithSpringApi("reader@example.com", "ValidPassword1!", fetcher),
+      registerWithSpringApi("reader@example.com", "ValidPassword1!", { fetcher }),
     ).rejects.toMatchObject({ kind: "contract" });
   });
 
@@ -97,7 +98,9 @@ describe("spring-api-client", () => {
           { status: 200 },
         ),
       );
-    await expect(loginWithSpringApi("a@example.com", "password", fetcher)).rejects.toMatchObject({
+    await expect(
+      loginWithSpringApi("a@example.com", "password", { fetcher }),
+    ).rejects.toMatchObject({
       kind: "contract",
     });
   });
@@ -133,6 +136,33 @@ describe("spring-api-client", () => {
     vi.stubEnv("SPRING_API_BASE_URL", "http://localhost:8080");
     vi.stubEnv("BFF_PUBLIC_ORIGIN", "http://localhost:3000");
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 204 }));
-    await expect(logoutWithSpringApi("secret", fetcher)).resolves.toBeUndefined();
+    await expect(logoutWithSpringApi("secret", { fetcher })).resolves.toBeUndefined();
+  });
+
+  it("API呼び出しログへActionのrequest IDを引き継ぐ", async () => {
+    vi.stubEnv("SPRING_API_BASE_URL", "http://localhost:8080");
+    vi.stubEnv("BFF_PUBLIC_ORIGIN", "http://localhost:3000");
+    const log = vi.spyOn(console, "info").mockImplementation(() => undefined);
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 204 }));
+    const requestId = startBffAction(BFF_ACTION.logout).requestId;
+
+    try {
+      await requestSpringApi({
+        method: "POST",
+        path: "/api/v1/auth/logout",
+        requestId,
+        accessToken: "secret",
+        fetcher,
+      });
+      const events = log.mock.calls.map(
+        ([line]) => JSON.parse(String(line)) as Record<string, unknown>,
+      );
+      expect(events).toContainEqual(
+        expect.objectContaining({ event: "spring_api_request", requestId }),
+      );
+      expect(JSON.stringify(events)).not.toContain("secret");
+    } finally {
+      log.mockRestore();
+    }
   });
 });

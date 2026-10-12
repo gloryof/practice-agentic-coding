@@ -42,8 +42,25 @@
 
 ## Server Actionsとイベント
 - `MUST` Server Actionsを`loginAction`、`logoutAction`、`placeReservationAction`のように利用者操作を表す動詞で命名し、対象機能の近くへ配置する。
+- `MUST` 1つのServer Actionを、利用者が意図して実行する1つの操作に対応させる。  
+  画面、URL、入力項目の数を分割単位にしない。
+- `MUST` 操作ごとに入力、認証・認可、成功時の結果、失敗時の結果を決める。  
+  1つのフォームに異なる操作があれば操作別のActionを使用する。
+- `MAY` 操作の意味、入力、認証・認可、成功時の結果、失敗時の結果が同じ場合、複数の画面やコンポーネントから同じActionを呼び出してよい。
+- `MUST NOT` 異なる操作を汎用の`actionType`で振り分ける巨大なActionを作らない。  
+  1つの業務操作を入力項目単位のActionへ分割しない。
+- `MUST` 各Actionを独立したサーバー入口として扱い、入力を検証し、操作と対象資源に必要な認証・認可をAction実行時に確認する。  
+  画面の表示制御だけを根拠にしない。
+- `MUST` Actionは入力とBFFセッションの扱い、サーバー専用APIクライアントの呼び出し、画面用結果への変換、更新後の再検証または遷移を担当する。  
+  業務上の可否と永続化の正本はSpring Boot APIに置く。
+- `MUST` Actionの戻り値を画面に必要な状態へ限定し、秘密情報と未加工のAPI応答を含めない。
 - `MUST` 利用者操作に伴うAPI呼び出しをイベントから呼び出されたServer Actionで開始する。
 - `MUST` 状態を変更するServer ActionとRoute Handlerへ[API・認証連携設計](api-auth-integration.md)のCSRF対策を適用する。
+- `MUST` 安定したURL、HTTPメソッド、外部向け通信契約を必要とする処理にはRoute Handlerを使用し、Server Actionで代替しない。
+
+ログインと利用登録は、別々の利用者操作として`loginAction`と`registrationAction`を使用する。  
+同じ画面から予約と取消を行う場合も、`placeReservationAction`と`cancelReservationAction`へ分ける。  
+同じ予約操作を複数画面に置く場合、上記の入力と結果の契約が同じならActionを共有する。
 
 ## 非同期処理
 - `MUST` ルートで必要な読み取りをServer ComponentsとApp Routerのデータ取得で行う。

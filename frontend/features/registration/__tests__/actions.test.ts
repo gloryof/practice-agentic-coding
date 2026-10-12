@@ -1,6 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { BffApiError } from "@/shared/api/server/api-errors";
+import { configureBffLogSink } from "@/shared/api/server/logger";
 
 const mocks = vi.hoisted(() => ({
   redirect: vi.fn(),
@@ -12,7 +13,6 @@ vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
 vi.mock("@/shared/api/server/spring-api-client", () => ({
   registerWithSpringApi: mocks.registerWithSpringApi,
 }));
-vi.mock("@/shared/api/server/logger", () => ({ logBffEvent: mocks.logBffEvent }));
 
 import { registrationAction } from "../actions";
 
@@ -24,7 +24,11 @@ function validForm() {
 }
 
 describe("registrationAction", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    configureBffLogSink((line) => mocks.logBffEvent(JSON.parse(line)));
+  });
+  afterAll(() => configureBffLogSink((line) => console.info(line)));
 
   it("不正な入力ではAPIを呼ばず項目エラーを返す", async () => {
     const form = new FormData();
@@ -51,6 +55,22 @@ describe("registrationAction", () => {
 
     await expect(registrationAction({ status: "idle" }, validForm())).resolves.toBeUndefined();
     expect(mocks.redirect).toHaveBeenCalledWith("/login?registered=1");
+    const actionLog = mocks.logBffEvent.mock.calls
+      .map(([event]) => event)
+      .find((event) => event.event === "registration_action");
+    expect(actionLog).toEqual(
+      expect.objectContaining({ result: "success", requestId: expect.any(String) }),
+    );
+    expect(mocks.registerWithSpringApi).toHaveBeenCalledWith(
+      "reader@example.com",
+      "ValidPassword1!",
+      { requestId: actionLog.requestId },
+    );
+    expect(JSON.stringify(actionLog)).not.toContain("reader@example.com");
+    expect(JSON.stringify(actionLog)).not.toContain("ValidPassword1!");
+    expect(
+      mocks.logBffEvent.mock.calls.filter(([event]) => event.event === "registration_action"),
+    ).toHaveLength(1);
   });
 
   it("重複メールアドレスを業務エラーへ変換する", async () => {
@@ -65,6 +85,14 @@ describe("registrationAction", () => {
       status: "error",
       code: "duplicate_email",
     });
+    expect(mocks.logBffEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: "registration_action",
+        result: "failure",
+        errorClass: "duplicate_email",
+        requestId: expect.any(String),
+      }),
+    );
   });
 
   it("API入力エラーの許可済み項目だけを返す", async () => {
@@ -100,7 +128,7 @@ describe("registrationAction", () => {
       code: "unexpected",
     });
     expect(mocks.logBffEvent).toHaveBeenCalledWith(
-      expect.objectContaining({ errorClass: "contract" }),
+      expect.objectContaining({ event: "registration_action", errorClass: "contract" }),
     );
   });
 

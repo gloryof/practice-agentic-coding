@@ -2,7 +2,7 @@ import "server-only";
 
 import { getServerConfig } from "./config";
 import { BffApiError, isRecord, parseApiError } from "./api-errors";
-import { logBffEvent } from "./logger";
+import { logBffEvent, startLogTimer, type RequestId } from "./logger";
 import type { components } from "@/shared/api/generated/openapi";
 
 export type SpringApiRequest = Readonly<{
@@ -12,10 +12,13 @@ export type SpringApiRequest = Readonly<{
   accessToken?: string;
   timeoutMilliseconds?: number;
   fetcher?: typeof fetch;
+  requestId?: RequestId;
 }>;
 
+type SpringApiCallOptions = Readonly<{ fetcher?: typeof fetch; requestId?: RequestId }>;
+
 export async function requestSpringApi<T>(request: SpringApiRequest): Promise<T> {
-  const startedAt = Date.now();
+  const elapsedMs = startLogTimer();
   const fetcher = request.fetcher ?? fetch;
   const timeoutMilliseconds = request.timeoutMilliseconds ?? 5_000;
   const headers = new Headers({ Accept: "application/json" });
@@ -50,9 +53,10 @@ export async function requestSpringApi<T>(request: SpringApiRequest): Promise<T>
         event: "spring_api_request",
         method: request.method,
         route: request.path,
+        requestId: request.requestId,
         dependency: "spring-api",
         result: "failure",
-        durationMs: Date.now() - startedAt,
+        durationMs: elapsedMs(),
         errorClass: error.kind,
       });
       throw error;
@@ -61,9 +65,10 @@ export async function requestSpringApi<T>(request: SpringApiRequest): Promise<T>
       event: "spring_api_request",
       method: request.method,
       route: request.path,
+      requestId: request.requestId,
       dependency: "spring-api",
       result: "success",
-      durationMs: Date.now() - startedAt,
+      durationMs: elapsedMs(),
     });
     return rawBody as T;
   } catch (error) {
@@ -74,9 +79,10 @@ export async function requestSpringApi<T>(request: SpringApiRequest): Promise<T>
       event: "spring_api_request",
       method: request.method,
       route: request.path,
+      requestId: request.requestId,
       dependency: "spring-api",
       result: "failure",
-      durationMs: Date.now() - startedAt,
+      durationMs: elapsedMs(),
       errorClass: bffError.kind,
     });
     throw bffError;
@@ -104,13 +110,14 @@ export type RegistrationApiResponse = Readonly<
 export async function registerWithSpringApi(
   email: string,
   password: string,
-  fetcher: typeof fetch = fetch,
+  options: SpringApiCallOptions = {},
 ): Promise<RegistrationApiResponse> {
   const response = await requestSpringApi<unknown>({
     method: "POST",
     path: "/api/v1/library-users/registrations",
     body: { email, password },
-    fetcher,
+    fetcher: options.fetcher,
+    requestId: options.requestId,
   });
   if (
     !isRecord(response) ||
@@ -133,13 +140,14 @@ export async function registerWithSpringApi(
 export async function loginWithSpringApi(
   email: string,
   password: string,
-  fetcher: typeof fetch = fetch,
+  options: SpringApiCallOptions = {},
 ): Promise<LoginApiResponse> {
   const response = await requestSpringApi<unknown>({
     method: "POST",
     path: "/api/v1/auth/login",
     body: { email, password },
-    fetcher,
+    fetcher: options.fetcher,
+    requestId: options.requestId,
   });
   const expiresInSeconds = isRecord(response) ? response.expires_in_seconds : undefined;
   if (
@@ -161,13 +169,14 @@ export async function loginWithSpringApi(
 
 export async function logoutWithSpringApi(
   accessToken: string,
-  fetcher: typeof fetch = fetch,
+  options: SpringApiCallOptions = {},
 ): Promise<void> {
   await requestSpringApi<undefined>({
     method: "POST",
     path: "/api/v1/auth/logout",
     accessToken,
-    fetcher,
+    fetcher: options.fetcher,
+    requestId: options.requestId,
   });
 }
 

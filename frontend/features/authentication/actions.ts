@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { BffApiError } from "@/shared/api/server/api-errors";
 import { loginWithSpringApi, logoutWithSpringApi } from "@/shared/api/server/spring-api-client";
-import { logBffEvent } from "@/shared/api/server/logger";
+import { BFF_ACTION, logBffEvent, startBffAction } from "@/shared/api/server/logger";
 import { type BffSession } from "@/shared/auth/server/bff-session-store";
 import {
   clearSessionCookie,
@@ -29,20 +29,26 @@ export async function loginAction(
   _previous: LoginActionState,
   formData: FormData,
 ): Promise<LoginActionState> {
+  const { requestId, logOutcome } = startBffAction(BFF_ACTION.login);
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
   const validation = validateCredentials(email, password);
   if (!validation.valid) {
+    logOutcome("failure", "invalid_input");
     return { status: "error", code: "invalid_input", fieldErrors: validation.errors };
   }
 
   const limit = loginRateLimiter.consume();
-  if (!limit.allowed)
+  if (!limit.allowed) {
+    logOutcome("failure", "rate_limited");
     return { status: "error", code: "rate_limited", retryAfterSeconds: limit.retryAfterSeconds };
+  }
 
   let accessToken: string | undefined;
   try {
-    const login = await loginWithSpringApi(validation.value.email, validation.value.password);
+    const login = await loginWithSpringApi(validation.value.email, validation.value.password, {
+      requestId,
+    });
     accessToken = login.access_token;
     const now = new Date();
     const previous = await readCurrentSession(now);
@@ -57,12 +63,13 @@ export async function loginAction(
     if (previous) {
       await deleteSession(previous.id);
       try {
-        await logoutWithSpringApi(previous.session.accessToken);
+        await logoutWithSpringApi(previous.session.accessToken, { requestId });
       } catch {
         logBffEvent({
           event: "bff_previous_session_revoke",
           method: "POST",
           route: "/api/v1/auth/logout",
+          requestId,
           dependency: "spring-api",
           result: "failure",
           errorClass: "remote_revocation",
@@ -73,7 +80,7 @@ export async function loginAction(
   } catch (error) {
     if (accessToken) {
       try {
-        await logoutWithSpringApi(accessToken);
+        await logoutWithSpringApi(accessToken, { requestId });
       } catch {
         /* best effort compensation */
       }
@@ -85,68 +92,67 @@ export async function loginAction(
     ) {
       const fieldErrors = sanitizeCredentialValidationErrors(error.details);
       if (!hasValidationErrors(fieldErrors)) {
-        logBffEvent({
-          event: "login_action",
-          method: "POST",
-          route: "loginAction",
-          dependency: "spring-api",
-          result: "failure",
-          errorClass: "contract",
-        });
+        logOutcome("failure", "contract");
         return { status: "error", code: "unexpected" };
       }
+      logOutcome("failure", "invalid_input");
       return { status: "error", code: "invalid_input", fieldErrors };
     }
-    if (error instanceof BffApiError && error.kind === "http" && error.status === 401)
+    if (error instanceof BffApiError && error.kind === "http" && error.status === 401) {
+      logOutcome("failure", "invalid_credentials");
       return { status: "error", code: "invalid_credentials" };
-    if (error instanceof BffApiError && (error.kind === "timeout" || error.kind === "network"))
+    }
+    if (error instanceof BffApiError && (error.kind === "timeout" || error.kind === "network")) {
+      logOutcome("failure", "temporarily_unavailable");
       return { status: "error", code: "temporarily_unavailable" };
-    logBffEvent({
-      event: "login_action",
-      method: "POST",
-      route: "loginAction",
-      dependency: "bff",
-      result: "failure",
-      errorClass: "unexpected",
-    });
+    }
+    logOutcome("failure", error instanceof BffApiError ? error.kind : "unexpected");
     return { status: "error", code: "unexpected" };
   }
 
+  logOutcome("success");
   return redirect("/");
 }
 
 export async function logoutAction(): Promise<never> {
-  const current = await readCurrentSession();
-  await clearSessionCookie();
-  if (!current) {
-    revalidatePath("/", "layout");
-    return redirect("/login?logged_out=1");
-  }
-  await deleteSession(current.id);
-  const limit = logoutRateLimiter.consume();
-  if (limit.allowed) {
-    try {
-      await logoutWithSpringApi(current.session.accessToken);
-    } catch (error) {
-      logBffEvent({
-        event: "logout_remote_revocation",
-        method: "POST",
-        route: "/api/v1/auth/logout",
-        dependency: "spring-api",
-        result: "failure",
-        errorClass: error instanceof BffApiError ? error.kind : "unexpected",
-      });
+  const { requestId, logOutcome } = startBffAction(BFF_ACTION.logout);
+  try {
+    const current = await readCurrentSession();
+    await clearSessionCookie();
+    if (current) {
+      await deleteSession(current.id);
+      const limit = logoutRateLimiter.consume();
+      if (limit.allowed) {
+        try {
+          await logoutWithSpringApi(current.session.accessToken, { requestId });
+        } catch (error) {
+          logBffEvent({
+            event: "logout_remote_revocation",
+            method: "POST",
+            route: "/api/v1/auth/logout",
+            requestId,
+            dependency: "spring-api",
+            result: "failure",
+            errorClass: error instanceof BffApiError ? error.kind : "unexpected",
+          });
+        }
+      } else {
+        logBffEvent({
+          event: "logout_remote_revocation",
+          method: "POST",
+          route: "/api/v1/auth/logout",
+          requestId,
+          dependency: "spring-api",
+          result: "skipped",
+          errorClass: "rate_limited",
+        });
+      }
     }
-  } else {
-    logBffEvent({
-      event: "logout_remote_revocation",
-      method: "POST",
-      route: "/api/v1/auth/logout",
-      dependency: "spring-api",
-      result: "skipped",
-      errorClass: "rate_limited",
-    });
+    revalidatePath("/", "layout");
+  } catch (error) {
+    logOutcome("failure", error instanceof BffApiError ? error.kind : "unexpected");
+    throw error;
   }
-  revalidatePath("/", "layout");
+  logOutcome("success");
   return redirect("/login?logged_out=1");
 }

@@ -145,7 +145,12 @@
 
 ## 可観測性と障害切り分け
 - 現在はデプロイせず実利用者データを扱わないため、外部テレメトリSDK、収集設定、送信基盤を初期構成へ追加しない。
-- `MUST` BFFの構造化ログに時刻、level、イベント名、HTTP method、URL値を含まないroute template、結果、処理時間、エラー分類を含める。
+- `MUST` BFFの構造化ログに時刻、level、イベント名、HTTP method、結果、処理時間、失敗時のエラー分類を含める。  
+  HTTP境界にはURL値を含まないroute templateを、Server Actionには`<server-action>`を記録する。
+- `MUST` 各Server Actionの結果を、安定した操作名とサーバー生成のrequest IDで1実行につき1件記録する。  
+  同じ実行から呼び出すBFF内のAPIクライアントログにも同じrequest IDを付ける。
+- `MUST` Server Actionのrequest ID発行と処理時間の計測には、BFF共通のActionログ処理を使用する。  
+  各ActionでID形式や計測時計を個別に決めない。
 - `MUST NOT` メールアドレス、Cookie、セッションID、Bearerアクセストークン、パスワード、要求・応答本文、URL queryをブラウザまたはサーバーログへ出力しない。
 - `MUST` ブラウザE2Eで未処理例外と予期しないconsole errorを失敗にし、BFF、セッションストア、Spring Boot API、DBの代表障害をログとエラー分類から区別できることを確認する。
 - `MUST` 代表障害シナリオで、収集したartifactとログから主要障害領域を10分以内に一次特定できることを確認する。

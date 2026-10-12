@@ -79,6 +79,7 @@ frontend/
 - `MUST` [状態・イベント管理設計](state-and-event-management.md)を状態所有、イベント、非同期処理、二重送信、エラー回復の詳細な正本として適用する。
 - `MUST` Client Components、URL、フォーム、ローカルUIを変更する場合は[Clientアーキテクチャ](client/architecture.md)を入口として適用する。
 - `MUST` Server Components、Server Actions、Route Handlers、サーバー専用データアクセス境界を変更する場合は[BFFアーキテクチャ](bff/architecture.md)を入口として適用する。
+- `MUST` Server Actionの分割と共有は[BFF状態・イベント管理設計](bff/state-and-event-management.md)の利用者操作単位の規則で判断する。
 - `MUST` 認証、URL、フォーム、APIサーバー、ローカルUI、派生状態を分類し、それぞれの正本を重複させない。
 - `MUST` 画面横断の状態変更をURL、BFFセッション、APIサーバー状態、Server Action後の再検証またはリダイレクトで伝える。
 - `MUST NOT` 初期構成へ外部状態管理ライブラリ、クライアントデータキャッシュ、フォーム管理ライブラリ、汎用イベントバスを追加する。

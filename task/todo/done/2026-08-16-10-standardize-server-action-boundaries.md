@@ -1,8 +1,9 @@
 # Server Actionの設計単位を標準化する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
 - Updated: 2026-08-16 - 起票
+- Updated: 2026-10-12 - Server Actionの設計単位と実行ログを標準化
 - 優先度: 10
 - 依存関係: なし
 

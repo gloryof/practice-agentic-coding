@@ -148,7 +148,8 @@ BFFは少なくとも次へ分類する。
   読み取りの再試行も、回数と対象エラーを明示した場合だけ許可する。
 
 ## ログ
-- ログには操作名、結果、エラー分類、依存先、所要時間を記録してよい。
+- Server Actionの操作名、request ID、結果とBFF内のAPIログの対応付けは[フロントエンド品質・非機能要件](../quality-and-nonfunctional-requirements.md)に従う。
+- ログには依存先と所要時間を記録してよい。
 - Cookie、Bearer、パスワード、メールアドレス、API本文、`Set-Cookie`、`Authorization`をログへ記録しない。
 
 ### BFF実装の濫用制限
