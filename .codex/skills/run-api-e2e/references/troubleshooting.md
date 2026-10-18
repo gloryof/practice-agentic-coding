@@ -34,7 +34,8 @@
 
 ## API起動またはE2Eに失敗する
 
-- `e2e`の場合は`api/build/run-api-e2e/api.log`を確認する。
+- `e2e`の場合は`work/logs/api/e2e.log`を確認する。  
+  API起動に失敗した場合は`api/build/run-api-e2e/api.log`も確認する。
 - `start`の場合はフォアグラウンドのターミナル出力を確認する。
 - 次のコマンドでhealthを手動確認する:
   `curl -sS http://localhost:8080/actuator/health`

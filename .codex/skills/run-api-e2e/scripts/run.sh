@@ -200,6 +200,10 @@ main() {
             run_start
             ;;
         e2e)
+            exec "${REPO_ROOT}/scripts/run-gate-with-log.sh" api e2e -- \
+                "${SCRIPT_DIR}/run.sh" _e2e
+            ;;
+        _e2e)
             run_e2e
             ;;
         stop)

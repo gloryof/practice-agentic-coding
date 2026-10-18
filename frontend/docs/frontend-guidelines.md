@@ -133,6 +133,9 @@ npm run check
 | `npm run audit:high` | CriticalとHighの既知脆弱性を検査する |
 | `npm run check` | 整形検査を含む、すべてのフロントエンド変更に必要な高速ゲートを実行する |
 
+`npm run check`、実APIブラウザE2E、複数ブラウザE2E、性能検査の詳細出力は`work/logs/frontend/`へ保存する。  
+端末に表示するログパスから、失敗したゲートの詳細を確認する。
+
 - `MUST NOT` `npm run dev`からSpring Boot API、DB、Gradleタスクを起動しない。
 - `MUST` Next.jsとSpring Boot APIを別プロセスとして起動し、ブラウザの接続先はNext.jsだけとする。
 - `MUST` Node.js実行用成果物とSpring Boot APIを独立してビルドし、障害とロールバックの境界を分離する。

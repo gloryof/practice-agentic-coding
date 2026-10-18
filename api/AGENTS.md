@@ -10,7 +10,7 @@
 
 ## 必須検証
 - `MUST` Kotlin の変更を確定する前に `./gradlew ktlintFormat` を実行する。
-- `MUST` 実装またはレビュー結果を共有する前に `./gradlew check` を実行する。
+- `MUST` 実装またはレビュー結果を共有する前に `./scripts/run-api-check.sh` で `./gradlew check` を実行する。
 
 ## レビュー要件
 - `MUST` API の実装またはレビュー結果に、確認したルールを示す簡潔な準拠メモを含める。

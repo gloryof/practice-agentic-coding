@@ -29,12 +29,12 @@
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build",
     "test:storybook": "vitest run --config vitest.storybook.config.ts",
-    "test:e2e": "npm run build && ./scripts/run-browser-e2e.sh --project=chromium",
-    "test:e2e:cross-browser": "npm run build && ./scripts/run-browser-e2e.sh",
-    "test:performance": "npm run build && ./scripts/run-performance.sh",
+    "test:e2e": "../scripts/run-gate-with-log.sh frontend e2e -- ./scripts/run-gate-steps.sh e2e",
+    "test:e2e:cross-browser": "../scripts/run-gate-with-log.sh frontend e2e-cross-browser -- ./scripts/run-gate-steps.sh e2e-cross-browser",
+    "test:performance": "../scripts/run-gate-with-log.sh frontend performance -- ./scripts/run-gate-steps.sh performance",
     "audit:signatures": "npm audit signatures",
     "audit:high": "npm audit --audit-level=high",
-    "check": "npm run format:check && npm run typecheck && npm run lint && npm run test && npm run build && npm run build:storybook && npm run test:storybook"
+    "check": "../scripts/run-gate-with-log.sh frontend check -- ./scripts/run-gate-steps.sh check"
   },
   "dependencies": {
     "next": "16.3.0",

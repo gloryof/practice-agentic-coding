@@ -87,4 +87,4 @@ Spring Boot API、PostgreSQL、BFF連携に固有の運用・非機能前提を�
 
 ## 実行チェック
 - `MUST` Kotlin変更時は `./gradlew ktlintFormat` を実行する。
-- `MUST` 最終確認として `./gradlew check` を実行する。
+- `MUST` 最終確認として `./scripts/run-api-check.sh` で `./gradlew check` を実行する。

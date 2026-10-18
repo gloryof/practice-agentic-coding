@@ -87,6 +87,8 @@
 | `npm run audit:high` | CriticalとHighの既知脆弱性を検査する |
 | `npm run check` | 整形検査、型検査、静的解析、単体・境界テスト、build、Storybook build、story・a11y検査を順に実行する |
 
+- `MUST` `check`、実APIブラウザE2E、複数ブラウザE2E、性能検査の標準出力と標準エラーを`work/logs/frontend/`のゲート別ログへ上書き保存する。  
+  端末には結果、終了コード、ログパスだけを表示し、失敗したゲートのログを開いて原因を調べる。
 - `MUST` フロントエンドを変更するすべてのPRで`npm ci`の後に`npm run check`を成功させる。
 - `MUST` BFF、認証、API契約、利用者機能を変更するPRで、実APIブラウザE2Eを成功させる。
 - `MUST` OpenAPI契約を変更するPRで、生成物を再生成して差分が残らないことを確認する。

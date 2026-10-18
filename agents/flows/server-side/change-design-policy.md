@@ -102,7 +102,7 @@
 - 主要HTTPフローに影響する場合は、`run-api-e2e`に従ってAPIを起動し、E2Eで接続を検証する。  
   既存テストを再利用する場合も結果を記録する。  
   主要HTTPフローに影響しない場合はE2Eを省略する理由を記録する。
-- API規約に従い、`api/`で`./gradlew ktlintFormat`と`./gradlew check`を実行する。
+- API規約に従い、`api/`で`./gradlew ktlintFormat`と`./scripts/run-api-check.sh`を実行する。
 - 変更した設計ドキュメントの整合性・参照リンクを確認し、リポジトリルートで`python3 scripts/check-docs.py`を実行する。
 - 検証結果と確認したAPI規約の簡潔な準拠メモを記録する。  
   作業を妨げる未解決事項があれば終了条件の「未完了・確認待ち」に従う。
