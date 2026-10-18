@@ -27,8 +27,14 @@ npm run dev
 - トップ: `http://localhost:3000/`
 - 利用登録: `http://localhost:3000/register`
 - ログイン: `http://localhost:3000/login`
+- 蔵書検索・在庫確認: `http://localhost:3000/search`
 
 停止する場合は起動中のターミナルで`Ctrl-C`を入力する。
+
+## 性能検証
+
+`npm run test:performance`は検証用のローカル`agentic`データベースを削除して再作成し、終了時に片付ける。  
+APIとBFFのポートが空いている状態で実行する。
 
 ## Storybook
 Storybookだけを確認する場合、Spring Boot APIの起動は不要である。  

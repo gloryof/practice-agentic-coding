@@ -19,8 +19,8 @@
 - `MUST` BFFを変更する場合は[BFFアーキテクチャ](bff/architecture.md)を参照する。
 - `MUST` Client Componentsまたはブラウザ側を変更する場合は[Clientアーキテクチャ](client/architecture.md)を参照する。
 - `MUST` BFFとClientの両境界を変更する場合は、両方のアーキテクチャを参照する。
-- 現在はNext.js BFF基盤に加え、利用登録、ログイン、ログアウト、認証セッションを実装済みである。  
-  蔵書検索、在庫確認、予約の利用者機能は未実装である。
+- 現在はNext.js BFF基盤、利用登録、ログイン、ログアウト、認証セッション、蔵書検索、在庫確認を実装済みである。  
+  予約の利用者機能は未実装である。
 - `MUST` テスト、CI、アクセシビリティ検査、対応ブラウザ、性能、可観測性、セキュリティヘッダー、依存関係には[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を適用する。
 
 ## アーキテクチャ
@@ -154,5 +154,4 @@ npm run check
 - [ADR-0002: Next.js BFFをフロントエンドアーキテクチャに採用する](ADR/0002-adopt-nextjs-bff-architecture.md)
 
 ## 実装を後続TODOへ委ねる事項
-- 蔵書検索・在庫確認: `task/todo/2026-08-18-01-implement-frontend-book-search-and-availability.md`
 - 予約: `task/todo/2026-08-18-02-implement-frontend-reservation.md`

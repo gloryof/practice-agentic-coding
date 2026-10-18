@@ -4,7 +4,7 @@
 - Status: Proposed
 - Updated: 2026-07-20 - 起票
 - 優先度: 11
-- 依存関係: `2026-08-18-01-implement-frontend-book-search-and-availability.md`
+- 依存関係: `task/todo/done/2026-08-18-01-implement-frontend-book-search-and-availability.md`（完了済み）
 
 ## 背景
 US-0004を実現するAPIは存在するが、図書館利用者が検索結果から書誌を選択して予約する画面と操作導線がない。

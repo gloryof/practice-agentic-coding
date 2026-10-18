@@ -1,7 +1,8 @@
 # 蔵書検索・在庫確認のフロントエンドを実装する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-10-12 - 蔵書検索・在庫確認画面と実API検証を完了
 - Updated: 2026-07-20 - 起票
 - 優先度: 10
 - 依存関係: `2026-07-20-09-implement-frontend-registration-and-login.md`

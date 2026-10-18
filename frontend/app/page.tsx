@@ -14,9 +14,20 @@ export default async function HomePage() {
           図書館の本を、もっと見つけやすく。
         </h1>
         {session ? (
-          <InlineMessage variant="success" title="ログインしています">
-            蔵書検索、在庫確認、予約は順次利用できるようになります。
-          </InlineMessage>
+          <div className="space-y-5">
+            <InlineMessage variant="success" title="ログインしています">
+              蔵書検索と在庫確認を利用できます。
+            </InlineMessage>
+            <p className="text-lg text-text-muted">
+              蔵書を検索して、来館前に貸出可否を確認できます。
+            </p>
+            <Link
+              className="inline-block min-h-11 rounded-lg border-2 border-action bg-action px-4 py-2 font-semibold text-on-action hover:bg-action-hover"
+              href="/search"
+            >
+              蔵書を検索する
+            </Link>
+          </div>
         ) : (
           <>
             <p className="text-lg text-text-muted">

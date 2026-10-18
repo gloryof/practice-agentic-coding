@@ -1,6 +1,7 @@
 import { StatusBadge } from "@/shared/ui/status-badge";
 
 export type BookResultSummaryProps = Readonly<{
+  bookProductId: string;
   title: string;
   authors: readonly string[];
   publisher: string;
@@ -10,6 +11,7 @@ export type BookResultSummaryProps = Readonly<{
 }>;
 
 export function BookResultSummary({
+  bookProductId,
   title,
   authors,
   publisher,
@@ -33,6 +35,10 @@ export function BookResultSummary({
           <div>
             <dt className="font-semibold">ISBN</dt>
             <dd>{isbn}</dd>
+          </div>
+          <div>
+            <dt className="font-semibold">書誌ID</dt>
+            <dd className="break-all">{bookProductId}</dd>
           </div>
         </dl>
         <div className="flex flex-wrap items-center gap-3">

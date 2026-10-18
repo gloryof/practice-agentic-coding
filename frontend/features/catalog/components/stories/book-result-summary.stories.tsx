@@ -6,6 +6,7 @@ const meta = {
   title: "蔵書/BookResultSummary",
   component: BookResultSummary,
   args: {
+    bookProductId: "book-123",
     title: "地域の未来をつくる小さな図書館",
     authors: ["山田 花子", "佐藤 太郎"],
     publisher: "まちの本出版",

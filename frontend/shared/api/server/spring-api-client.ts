@@ -19,6 +19,7 @@ type SpringApiCallOptions = Readonly<{ fetcher?: typeof fetch; requestId?: Reque
 
 export async function requestSpringApi<T>(request: SpringApiRequest): Promise<T> {
   const elapsedMs = startLogTimer();
+  const logRoute = request.path.split("?", 1)[0];
   const fetcher = request.fetcher ?? fetch;
   const timeoutMilliseconds = request.timeoutMilliseconds ?? 5_000;
   const headers = new Headers({ Accept: "application/json" });
@@ -52,7 +53,7 @@ export async function requestSpringApi<T>(request: SpringApiRequest): Promise<T>
       logBffEvent({
         event: "spring_api_request",
         method: request.method,
-        route: request.path,
+        route: logRoute,
         requestId: request.requestId,
         dependency: "spring-api",
         result: "failure",
@@ -64,7 +65,7 @@ export async function requestSpringApi<T>(request: SpringApiRequest): Promise<T>
     logBffEvent({
       event: "spring_api_request",
       method: request.method,
-      route: request.path,
+      route: logRoute,
       requestId: request.requestId,
       dependency: "spring-api",
       result: "success",
@@ -78,7 +79,7 @@ export async function requestSpringApi<T>(request: SpringApiRequest): Promise<T>
     logBffEvent({
       event: "spring_api_request",
       method: request.method,
-      route: request.path,
+      route: logRoute,
       requestId: request.requestId,
       dependency: "spring-api",
       result: "failure",

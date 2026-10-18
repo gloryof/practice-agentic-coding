@@ -1,12 +1,23 @@
+// Lighthouse CIのCommonJS設定ではPlaywrightのChromium実行ファイルを参照する。
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { chromium } = require("playwright");
+
 module.exports = {
   ci: {
     collect: {
-      url: ["http://127.0.0.1:3000/register", "http://127.0.0.1:3000/login"],
+      url: [
+        "http://127.0.0.1:3000/register",
+        "http://127.0.0.1:3000/login",
+        "http://127.0.0.1:3000/search?isbn=9780000000001",
+      ],
       numberOfRuns: 3,
+      chromePath: chromium.executablePath(),
+      puppeteerScript: "./scripts/lhci-auth.cjs",
       startServerCommand:
         "SPRING_API_BASE_URL=http://127.0.0.1:8080 BFF_PUBLIC_ORIGIN=http://127.0.0.1:3000 npm run start",
       startServerReadyPattern: "Ready",
       settings: {
+        disableStorageReset: true,
         formFactor: "mobile",
         screenEmulation: {
           mobile: true,

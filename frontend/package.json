@@ -31,7 +31,7 @@
     "test:storybook": "vitest run --config vitest.storybook.config.ts",
     "test:e2e": "npm run build && ./scripts/run-browser-e2e.sh --project=chromium",
     "test:e2e:cross-browser": "npm run build && ./scripts/run-browser-e2e.sh",
-    "test:performance": "npm run build && lhci autorun",
+    "test:performance": "npm run build && ./scripts/run-performance.sh",
     "audit:signatures": "npm audit signatures",
     "audit:high": "npm audit --audit-level=high",
     "check": "npm run format:check && npm run typecheck && npm run lint && npm run test && npm run build && npm run build:storybook && npm run test:storybook"
