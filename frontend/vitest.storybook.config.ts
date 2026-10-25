@@ -7,6 +7,7 @@ import { defineConfig } from "vitest/config";
 const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  optimizeDeps: { include: ["next/link"] },
   plugins: [
     storybookTest({
       configDir: path.join(rootDirectory, ".storybook"),

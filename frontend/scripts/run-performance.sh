@@ -6,8 +6,13 @@ mkdir -p test-results
 OPENAPI_ENABLED=true ./scripts/start-e2e-api.sh &
 api_process_pid=$!
 api_listener_pid=""
+bff_process_pid=""
 
 cleanup() {
+  if [[ -n "${bff_process_pid}" ]]; then
+    kill "${bff_process_pid}" 2>/dev/null || true
+    wait "${bff_process_pid}" 2>/dev/null || true
+  fi
   if [[ -n "${api_listener_pid}" ]]; then
     kill "${api_listener_pid}" 2>/dev/null || true
   fi
@@ -34,3 +39,20 @@ done
   exit 1
 }
 npx lhci autorun
+
+SPRING_API_BASE_URL=http://127.0.0.1:8080 \
+  BFF_PUBLIC_ORIGIN=http://127.0.0.1:3000 \
+  ./node_modules/.bin/next start > test-results/performance-bff.log 2>&1 &
+bff_process_pid=$!
+for attempt in {1..60}; do
+  if ! kill -0 "${bff_process_pid}" 2>/dev/null; then
+    printf '%s\n' '[performance] BFF起動に失敗しました。ログ: frontend/test-results/performance-bff.log' >&2
+    exit 1
+  fi
+  if curl -fsS --max-time 2 http://127.0.0.1:3000/api/health >/dev/null 2>&1; then
+    break
+  fi
+  sleep 1
+done
+curl -fsS --max-time 2 http://127.0.0.1:3000/api/health >/dev/null
+node ./scripts/measure-reservation.mjs

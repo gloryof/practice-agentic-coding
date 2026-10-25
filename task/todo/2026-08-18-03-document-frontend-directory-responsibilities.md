@@ -4,7 +4,7 @@
 - Status: Proposed
 - Updated: 2026-08-09 - 起票
 - 優先度: 12
-- 依存関係: `2026-08-18-02-implement-frontend-reservation.md`
+- 依存関係: `task/todo/done/2026-08-18-02-implement-frontend-reservation.md`（完了済み）
 
 ## 背景
 `app`、`features`、`shared`のトップレベルの責務と依存方向は決定済みだが、`components`、`actions`、`server`、`types`、テストなどのサブディレクトリは、利用者機能の実装パターンが定着してから文書化する方針としている。

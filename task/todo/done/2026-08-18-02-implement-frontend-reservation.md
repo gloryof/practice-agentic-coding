@@ -1,8 +1,9 @@
 # 蔵書予約のフロントエンドを実装する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
 - Updated: 2026-07-20 - 起票
+- Updated: 2026-10-18 - 蔵書検索からの予約導線、エラー表示、二重送信抑止、実APIブラウザE2Eと性能検証を完了
 - 優先度: 11
 - 依存関係: `task/todo/done/2026-08-18-01-implement-frontend-book-search-and-availability.md`（完了済み）
 

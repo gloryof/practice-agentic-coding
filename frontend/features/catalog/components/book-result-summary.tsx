@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { StatusBadge } from "@/shared/ui/status-badge";
 
 export type BookResultSummaryProps = Readonly<{
@@ -8,6 +10,7 @@ export type BookResultSummaryProps = Readonly<{
   isbn: string;
   availableCount: number;
   totalCount: number;
+  action?: ReactNode;
 }>;
 
 export function BookResultSummary({
@@ -18,6 +21,7 @@ export function BookResultSummary({
   isbn,
   availableCount,
   totalCount,
+  action,
 }: BookResultSummaryProps) {
   const isAvailable = availableCount > 0;
   return (
@@ -49,6 +53,7 @@ export function BookResultSummary({
             利用可能 {availableCount}冊 / 所蔵 {totalCount}冊
           </p>
         </div>
+        {action}
       </div>
     </article>
   );

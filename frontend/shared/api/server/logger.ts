@@ -10,6 +10,7 @@ export const BFF_ACTION = {
   login: "login_action",
   logout: "logout_action",
   registration: "registration_action",
+  reservation: "reservation_action",
 } as const;
 
 type BffActionName = (typeof BFF_ACTION)[keyof typeof BFF_ACTION];

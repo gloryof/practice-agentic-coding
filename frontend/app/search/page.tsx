@@ -5,6 +5,7 @@ import { BookSearchForm } from "@/features/catalog/components/book-search-form";
 import { BookResultSummary } from "@/features/catalog/components/book-result-summary";
 import { parseSearchParams } from "@/features/catalog/search-criteria";
 import { searchBooks } from "@/features/catalog/server/search-books";
+import { ReservationForm } from "@/features/reservation/components/reservation-form";
 import { BffApiError } from "@/shared/api/server/api-errors";
 import { deleteSession, readCurrentSession } from "@/shared/auth/server/session";
 import { EmptyState } from "@/shared/ui/empty-state";
@@ -71,7 +72,17 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               <p role="status">{results.length}件の本が見つかりました。</p>
               <div className="space-y-4">
                 {results.map((book) => (
-                  <BookResultSummary key={book.bookProductId} {...book} />
+                  <BookResultSummary
+                    key={book.bookProductId}
+                    {...book}
+                    action={
+                      <ReservationForm
+                        bookProductId={book.bookProductId}
+                        bookTitle={book.title}
+                        available={book.availableCount > 0}
+                      />
+                    }
+                  />
                 ))}
               </div>
             </>
