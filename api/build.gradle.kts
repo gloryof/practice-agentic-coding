@@ -33,8 +33,10 @@ val architectureTestSourceSet =
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(27)
     }
+    sourceCompatibility = JavaVersion.VERSION_24
+    targetCompatibility = JavaVersion.VERSION_24
 }
 
 repositories {
@@ -100,8 +102,13 @@ dependencies {
 
 kotlin {
     compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
         freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
     }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(24)
 }
 
 tasks.withType<Test> {
