@@ -48,26 +48,63 @@
 - `MUST` ブラウザ起点の更新処理にServer Actionsを既定として使用する。
 
 ### ディレクトリと依存方向
-```text
-frontend/
-├── app/
-├── features/
-│   ├── registration/
-│   ├── authentication/
-│   ├── catalog/
-│   └── reservation/
-└── shared/
-    ├── api/
-    ├── auth/
-    └── validation/
-```
+`app`はルートと画面合成、`features`は利用者機能、`shared`は機能に属さない共通契約と基盤を所有する。  
+新しいコードは、利用者機能の振る舞いを所有する場所を先に決めてから配置する。  
+次の表は配置判断に使う責務と代表例を示し、全ディレクトリの一覧ではない。  
+機能の追加だけでは本文書を更新せず、責務または依存規則を変更するときに更新する。
 
-- `MUST` 利用者機能を`features`配下へ配置し、UI、Server Actions、型、テストを変更単位の近くに置く。
-- `MUST` `app`から`features`と`shared`への依存を許可し、`features`から`app`への依存を禁止する。
+| 配置先 | 責務 | 現在の例 |
+|---|---|---|
+| `frontend/app/` | URL、レイアウト、ローディング、エラー境界、Route Handler、複数機能の画面合成 | `frontend/app/search/page.tsx`が検索結果と予約操作を合成する |
+| `frontend/features/<機能>/` | その機能が所有する入力、操作、データ取得、状態、表示 | `frontend/features/catalog/server/search-books.ts` |
+| `frontend/shared/` | 複数機能で使う処理、または特定の機能に属さないアプリ基盤・共通UI契約 | `frontend/shared/api/`、`frontend/shared/ui/` |
+| `frontend/`直下のNext.js規約ファイル | アプリ全体のProxy、計測、設定 | `frontend/proxy.ts`、`frontend/instrumentation.ts` |
+
+- `MUST` 利用者機能のUI、Server Actions、型、テストを、その機能の変更単位の近くへ置く。
+- `MUST` 内部コードへの依存を、`app`から`features`と`shared`、`features`から同じ機能内と`shared`、`shared`から`shared`内への方向に限定する。
+- `MUST NOT` `features`と`shared`から`app`へ依存させる。
 - `MUST NOT` 異なる機能間を直接依存させる。  
-  共有が必要な場合は、責務を確認して`shared`または画面合成へ移す。
-- `MUST` `shared`には複数機能で実際に再利用する、業務機能を所有しない処理だけを配置する。
+  複数機能を組み合わせる表示は`app`で合成し、機能に属さない契約だけを`shared`へ移す。
+- `MUST` `shared`へ移す前に、複数機能で実際に同じ契約を使うか、特定機能が所有しないアプリ基盤か、デザインシステムが所有する共通UIかを確認する。  
+  呼び出し元が一つでも、ヘルスチェック用のAPI接続やセキュリティヘッダーのようなアプリ基盤は`shared`が所有する。
+- `MUST NOT` 業務語彙を持つ表示や処理を、形が似ていることだけを理由に`shared`へ移さない。  
+  共通UIと機能UIの所有境界は[フロントエンドデザインシステム](design-system.md)を正本とする。
 - `MUST NOT` バックエンドのパッケージ構成を理由なく複製し、利用者画面の変更単位を分断しない。
+
+#### 機能内と基盤内の配置
+
+| 配置先 | 配置するもの | 現在の例 |
+|---|---|---|
+| `frontend/features/<機能>/components/` | その機能のフォーム、表示、Client Components | `frontend/features/catalog/components/book-result-summary.tsx` |
+| `frontend/features/<機能>/actions.ts` | ブラウザ起点の更新を受けるServer Actions | `frontend/features/reservation/actions.ts` |
+| `frontend/features/<機能>/server/` | その機能だけが使うサーバー専用の読取・更新処理とAPI応答の解釈 | `frontend/features/catalog/server/search-books.ts` |
+| `frontend/features/<機能>/`直下 | 機能内で複数の配置先から使う状態、型、純粋な変換 | `frontend/features/reservation/action-state.ts` |
+| `frontend/shared/api/server/` | BFF共通のAPI接続、設定、エラー、ログ、ヘルスチェック | `frontend/shared/api/server/spring-api-client.ts` |
+| `frontend/shared/api/generated/` | API契約から生成した型 | `frontend/shared/api/generated/openapi.ts` |
+| `frontend/shared/auth/server/` | BFFセッションと認証基盤 | `frontend/shared/auth/server/session.ts` |
+| `frontend/shared/validation/` | 複数機能で使う入力検証 | `frontend/shared/validation/credentials.ts` |
+| `frontend/shared/ui/` | デザインシステムが所有する共通UI | `frontend/shared/ui/button.tsx` |
+| `frontend/shared/security/` | アプリ全体のセキュリティ設定処理 | `frontend/shared/security/headers.ts` |
+
+- `MUST` Server Actionの公開入口を対象機能の近くへ置き、同じ機能のサーバー専用処理が必要なら`server/`へ委譲する。  
+  現在は各機能の`actions.ts`が公開入口である。  
+  操作単位での分割と共有は[BFF状態・イベント管理設計](bff/state-and-event-management.md)を正本とする。
+- `MUST` 型は所有する処理の近くで定義する。  
+  機能内の状態型のためだけに`types/`を作らず、API生成型は`shared/api/generated/`に置く。
+- `MUST` Client Componentsから`features/<機能>/server/`と`shared/*/server/`を参照しない。  
+  Client Componentsから呼ぶServer Actionは、その機能の`actions.ts`が公開する操作を参照する。
+- `MUST` サーバー専用のAPI接続、セッション、設定を`server-only`で保護し、Client Componentsへ秘密情報を渡さない。  
+  詳細な実行境界は[BFFアーキテクチャ](bff/architecture.md)と[Clientアーキテクチャ](client/architecture.md)を正本とする。
+
+#### テストとStorybookの配置
+
+- `MUST` 対象コードの単体・コンポーネント・API境界テストを近接する`__tests__/`へ置く。  
+  例として`frontend/app/search/__tests__/page.test.tsx`、`frontend/features/reservation/server/__tests__/place-reservation.test.ts`、`frontend/shared/api/server/__tests__/spring-api-client.test.ts`がある。
+- `MUST` コンポーネントのstoryを近接する`stories/`へ置く。  
+  例として`frontend/features/catalog/components/stories/`と`frontend/shared/ui/stories/`がある。
+- `MUST` 複数の画面とAPIを通るブラウザE2Eを`frontend/e2e/`、共通テスト設定とスタブを`frontend/test/`へ置く。  
+  テストの対象と実行条件は[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を正本とする。
+- `MUST NOT` 実装のない`actions/`、`types/`、`server/`、`__tests__/`などを形式的に作らない。
 
 ## API・認証連携
 - `MUST` ブラウザからSpring Boot APIへ直接接続せず、BFF境界を経由する。

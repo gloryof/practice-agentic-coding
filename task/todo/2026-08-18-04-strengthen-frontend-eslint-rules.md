@@ -3,8 +3,9 @@
 ## ステータス
 - Status: Proposed
 - Updated: 2026-08-09 - 起票
+- Updated: 2026-10-25 - ディレクトリ責務の文書化完了に合わせて依存先を更新
 - 優先度: 13
-- 依存関係: `2026-08-18-03-document-frontend-directory-responsibilities.md`
+- 依存関係: `task/todo/done/2026-08-18-03-document-frontend-directory-responsibilities.md`（完了済み）
 
 ## 背景
 現在のフロントエンドは`eslint-config-next/core-web-vitals`と`eslint-config-next/typescript`を適用しているが、プロジェクト固有のディレクトリ依存方向、Client／Server境界、ログ、Promise、テスト品質の規則は文書とレビューで確認している。  

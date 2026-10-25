@@ -1,8 +1,8 @@
 # フロントエンドのディレクトリ責務を文書化する
 
 ## ステータス
-- Status: Proposed
-- Updated: 2026-08-09 - 起票
+- Status: Done
+- Updated: 2026-10-25 - 既存実装に基づく配置責務と依存方向を`frontend/docs/frontend-guidelines.md`へ明記
 - 優先度: 12
 - 依存関係: `task/todo/done/2026-08-18-02-implement-frontend-reservation.md`（完了済み）
 
