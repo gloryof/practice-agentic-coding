@@ -35,3 +35,6 @@ export const DuplicateEmail: Story = {
 export const TemporarilyUnavailable: Story = {
   args: { state: { status: "error", code: "temporarily_unavailable" } },
 };
+export const RateLimited: Story = {
+  args: { state: { status: "error", code: "rate_limited", retryAfterSeconds: 30 } },
+};

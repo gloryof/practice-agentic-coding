@@ -3,6 +3,29 @@ import { expect, test, type Page } from "@playwright/test";
 const validPassword = "ValidPassword1!";
 const sessionCookieName = "book_vista_session";
 
+test("同じメールの登録試行が集中すると再試行時間を案内する", async ({ page, browserName }) => {
+  const email = `limited-reader-${browserName}@example.com`;
+  await register(page, email);
+  await expect(page).toHaveURL(/\/login\?registered=1$/);
+  await page.goto("/register");
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    await page.getByLabel("メールアドレス").fill(email);
+    await page.getByLabel("パスワード").fill(validPassword);
+    await page.getByRole("button", { name: "利用登録する" }).click();
+    await expect(
+      page.getByRole("alert").filter({
+        hasText:
+          attempt < 4 ? "このメールアドレスは登録済みです" : "利用登録の受付が集中しています",
+      }),
+    ).toContainText(
+      attempt < 4 ? "このメールアドレスは登録済みです" : "利用登録の受付が集中しています",
+    );
+  }
+  await expect(
+    page.getByRole("alert").filter({ hasText: "利用登録の受付が集中しています" }),
+  ).toContainText(/\d+秒後に、もう一度お試しください/);
+});
+
 test("利用登録、ログイン、ブラウザ再起動相当、ログアウトを完了する", async ({
   browser,
   browserName,

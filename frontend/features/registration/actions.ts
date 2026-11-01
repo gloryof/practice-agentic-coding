@@ -12,6 +12,7 @@ import {
 import { hasValidationErrors } from "@/shared/validation/validation-errors";
 
 import type { RegistrationActionState } from "./action-state";
+import { consumeRegistrationLimit } from "./server/registration-rate-limit";
 
 export async function registrationAction(
   _previous: RegistrationActionState,
@@ -24,6 +25,17 @@ export async function registrationAction(
   if (!validation.valid) {
     logOutcome("failure", "invalid_input");
     return { status: "error", code: "invalid_input", fieldErrors: validation.errors };
+  }
+
+  try {
+    const limit = await consumeRegistrationLimit(validation.value.email);
+    if (!limit.allowed) {
+      logOutcome("failure", "rate_limited");
+      return { status: "error", code: "rate_limited", retryAfterSeconds: limit.retryAfterSeconds };
+    }
+  } catch {
+    logOutcome("failure", "limit_store_unavailable");
+    return { status: "error", code: "temporarily_unavailable" };
   }
 
   try {

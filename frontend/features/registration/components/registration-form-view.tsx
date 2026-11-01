@@ -62,6 +62,11 @@ export function RegistrationFormView({ state, pending, formAction }: Registratio
           時間をおいて、もう一度お試しください。
         </InlineMessage>
       ) : null}
+      {state.status === "error" && state.code === "rate_limited" ? (
+        <InlineMessage variant="error" title="利用登録の受付が集中しています">
+          {state.retryAfterSeconds ?? 1}秒後に、もう一度お試しください。
+        </InlineMessage>
+      ) : null}
       {state.status === "error" && state.code === "unexpected" ? (
         <InlineMessage variant="error" title="利用登録を完了できませんでした">
           時間をおいて、もう一度お試しください。

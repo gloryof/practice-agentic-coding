@@ -5,8 +5,14 @@ export type RegistrationActionState =
   | { status: "success" }
   | {
       status: "error";
-      code: "invalid_input" | "duplicate_email" | "temporarily_unavailable" | "unexpected";
+      code:
+        | "invalid_input"
+        | "duplicate_email"
+        | "rate_limited"
+        | "temporarily_unavailable"
+        | "unexpected";
       fieldErrors?: CredentialValidationErrors;
+      retryAfterSeconds?: number;
     };
 
 export const initialRegistrationActionState: RegistrationActionState = {

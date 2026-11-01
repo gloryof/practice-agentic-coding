@@ -52,4 +52,15 @@ describe("RegistrationFormView", () => {
     expect(screen.getByRole("button", { name: "利用登録中" })).toBeDisabled();
     expect(screen.getByRole("textbox", { name: "メールアドレス" })).toBeDisabled();
   });
+
+  it("制限超過時に再試行時刻を案内する", () => {
+    render(
+      <RegistrationFormView
+        state={{ status: "error", code: "rate_limited", retryAfterSeconds: 42 }}
+        pending={false}
+        formAction={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("42秒後に、もう一度お試しください");
+  });
 });

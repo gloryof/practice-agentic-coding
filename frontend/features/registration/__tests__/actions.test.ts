@@ -7,11 +7,15 @@ const mocks = vi.hoisted(() => ({
   redirect: vi.fn(),
   registerWithSpringApi: vi.fn(),
   logBffEvent: vi.fn(),
+  consumeRegistrationLimit: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
 vi.mock("@/shared/api/server/spring-api-client", () => ({
   registerWithSpringApi: mocks.registerWithSpringApi,
+}));
+vi.mock("../server/registration-rate-limit", () => ({
+  consumeRegistrationLimit: mocks.consumeRegistrationLimit,
 }));
 
 import { registrationAction } from "../actions";
@@ -26,6 +30,7 @@ function validForm() {
 describe("registrationAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.consumeRegistrationLimit.mockResolvedValue({ allowed: true, retryAfterSeconds: 0 });
     configureBffLogSink((line) => mocks.logBffEvent(JSON.parse(line)));
   });
   afterAll(() => configureBffLogSink((line) => console.info(line)));
@@ -139,6 +144,26 @@ describe("registrationAction", () => {
       status: "error",
       code: "temporarily_unavailable",
     });
+  });
+
+  it("制限超過ではAPIを呼ばず再試行秒数を返す", async () => {
+    mocks.consumeRegistrationLimit.mockResolvedValue({ allowed: false, retryAfterSeconds: 42 });
+    await expect(registrationAction({ status: "idle" }, validForm())).resolves.toEqual({
+      status: "error",
+      code: "rate_limited",
+      retryAfterSeconds: 42,
+    });
+    expect(mocks.registerWithSpringApi).not.toHaveBeenCalled();
+    expect(JSON.stringify(mocks.logBffEvent.mock.calls)).not.toContain("reader@example.com");
+  });
+
+  it("制限ストア障害では登録を一時停止する", async () => {
+    mocks.consumeRegistrationLimit.mockRejectedValue(new Error("redis unavailable"));
+    await expect(registrationAction({ status: "idle" }, validForm())).resolves.toEqual({
+      status: "error",
+      code: "temporarily_unavailable",
+    });
+    expect(mocks.registerWithSpringApi).not.toHaveBeenCalled();
   });
 
   it("成功応答の契約違反は一般エラーへ変換する", async () => {
