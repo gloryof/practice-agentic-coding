@@ -3,6 +3,7 @@
 ## 事前条件
 - Node.js 24を使用する。
 - Spring Boot APIを`http://localhost:8080`で起動する。
+- 利用登録を確認する場合はDockerでRedisを起動する。
 
 APIの起動方法は`api/README.md`を参照する。
 
@@ -14,14 +15,20 @@ cp .env.example .env.local
 npm ci
 ```
 
-`.env.local`の既定値は、Spring Boot APIへ`http://localhost:8080`で接続し、フロントエンドを`http://localhost:3000`で公開する設定である。
+`.env.local`の既定値は、Spring Boot APIへ`http://localhost:8080`で接続し、フロントエンドを`http://localhost:3000`で公開する設定である。  
+利用登録を確認する前に、`.env.local`の`REGISTRATION_LIMIT_HMAC_KEY`を32バイト以上のランダムな値へ変更する。
 
 ## ローカル起動
 `frontend/`で次を実行する。
 
 ```bash
+docker compose -f compose.redis.yml up -d
 npm run dev
 ```
+
+`npm run dev`はNext.jsだけを起動する。  
+利用登録はRedisへ接続できない場合に一時停止する。  
+RedisはE2E実行時にはテスト用スクリプトが自動で起動・停止する。
 
 ### 起動後のURL
 - トップ: `http://localhost:3000/`
@@ -29,7 +36,8 @@ npm run dev
 - ログイン: `http://localhost:3000/login`
 - 蔵書検索・在庫確認・書誌予約: `http://localhost:3000/search`
 
-停止する場合は起動中のターミナルで`Ctrl-C`を入力する。
+停止する場合は起動中のターミナルで`Ctrl-C`を入力する。  
+Redisも停止する場合は、別のターミナルで`frontend/`から`docker compose -f compose.redis.yml down`を実行する。
 
 ## 性能検証
 
