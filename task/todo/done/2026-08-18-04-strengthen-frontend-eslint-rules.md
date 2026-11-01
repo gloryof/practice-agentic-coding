@@ -1,9 +1,11 @@
 # フロントエンドのESLintルールを強化する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
 - Updated: 2026-08-09 - 起票
 - Updated: 2026-10-25 - ディレクトリ責務の文書化完了に合わせて依存先を更新
+- Updated: 2026-10-25 - ESLint実装と高速ゲートを完了し、性能ゲートの事前ログイン失敗を調査中
+- Updated: 2026-11-01 - ESLint検証、高速ゲート、性能ゲートを完了し、追加プラグインに監査指摘がないことを確認
 - 優先度: 13
 - 依存関係: `task/todo/done/2026-08-18-03-document-frontend-directory-responsibilities.md`（完了済み）
 

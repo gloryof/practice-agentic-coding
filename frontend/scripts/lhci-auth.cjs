@@ -6,11 +6,13 @@ module.exports = async (browser, { url }) => {
   const email = `lhci-reader-${Date.now()}@example.com`;
   const password = "ValidPassword1!";
   try {
-    await page.goto(`${origin}/register`);
+    // Wait for hydration before typing into React-controlled form fields.
+    await page.goto(`${origin}/register`, { waitUntil: "networkidle0" });
     await page.type('input[name="email"]', email);
     await page.type('input[name="password"]', password);
     await page.click('button[type="submit"]');
     await page.waitForFunction(() => location.pathname === "/login", { timeout: 15_000 });
+    await page.waitForNetworkIdle();
     await page.type('input[name="email"]', email);
     await page.type('input[name="password"]', password);
     await page.click('button[type="submit"]');

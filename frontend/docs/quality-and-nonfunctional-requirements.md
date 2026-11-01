@@ -20,6 +20,23 @@
 | 各画面機能の完了または互換性へ影響する変更 | Firefox、WebKit、手動アクセシビリティ、性能予算 | 視覚差分検査 |
 | デプロイまたは実利用開始 | フィールド性能、画面エラー、主要操作成功率、通知と保持 | 外部テレメトリ、依存関係自動更新、常時の複数ブラウザ検査 |
 
+## 静的解析
+
+- `MUST` `npm run lint`で`app`、`features`、`shared`の依存方向と異なる機能間の直接依存を検査する。  
+  エイリアスと相対パスの両方を対象にする。
+- `MUST` `use client`を宣言したファイルからサーバー専用ディレクトリと`server-only`への直接参照を検出する。  
+  推移的なClient／Server境界はNext.jsのbuildでも確認する。
+- `MUST` 型情報を使って未処理Promiseを検出する。  
+  通常のアプリケーションコードでは`console`を禁止し、BFFの構造化ロガーを使用する。
+- `MUST` 単体テストの集中実行、無効化、assertion不足と、Testing Libraryの代表的な誤用を検出する。  
+  ブラウザE2Eでも集中実行を検出する。
+- `MUST` ESLint設定の検出例と許可例を`frontend/scripts/verify-eslint-rules.mjs`で確認し、ルール変更後の誤検出と検出漏れを防ぐ。
+- `frontend/shared/api/server/logger.ts`の`console`は、構造化されたJSONを標準出力へ書くために許可する。  
+  テストファイルではログ出力先を差し替える検査のために許可する。  
+  どちらもログの責務を別の仕組みに移したときに例外を見直す。
+- `frontend/features/catalog/components/__tests__/book-result-summary.test.tsx`のDOM直接参照は、XSS検査でアクセシビリティツリーに現れない画像も検出するため、該当する1行だけ許可する。  
+  同じ検出範囲を持つTesting Libraryの検査に置き換えられるときに例外を解除する。
+
 ## テスト戦略
 
 ### テスト層と責務

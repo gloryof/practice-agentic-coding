@@ -41,6 +41,8 @@ describe("BookResultSummary", () => {
     expect(
       screen.getByRole("heading", { name: '<img src=x onerror="alert(1)">' }),
     ).toBeInTheDocument();
+    // XSS検査ではアクセシビリティツリーに出ないimgも検出する。DOM全体を検査できる代替ができたら解除する。
+    // eslint-disable-next-line testing-library/no-node-access -- 上記の理由でこの検査だけDOMを直接参照する。
     expect(container.querySelector("img")).toBeNull();
   });
 });
