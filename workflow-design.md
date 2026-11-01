@@ -73,7 +73,7 @@ AIはユーザーが指定または選択したワークフローについて、
 |---|---|
 | [レビューへの工程間引き継ぎ（完了）](task/todo/done/2026-08-16-04-pass-review-context-packages.md) | 前工程の成果物をレビュー工程の必須入力として渡す |
 | [ワークフローとレビューの選択（完了）](task/todo/done/2026-08-16-05-classify-task-size-and-select-workflow.md) | 任意のフロー選択と変更影響に応じたレビュー判定を用いる |
-| [ワークフローごとの検証選択](task/todo/2026-08-16-11-define-workflow-specific-verification.md) | 過剰な検証と重複実行を減らし、結果を共有する |
+| [ワークフローごとの検証選択（完了）](task/todo/done/2026-08-16-11-define-workflow-specific-verification.md) | 過剰な検証と重複実行を減らし、結果を共有する |
 | [選択結果の回帰テスト（終了）](task/todo/done/2026-08-16-06-add-agent-workflow-regression-tests.md) | 既存ベンチマークとの重複を確認し、追加実装せず終了した |
 | [ワークフロー文書の責務監査（終了）](task/todo/done/2026-08-16-07-audit-agent-workflow-responsibilities.md) | 現行の入口と実装フローの照合で具体的な矛盾が見つからず、追加の網羅的監査を行わず終了した |
 | [最適化効果の再計測](task/todo/2026-08-16-08-verify-agent-context-optimization.md) | 同じ条件で全体コストと品質を比較する |
@@ -83,4 +83,4 @@ AIはユーザーが指定または選択したワークフローについて、
 | 関連TODO | 課題との関係 |
 |---|---|
 | [Markdown記述ルールと変更ファイル限定Lint](task/todo/done/2026-08-16-09-standardize-markdown-writing-and-incremental-lint.md) | 部分参照を扱いやすくし、文書検査の対象と出力を絞る |
-| [フロントエンド品質文書の責務整理](task/todo/2026-08-20-01-refactor-frontend-quality-documentation.md) | 変更内容から必要な品質規則を選びやすくする |
+| [フロントエンド品質文書の責務整理（完了）](task/todo/done/2026-08-20-01-refactor-frontend-quality-documentation.md) | 現行の入口と品質文書で参照先を判断できることを確認した |

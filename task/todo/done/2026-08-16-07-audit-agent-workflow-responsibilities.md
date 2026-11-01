@@ -51,4 +51,4 @@
 - サーバサイド実装フローを選択一覧へ登録する際は、共通入口への依存と残る旧入口参照を整理する。  
   新しいフロントエンド実装フローと横断する場合の確認担当と実行順序も監査する。
 - 既存のロール・スキル責務分担、仕様更新ルール、各領域の実装規則を変更する場合は、コンテキスト最適化に必要な差分だけに限定する。
-- フロントエンド品質文書自体の分割は`task/todo/2026-08-20-01-refactor-frontend-quality-documentation.md`、ディレクトリ責務は`task/todo/2026-08-18-03-document-frontend-directory-responsibilities.md`へ委ね、本TODOへ取り込まない。
+- フロントエンド品質文書自体の分割は`task/todo/done/2026-08-20-01-refactor-frontend-quality-documentation.md`、ディレクトリ責務は`task/todo/done/2026-08-18-03-document-frontend-directory-responsibilities.md`へ委ね、本TODOへ取り込まない。
