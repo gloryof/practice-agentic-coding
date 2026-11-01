@@ -122,7 +122,7 @@ Cookie名は実装時に一つの定数として定義する。
 - Spring Boot APIの動的OpenAPIを`OPENAPI_ENABLED=true`のローカルAPIから取得する。
 - `openapi-typescript`でTypeScript型を生成し、サーバー専用APIクライアントから使用する。
 - 生成物はコミットし、生成元と生成コマンドをファイルヘッダーまたは開発文書へ記録する。
-- CIでは同じOpenAPIから再生成し、コミット済み生成物との差分を契約ドリフトとして失敗させる。
+- API契約の変更時はローカルで同じOpenAPIから再生成し、コミット済み生成物との差分を契約ドリフトとして検出する。
 - OpenAPIから生成した型だけで実行時の安全性を保証せず、BFF境界と画面入力で必要な実行時検証を行う。
 - BFF独自の画面向けDTOはSpring Boot APIのDTOをそのまま公開せず、機能単位の型と実行時スキーマで定義する。
 
@@ -169,7 +169,7 @@ BFFは少なくとも次へ分類する。
 - Client Components、HTML、Cookie、Web Storage、ログにBearerが存在しないことを確認する。
 - セッション固定化、Cookie改ざん、期限切れ、API認証失敗、CSRF、XSS出力の代表的な異常系を自動テストする。
 - Spring Boot APIのログアウト後に同じBearerを再利用できないことをAPI E2Eで検証する。
-- OpenAPI生成物のドリフト検査をCIで実行する。
+- OpenAPI生成物のドリフト検査をAPI契約の変更時にローカルで実行する。
 - BFF、セッションストア、APIの障害を注入し、ログとエラー分類から主要障害領域を10分以内に特定できることを確認する。
 
 ### 現在の実装範囲

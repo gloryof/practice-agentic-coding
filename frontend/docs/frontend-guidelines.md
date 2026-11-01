@@ -20,7 +20,7 @@
 - `MUST` Client Componentsまたはブラウザ側を変更する場合は[Clientアーキテクチャ](client/architecture.md)を参照する。
 - `MUST` BFFとClientの両境界を変更する場合は、両方のアーキテクチャを参照する。
 - 現在はNext.js BFF基盤、利用登録、ログイン、ログアウト、認証セッション、蔵書検索、在庫確認、書誌予約を実装済みである。
-- `MUST` テスト、CI、アクセシビリティ検査、対応ブラウザ、性能、可観測性、セキュリティヘッダー、依存関係には[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を適用する。
+- `MUST` テスト、品質ゲート、アクセシビリティ検査、対応ブラウザ、性能、可観測性、セキュリティヘッダー、依存関係には[フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)を適用する。
 
 ## アーキテクチャ
 
@@ -39,7 +39,7 @@
 | 言語 | TypeScript strict |
 
 - `MUST` `package.json`の`engines`とリポジトリのNode.jsバージョン指定をNode.js 24系に揃える。
-- `MUST` CIおよび再現可能なローカル準備では`npm ci`を使用する。
+- `MUST` 再現可能なローカル準備では`npm ci`を使用する。
 - `MUST` パッケージの解決結果を`package-lock.json`へ固定してコミットする。
 - `MUST` [フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)の対応ブラウザとpolyfill方針を適用し、互換性を狭める機能を無検証で導入しない。
 
@@ -129,7 +129,7 @@
 - `MUST` Markdownを規則の正本、Storybookを実行可能なコンポーネント状態例として維持する。
 
 ## 品質・非機能要件
-- `MUST` [フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)をテスト層、CIゲート、アクセシビリティ検査、ブラウザE2E、対応ブラウザ、性能予算、可観測性、セキュリティヘッダー、依存関係の詳細な正本として適用する。
+- `MUST` [フロントエンド品質・非機能要件](quality-and-nonfunctional-requirements.md)をテスト層、品質ゲート、アクセシビリティ検査、ブラウザE2E、対応ブラウザ、性能予算、可観測性、セキュリティヘッダー、依存関係の詳細な正本として適用する。
 - `MUST` 高速で決定的なゲートをすべてのフロントエンド変更へ適用し、実API E2E、性能、複数ブラウザを対象変更と機能完成の段階で追加する。
 - `MUST` async Server Components、BFF、Cookie、Spring Boot API、DBをまたぐ利用者フローを単体テストだけで保証しない。
 
