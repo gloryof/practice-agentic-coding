@@ -1,8 +1,8 @@
 # Storybookのimage-size既知脆弱性を解消する
 
 ## ステータス
-- Status: Proposed
-- Updated: 2026-08-09 - 起票
+- Status: Done
+- Updated: 2026-11-01 - `image-size` 2.0.4へ更新し、Storybookのビルドとテストを確認
 - 再確認期限: 2026-08-23
 - 優先度: 高
 
@@ -24,3 +24,11 @@ production依存と利用者入力の処理経路には含まれない。
 - 修正版へ更新できるまで、外部または利用者提供のICNS、JXL、HEIF画像をStorybookへ入力しない。
 - 修正版公開後は`min-release-age`の要件を確認し、必要なら記録済みのセキュリティ例外として更新する。
 - `npm audit --audit-level=high`で該当経路の解消を確認し、`npm run build:storybook`と`npm run test:storybook`で既存動作を確認する。
+
+## 完了記録
+
+`vite-plugin-storybook-nextjs`が参照する`image-size`を2.0.4へ更新した。  
+`npm ls image-size vite-plugin-storybook-nextjs`でStorybookの依存経路に2.0.4だけがあることを確認した。  
+`npm run audit:high`では対象の`image-size`脆弱性は検出されず、他の依存関係の検出は既存のactive TODOで追跡している。  
+Storybookの静的ビルドは成功し、Storybookテストは39件すべて成功した。  
+更新したロックファイルのRegistry署名検証も成功した。
