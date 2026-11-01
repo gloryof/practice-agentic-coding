@@ -140,4 +140,12 @@ describe("registrationAction", () => {
       code: "temporarily_unavailable",
     });
   });
+
+  it("成功応答の契約違反は一般エラーへ変換する", async () => {
+    mocks.registerWithSpringApi.mockRejectedValue(new BffApiError("contract", "invalid response"));
+    await expect(registrationAction({ status: "idle" }, validForm())).resolves.toEqual({
+      status: "error",
+      code: "unexpected",
+    });
+  });
 });

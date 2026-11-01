@@ -156,6 +156,7 @@ npm run check
 | `npm run typecheck` | TypeScriptと生成したAPI型を検査する |
 | `npm run lint` | 静的解析を実行する |
 | `npm run test` | 単体テストとAPI境界テストを実行する |
+| `npm run test:coverage` | カバレッジの下限を検証し、HTML・LCOVレポートを出力する |
 | `npm run api:types:generate` | `OPENAPI_ENABLED=true`の動的APIからコミット対象のTypeScript型を生成する |
 | `npm run api:types:check` | 動的OpenAPIから型を再生成し、コミット済み生成物との差分を検査する |
 | `npm run build` | Node.js実行用の成果物を生成する |

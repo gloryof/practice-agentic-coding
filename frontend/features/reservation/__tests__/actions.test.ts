@@ -121,4 +121,31 @@ describe("placeReservationAction", () => {
       code: "temporarily_unavailable",
     });
   });
+
+  it("存在しない書誌とAPI側の入力拒否を区別する", async () => {
+    mocks.placeReservation.mockRejectedValueOnce(
+      new BffApiError("http", "private", {
+        status: 404,
+        apiCode: "RESERVATION_TARGET_NOT_FOUND",
+      }),
+    );
+    await expect(
+      placeReservationAction({ status: "idle" }, reservationForm("missing")),
+    ).resolves.toEqual({
+      status: "error",
+      code: "target_not_found",
+    });
+    mocks.placeReservation.mockRejectedValueOnce(
+      new BffApiError("http", "private", {
+        status: 400,
+        apiCode: "VALIDATION_ERROR",
+      }),
+    );
+    await expect(
+      placeReservationAction({ status: "idle" }, reservationForm("book-1")),
+    ).resolves.toEqual({
+      status: "error",
+      code: "invalid_input",
+    });
+  });
 });

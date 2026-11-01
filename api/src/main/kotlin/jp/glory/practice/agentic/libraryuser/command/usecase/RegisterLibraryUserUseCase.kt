@@ -92,7 +92,7 @@ class RegisterLibraryUserUseCase(
             libraryUserId = context.libraryUserId.value,
             email = event.email.value,
             registeredAt = context.registeredAt,
-            eventName = event::class.simpleName ?: "LibraryUserRegisteredEvent",
+            eventName = event.javaClass.simpleName,
         )
     }
 }

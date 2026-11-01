@@ -24,5 +24,10 @@ class EmailTest {
             val result = Email.create("ｕser@example.com")
             assertEquals(Err(DomainError.Validation(field = "email", reason = "must_be_half_width")), result)
         }
+
+        @Test
+        fun `given blank email when create then returns required error`() {
+            assertEquals(Err(DomainError.Validation(field = "email", reason = "required")), Email.create(" "))
+        }
     }
 }

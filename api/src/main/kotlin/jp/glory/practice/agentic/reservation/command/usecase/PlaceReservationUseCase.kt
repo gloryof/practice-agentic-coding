@@ -129,7 +129,7 @@ class PlaceReservationUseCase(
             isbn = placement.preparation.target.isbn,
             bookItemId = placement.event.bookItemId.value,
             reservedAt = placement.event.occurredAt,
-            eventName = placement.event::class.simpleName ?: "ReservationPlacedEvent",
+            eventName = placement.event.javaClass.simpleName,
         )
 }
 

@@ -55,6 +55,10 @@
 - `MUST` 正常系、入力エラー、認証・認可エラー、業務制約、一時障害、競合のうち、対象変更で起こり得る失敗を含める。
 - `MUST NOT` グローバルなカバレッジ率だけを品質ゲートに使用する。  
   重要な分岐、失敗条件、回帰リスクに対応するテストの有無をレビューする。
+- `MUST` Vitestの行・分岐カバレッジを、手書きの`app`、`features`、`shared`と共通の実行入口について各50%以上に保つ。  
+  セッション、API接続、機能別のサーバー処理、認証・登録・予約のServer Actionは各80%以上に保つ。
+- `MUST` 数値に加え、認証秘密、API契約、失敗条件の未テスト分岐をHTMLレポートで確認する。  
+  生成型、story、テストコードはカバレッジの集計から除く。
 
 ### Exportされた関数のテスト対象判断
 - `MUST` 独立した振る舞い、入力検証、状態遷移、秘密情報境界、外部通信を持つ`export`関数は、対応するテストを持つ。
@@ -96,6 +100,7 @@
 | `npm run format` | Markdownと生成物を除くフロントエンドファイルをPrettierで整形する |
 | `npm run format:check` | Markdownと生成物を除くフロントエンドファイルの整形状態を検査する |
 | `npm run test` | 単体テストとAPI境界テストを1回実行する |
+| `npm run test:coverage` | 単体・境界テストのカバレッジを検証し、`coverage/`にHTMLとLCOVを出力する |
 | `npm run test:storybook` | Chromiumで全storyの描画、interaction、a11y検査を実行する |
 | `npm run build:storybook` | Storybookの静的成果物を生成する |
 | `npm run test:e2e` | Chromiumで実APIブラウザE2Eを実行する |
@@ -103,7 +108,7 @@
 | `npm run test:performance` | production buildへLighthouse CIと主要操作の性能検査を実行する |
 | `npm run audit:signatures` | npm Registryの署名と来歴証明を検査する |
 | `npm run audit:high` | CriticalとHighの既知脆弱性を検査する |
-| `npm run check` | 整形検査、型検査、静的解析、単体・境界テスト、build、Storybook build、story・a11y検査を順に実行する |
+| `npm run check` | 整形検査、型検査、静的解析、カバレッジ付き単体・境界テスト、build、Storybook build、story・a11y検査を順に実行する |
 
 - `MUST` `check`、実APIブラウザE2E、複数ブラウザE2E、性能検査の標準出力と標準エラーを`work/logs/frontend/`のゲート別ログへ上書き保存する。  
   端末には結果、終了コード、ログパスだけを表示し、失敗したゲートのログを開いて原因を調べる。

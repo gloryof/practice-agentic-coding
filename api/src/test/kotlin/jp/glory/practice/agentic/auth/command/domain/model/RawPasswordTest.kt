@@ -24,5 +24,10 @@ class RawPasswordTest {
             val result = RawPassword.create("Abc1!short")
             assertEquals(Err(DomainError.Validation(field = "password", reason = "must_meet_password_policy")), result)
         }
+
+        @Test
+        fun `given blank password when create then returns required error`() {
+            assertEquals(Err(DomainError.Validation(field = "password", reason = "required")), RawPassword.create(" "))
+        }
     }
 }

@@ -37,6 +37,12 @@ npm run dev
 APIとBFFのポートが空いている状態で実行する。  
 Lighthouseの画面予算と、蔵書検索・書誌予約の操作時間を確認する。
 
+## テストカバレッジ
+
+`frontend/`で`npm run test:coverage`を実行する。  
+行・分岐の下限を確認し、未テスト箇所は`coverage/index.html`で確認する。  
+機械処理用の結果は`coverage/lcov.info`に出力する。
+
 ## Storybook
 Storybookだけを確認する場合、Spring Boot APIの起動は不要である。  
 `frontend/`で次を実行する。

@@ -150,57 +150,53 @@ val architectureTest =
         useJUnitPlatform()
     }
 
-tasks.jacocoTestCoverageVerification {
-    val jacocoExcludes =
-        listOf(
-            "**/infra/adapter/persistence/_*",
-            "**/infra/adapter/persistence/table/_*",
-        )
+val jacocoExcludes =
+    listOf(
+        "**/infra/adapter/persistence/_*",
+        "**/infra/adapter/persistence/table/_*",
+    )
+
+fun org.gradle.testing.jacoco.tasks.JacocoCoverageVerification.coverageFor(
+    includes: List<String>,
+    excludes: List<String>,
+    minimum: String,
+) {
+    dependsOn(tasks.test)
     classDirectories.setFrom(
-        files(
-            classDirectories.files.map {
-                fileTree(it) {
-                    exclude(jacocoExcludes)
-                }
-            },
-        ),
+        sourceSets.main.get().output.classesDirs.map { directory ->
+            fileTree(directory) {
+                include(includes)
+                exclude(jacocoExcludes + excludes)
+            }
+        },
     )
     violationRules {
         rule {
             element = "BUNDLE"
-            includes = listOf("**/domain/**")
             limit {
                 counter = "INSTRUCTION"
                 value = "COVEREDRATIO"
-                minimum = "1.0".toBigDecimal()
-            }
-        }
-        rule {
-            element = "BUNDLE"
-            includes = listOf("**/usecase/**")
-            limit {
-                counter = "INSTRUCTION"
-                value = "COVEREDRATIO"
-                minimum = "1.0".toBigDecimal()
-            }
-        }
-        rule {
-            element = "BUNDLE"
-            excludes =
-                listOf(
-                    "**/domain/**",
-                    "**/usecase/**",
-                    "**/infra/adapter/persistence/_*",
-                    "**/infra/adapter/persistence/table/_*",
-                )
-            limit {
-                counter = "INSTRUCTION"
-                value = "COVEREDRATIO"
-                minimum = "0.8".toBigDecimal()
+                this.minimum = minimum.toBigDecimal()
             }
         }
     }
 }
+
+tasks.jacocoTestCoverageVerification {
+    coverageFor(listOf("**/*.class"), listOf("**/domain/**", "**/usecase/**"), "0.8")
+}
+
+val jacocoDomainCoverageVerification =
+    tasks.register<org.gradle.testing.jacoco.tasks.JacocoCoverageVerification>("jacocoDomainCoverageVerification") {
+        executionData(layout.buildDirectory.file("jacoco/test.exec"))
+        coverageFor(listOf("**/domain/**"), emptyList(), "1.0")
+    }
+
+val jacocoUsecaseCoverageVerification =
+    tasks.register<org.gradle.testing.jacoco.tasks.JacocoCoverageVerification>("jacocoUsecaseCoverageVerification") {
+        executionData(layout.buildDirectory.file("jacoco/test.exec"))
+        coverageFor(listOf("**/usecase/**"), emptyList(), "1.0")
+    }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
@@ -267,6 +263,8 @@ tasks.named("check") {
         "detekt",
         "ktlintCheck",
         "jacocoTestCoverageVerification",
+        jacocoDomainCoverageVerification,
+        jacocoUsecaseCoverageVerification,
         "jacocoTestReport",
         architectureTest,
     )

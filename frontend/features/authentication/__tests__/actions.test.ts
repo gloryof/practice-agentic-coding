@@ -57,6 +57,8 @@ describe("authentication actions", () => {
     configureBffLogSink((line) => mocks.logBffEvent(JSON.parse(line)));
     mocks.getBffSessionStore.mockReturnValue({ create: vi.fn(), deleteExpired: vi.fn() });
     mocks.readCurrentSession.mockResolvedValue(null);
+    mocks.loginConsume.mockReturnValue({ allowed: true, retryAfterSeconds: 0 });
+    mocks.logoutConsume.mockReturnValue({ allowed: true, retryAfterSeconds: 0 });
   });
   afterAll(() => configureBffLogSink((line) => console.info(line)));
 
@@ -183,5 +185,67 @@ describe("authentication actions", () => {
       }),
     );
     expect(mocks.redirect).toHaveBeenCalledWith("/login?logged_out=1");
+  });
+
+  it("再ログイン時は旧セッションを破棄し、旧トークン失効の失敗を記録する", async () => {
+    mocks.loginWithSpringApi.mockResolvedValue({
+      access_token: "new-token",
+      expires_in_seconds: 300,
+    });
+    mocks.readCurrentSession.mockResolvedValue({
+      id: "old-id",
+      session: { accessToken: "old-token" },
+    });
+    mocks.logoutWithSpringApi.mockRejectedValue(new BffApiError("network", "unavailable"));
+    await loginAction({ status: "idle" }, validForm());
+    expect(mocks.deleteSession).toHaveBeenCalledWith("old-id");
+    expect(mocks.logBffEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ event: "bff_previous_session_revoke", result: "failure" }),
+    );
+  });
+
+  it("新セッション作成に失敗した場合は取得済みトークンを失効する", async () => {
+    mocks.loginWithSpringApi.mockResolvedValue({
+      access_token: "new-token",
+      expires_in_seconds: 300,
+    });
+    mocks.getBffSessionStore.mockReturnValue({
+      create: vi.fn().mockRejectedValue(new Error("store failure")),
+      deleteExpired: vi.fn(),
+    });
+    await expect(loginAction({ status: "idle" }, validForm())).resolves.toEqual({
+      status: "error",
+      code: "unexpected",
+    });
+    expect(mocks.logoutWithSpringApi).toHaveBeenCalledWith("new-token", expect.anything());
+  });
+
+  it("API接続障害を一時的な失敗として返す", async () => {
+    mocks.loginWithSpringApi.mockRejectedValue(new BffApiError("timeout", "timeout"));
+    await expect(loginAction({ status: "idle" }, validForm())).resolves.toEqual({
+      status: "error",
+      code: "temporarily_unavailable",
+    });
+  });
+
+  it("APIの入力検証エラーに有効な項目がなければ契約エラーとする", async () => {
+    mocks.loginWithSpringApi.mockRejectedValue(
+      new BffApiError("http", "invalid", { apiCode: "VALIDATION_ERROR", details: [] }),
+    );
+    await expect(loginAction({ status: "idle" }, validForm())).resolves.toEqual({
+      status: "error",
+      code: "unexpected",
+    });
+  });
+
+  it("ログアウトのレート制限時もローカル状態を破棄する", async () => {
+    mocks.readCurrentSession.mockResolvedValue({
+      id: "old-id",
+      session: { accessToken: "old-token" },
+    });
+    mocks.logoutConsume.mockReturnValue({ allowed: false, retryAfterSeconds: 10 });
+    await logoutAction();
+    expect(mocks.deleteSession).toHaveBeenCalledWith("old-id");
+    expect(mocks.logoutWithSpringApi).not.toHaveBeenCalled();
   });
 });
