@@ -32,7 +32,7 @@ try {
     const bookNumber = (attempt + 1) * 3;
     const isbn = `978000000${String(bookNumber).padStart(4, "0")}`;
     await page.goto(`${origin}/search?isbn=${isbn}`);
-    const submit = page.getByRole("button", { name: /を予約する$/ });
+    const submit = page.getByRole("button", { name: /^この本を予約する:/ });
     await submit.waitFor();
     const started = performance.now();
     await submit.click();

@@ -52,7 +52,7 @@ export function ReservationFormView({
         <input type="hidden" name="bookProductId" value={bookProductId} />
         <Button
           type="submit"
-          aria-label={pending ? `${bookTitle}を予約中` : `${bookTitle}を予約する`}
+          aria-label={pending ? `予約を申し込み中: ${bookTitle}` : `この本を予約する: ${bookTitle}`}
           pending={pending}
           pendingLabel="予約を申し込み中"
           className="w-full sm:w-auto"

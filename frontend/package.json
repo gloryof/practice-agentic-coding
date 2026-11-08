@@ -7,11 +7,11 @@
     "node": ">=24 <25"
   },
   "overrides": {
-    "nanoid": "3.3.17",
+    "nanoid": "3.3.18",
     "@redocly/openapi-core": {
-      "js-yaml": "4.3.1"
+      "js-yaml": "4.3.2"
     },
-    "sharp": "0.35.0",
+    "sharp": "0.35.5",
     "tmp": "0.2.7",
     "uuid": "11.1.1"
   },
@@ -38,38 +38,38 @@
     "check": "../scripts/run-gate-with-log.sh frontend check -- ./scripts/run-gate-steps.sh check"
   },
   "dependencies": {
-    "next": "16.3.0",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "redis": "6.3.0",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "redis": "6.3.1",
     "server-only": "0.0.1"
   },
   "devDependencies": {
     "@lhci/cli": "0.15.1",
-    "@playwright/test": "1.62.1",
-    "@storybook/addon-a11y": "10.5.5",
-    "@storybook/addon-vitest": "10.5.5",
-    "@storybook/nextjs-vite": "10.5.5",
+    "@playwright/test": "1.64.1",
+    "@storybook/addon-a11y": "10.6.5",
+    "@storybook/addon-vitest": "10.6.5",
+    "@storybook/nextjs-vite": "10.6.5",
     "@tailwindcss/postcss": "4.3.3",
-    "@testing-library/jest-dom": "7.0.0",
-    "@testing-library/react": "16.3.2",
-    "@testing-library/user-event": "14.6.1",
-    "@types/node": "26.1.2",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
-    "@vitest/browser-playwright": "4.1.10",
-    "@vitest/coverage-v8": "4.1.10",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.8",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitest/browser-playwright": "5.0.5",
+    "@vitest/coverage-v8": "5.0.5",
     "@vitest/eslint-plugin": "1.6.27",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.3.0",
+    "eslint-config-next": "16.4.3",
     "eslint-plugin-testing-library": "7.16.2",
-    "jsdom": "30.0.1",
+    "jsdom": "30.1.3",
     "openapi-typescript": "7.13.0",
-    "postcss": "8.5.25",
-    "prettier": "3.9.6",
-    "storybook": "10.5.5",
+    "postcss": "8.5.32",
+    "prettier": "3.9.10",
+    "storybook": "10.6.5",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
-    "vitest": "4.1.10"
+    "vitest": "5.0.5"
   }
 }

@@ -3,26 +3,30 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.flywaydb:flyway-database-postgresql:11.15.0")
-        classpath("org.postgresql:postgresql:42.7.9")
+        classpath("org.flywaydb:flyway-database-postgresql:13.12.1")
+        classpath("org.postgresql:postgresql:42.7.14")
     }
 }
 
 plugins {
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.spring") version "2.2.20"
-    id("org.springframework.boot") version "4.0.2"
+    kotlin("jvm") version "2.4.10"
+    kotlin("plugin.spring") version "2.4.10"
+    id("org.springframework.boot") version "4.1.2"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
-    id("org.flywaydb.flyway") version "11.15.0"
-    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
-    id("dev.detekt") version "2.0.0-alpha.1"
-    id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
+    id("org.flywaydb.flyway") version "13.12.1"
+    id("com.google.devtools.ksp") version "2.3.13"
+    id("dev.detekt") version "2.0.0-alpha.6"
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
 }
 
 group = "jp.glory.practice.agentic"
 version = "0.0.1-SNAPSHOT"
 description = "Demo project for Spring Boot"
+
+// Komapper 7が要求するcoroutine APIをSpring Bootの管理版で下げない。
+extra["kotlin-coroutines.version"] = "1.11.0"
+extra["flyway.version"] = "13.12.1"
 
 val e2eTestSourceSet = sourceSets.create("e2eTest")
 val architectureTestSourceSet =
@@ -43,8 +47,8 @@ repositories {
     mavenCentral()
 }
 
-val komapperVersion = "6.0.0"
-val testcontainersVersion = "2.0.3"
+val komapperVersion = "7.0.0"
+val testcontainersVersion = "2.0.5"
 val flywayUrl =
     providers
         .gradleProperty("flywayUrl")
@@ -67,7 +71,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("tools.jackson.module:jackson-module-kotlin")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
     implementation("org.flywaydb:flyway-core")
     implementation("org.postgresql:postgresql")
 
@@ -75,8 +79,8 @@ dependencies {
     implementation("org.komapper:komapper-dialect-postgresql-jdbc:$komapperVersion")
     ksp("org.komapper:komapper-processor:$komapperVersion")
 
-    implementation("io.konform:konform-jvm:0.11.0")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-jvm:2.1.0")
+    implementation("io.konform:konform-jvm:0.11.1")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-jvm:2.3.1")
     implementation("org.springframework.security:spring-security-crypto")
 
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
@@ -86,17 +90,17 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter:$testcontainersVersion")
     testImplementation("org.testcontainers:testcontainers-postgresql:$testcontainersVersion")
-    testImplementation("io.mockk:mockk:1.13.12")
-    testImplementation("com.github.f4b6a3:uuid-creator:5.3.2")
+    testImplementation("io.mockk:mockk:1.14.12")
+    testImplementation("com.github.f4b6a3:uuid-creator:6.1.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    add("architectureTestImplementation", "com.tngtech.archunit:archunit-junit5:1.4.2")
+    add("architectureTestImplementation", "com.tngtech.archunit:archunit-junit5:1.5.1")
     add("architectureTestImplementation", "org.jetbrains.kotlin:kotlin-test-junit5")
     add("architectureTestRuntimeOnly", "org.junit.platform:junit-platform-launcher")
 
     add("e2eTestImplementation", "org.springframework.boot:spring-boot-starter-actuator-test")
     add("e2eTestImplementation", "org.jetbrains.kotlin:kotlin-test-junit5")
-    add("e2eTestImplementation", "io.rest-assured:rest-assured:6.0.0")
+    add("e2eTestImplementation", "io.rest-assured:rest-assured:6.3.0")
     add("e2eTestRuntimeOnly", "org.junit.platform:junit-platform-launcher")
 }
 

@@ -14,7 +14,7 @@ const base = {
 describe("ReservationFormView", () => {
   it("予約できる書誌だけ操作を表示する", () => {
     const { rerender } = render(<ReservationFormView {...base} state={{ status: "idle" }} />);
-    expect(screen.getByRole("button", { name: "予約する本を予約する" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "この本を予約する: 予約する本" })).toBeEnabled();
     rerender(<ReservationFormView {...base} available={false} state={{ status: "idle" }} />);
     expect(screen.queryByRole("button")).toBeNull();
     expect(
@@ -26,7 +26,7 @@ describe("ReservationFormView", () => {
     const { rerender } = render(
       <ReservationFormView {...base} pending state={{ status: "idle" }} />,
     );
-    expect(screen.getByRole("button", { name: "予約する本を予約中" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "予約を申し込み中: 予約する本" })).toBeDisabled();
     rerender(
       <ReservationFormView
         {...base}

@@ -35,7 +35,9 @@ test("検索結果から予約し、連打を抑止して受付と重複理由�
     true,
   );
   const book = page.getByRole("article").filter({ hasText: target.title });
-  await expect(book.getByRole("button", { name: `${target.title}を予約する` })).toBeVisible();
+  await expect(
+    book.getByRole("button", { name: `この本を予約する: ${target.title}` }),
+  ).toBeVisible();
   await page.route("**/search**", async (route) => {
     if (route.request().method() === "POST") {
       actionPosts += 1;
@@ -43,21 +45,27 @@ test("検索結果から予約し、連打を抑止して受付と重複理由�
     }
     await route.continue();
   });
-  await book.getByRole("button", { name: `${target.title}を予約する` }).evaluate((button) => {
-    (button as HTMLButtonElement).click();
-    (button as HTMLButtonElement).click();
-  });
+  await book
+    .getByRole("button", { name: `この本を予約する: ${target.title}` })
+    .evaluate((button) => {
+      (button as HTMLButtonElement).click();
+      (button as HTMLButtonElement).click();
+    });
   await expect.poll(() => actionPosts).toBe(1);
-  await expect(book.getByRole("button", { name: `${target.title}を予約中` })).toBeDisabled();
+  await expect(
+    book.getByRole("button", { name: `予約を申し込み中: ${target.title}` }),
+  ).toBeDisabled();
   releaseAction();
   await expect(book.getByRole("status").filter({ hasText: "予約を受け付けました" })).toContainText(
     `${target.title}の予約が成立しました`,
   );
   expect(actionPosts).toBe(1);
-  await expect(book.getByRole("button", { name: `${target.title}を予約する` })).toHaveCount(0);
+  await expect(book.getByRole("button", { name: `この本を予約する: ${target.title}` })).toHaveCount(
+    0,
+  );
 
   await page.reload();
-  await book.getByRole("button", { name: `${target.title}を予約する` }).press("Enter");
+  await book.getByRole("button", { name: `この本を予約する: ${target.title}` }).press("Enter");
   await expect(
     book.getByRole("status").filter({ hasText: "予約は成立していません" }),
   ).toContainText("すでに予約しています");

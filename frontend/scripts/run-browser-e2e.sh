@@ -2,6 +2,7 @@
 set -euo pipefail
 
 skill_script="../.codex/skills/run-api-e2e/scripts/run.sh"
+export REGISTRATION_REDIS_URL="redis://127.0.0.1:${E2E_REDIS_PORT:-6379}"
 
 cleanup() {
   "$skill_script" stop
