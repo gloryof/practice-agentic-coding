@@ -1,7 +1,8 @@
 # API `check` が Docker 未起動環境で失敗する
 
 ## ステータス
-- Status: Proposed
+- Status: Done
+- Updated: 2026-11-08 - ユーザーの指示に基づき、解決済みとして終了（今回の更新ではAPI検証を再実行していない）
 - Updated: 2026-04-19 - 起票
 - 期限: 未定
 - 優先度: Medium
