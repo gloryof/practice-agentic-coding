@@ -20,3 +20,4 @@ Codexを使ってAgentic Codingの連取をする場所。
 
 ## Checks
 - 文書の変更ファイル限定検査（句点改行・リンク先・ローカル絶対パス）: `python3 scripts/check-docs.py`
+- セキュリティ検査: [実行方法と現在の実装範囲](docs/security/security-checks.md)

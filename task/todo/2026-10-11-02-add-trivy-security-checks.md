@@ -7,7 +7,7 @@ Trivyの配布物を検証し、Java依存関係、コンテナイメージ、�
 - Updated: 2026-11-15 - 親タスクから分割
 - 親タスク: [06: 全体管理](2026-10-11-06-establish-repeatable-security-checks.md)
 - 設計書: [情報漏洩対策の設計](../../docs/security/security-check-design.md)
-- 依存関係: [01: static検査基盤](2026-10-11-01-build-static-security-check-foundation.md)
+- 依存関係: [01: static検査基盤（完了）](done/2026-10-11-01-build-static-security-check-foundation.md)
 
 ## 背景
 

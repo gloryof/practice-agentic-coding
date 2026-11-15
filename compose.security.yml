@@ -1,0 +1,36 @@
+name: security-check
+
+services:
+  npm-audit:
+    image: node:24.22.3-alpine3.24@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+    user: node
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=128m,mode=1777
+    environment:
+      HOME: /tmp
+      NPM_CONFIG_CACHE: /tmp/npm-cache
+      NPM_CONFIG_USERCONFIG: /dev/null
+      NPM_CONFIG_UPDATE_NOTIFIER: "false"
+    volumes:
+      - type: bind
+        source: ./frontend/package.json
+        target: /input/package.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./frontend/package-lock.json
+        target: /input/package-lock.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./scripts/internal/security/npm-audit.mjs
+        target: /checks/npm-audit.mjs
+        read_only: true
+        bind:
+          create_host_path: false
+    entrypoint: [node, /checks/npm-audit.mjs]
