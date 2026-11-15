@@ -1,6 +1,37 @@
 name: security-check
 
 services:
+  trivy:
+    image: ghcr.io/aquasecurity/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=128m,mode=1777
+    environment:
+      HOME: /tmp
+      DOCKER_CONFIG: /tmp/docker
+      TRIVY_CACHE_DIR: /cache
+      TMPDIR: /cache
+    volumes:
+      - trivy-cache:/cache
+      - type: bind
+        source: ${SECURITY_INPUT:-./scripts/internal/security}
+        target: /input
+        read_only: true
+        bind:
+          create_host_path: false
+  cosign:
+    image: ghcr.io/sigstore/cosign/cosign:v3.1.4@sha256:0f06154836d2de34f887a5c273506d52ca43edaa1d9e53e6510fa78a48f69c2d
+    user: "65532:65532"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m,mode=1777
+    environment:
+      HOME: /tmp
+      DOCKER_CONFIG: /tmp/docker
   npm-audit:
     image: node:24.22.3-alpine3.24@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
     user: node
@@ -34,3 +65,6 @@ services:
         bind:
           create_host_path: false
     entrypoint: [node, /checks/npm-audit.mjs]
+
+volumes:
+  trivy-cache:

@@ -280,3 +280,31 @@ flyway {
     password = flywayPassword.get()
     locations = arrayOf("filesystem:src/main/resources/db/migration")
 }
+
+// コンパイルを起動せず、解決済みの外部JARだけを用途別に同期する。
+val securityDependencyConfigurations =
+    listOf(
+        "compileClasspath",
+        "runtimeClasspath",
+        "testCompileClasspath",
+        "testRuntimeClasspath",
+        "e2eTestCompileClasspath",
+        "e2eTestRuntimeClasspath",
+        "architectureTestCompileClasspath",
+        "architectureTestRuntimeClasspath",
+        "kspKotlinProcessorClasspath",
+    )
+
+tasks.register<Sync>("syncSecurityDependencies") {
+    group = "verification"
+    description = "検査用に実行・テスト・コード生成の外部依存JARを同期する。"
+    into(layout.buildDirectory.dir("security-dependencies"))
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    // 追加された古いJARも毎回除去し、UP-TO-DATE判定で同期を省略しない。
+    outputs.upToDateWhen { false }
+    securityDependencyConfigurations.forEach { configurationName ->
+        from(provider { configurations.getByName(configurationName).resolve().filter { it.extension == "jar" } }) {
+            into(configurationName)
+        }
+    }
+}
