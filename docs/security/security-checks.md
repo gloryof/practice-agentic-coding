@@ -1,13 +1,13 @@
 # セキュリティ検査の実行方法
 
-npm依存、Java依存JAR、PostgreSQL・Redisイメージ、秘密情報を個別に検査できる。  
-static全体はSemgrepの検査が未実装のため、現段階では終了コード`2`になる。
+npm依存、Java依存JAR、PostgreSQL・Redisイメージ、ソースコード、秘密情報を個別に検査できる。  
+static全体も実行でき、各検査の結果を集約する。
 
 ## 実行前提とコマンド
 
 Docker EngineとDocker Compose v2を起動して実行する。  
-Trivy検査にはPython 3.9以上、秘密情報検査にはGit、Java依存検査にはJDK 27とGradle Wrapperの実行環境が必要である。  
-ホストへのNode.js・Trivy・Cosignの導入、API・BFF・DB・Redisの起動は不要である。
+Trivy・Semgrep検査にはPython 3.9以上、秘密情報・ソース検査にはGit、Java依存検査にはJDK 27とGradle Wrapperの実行環境が必要である。  
+ホストへのNode.js・Trivy・Cosign・Semgrepの導入、API・BFF・DB・Redisの起動は不要である。
 
 ```shell
 # 共通入口
@@ -23,6 +23,9 @@ Trivy検査にはPython 3.9以上、秘密情報検査にはGit、Java依存検�
 ./scripts/internal/security/check-java-dependencies.sh
 ./scripts/internal/security/check-container-images.sh
 ./scripts/internal/security/check-secrets.sh
+
+# ソース検査だけを再実行
+./scripts/internal/security/check-source.sh
 ```
 
 リポジトリ外をカレントディレクトリとして実行しても、スクリプトの配置から対象を特定する。  
@@ -46,7 +49,7 @@ Trivy検査にはPython 3.9以上、秘密情報検査にはGit、Java依存検�
 | `java-dependencies` | 実装済み |
 | `container-images` | 実装済み |
 | `secrets` | 実装済み |
-| `source` | 子タスク03で追加予定 |
+| `source` | 実装済み |
 
 後続チェックは`scripts/internal/security/check-<チェック名>.sh`を追加すると共通入口に接続される。  
 個別スクリプトは公開契約の`0/1/2`を返す。
@@ -193,3 +196,42 @@ python3 scripts/check-docs.py
 実ツール検証は実在しない秘密情報とコードを含まないLog4jのJARメタデータを一時生成する。  
 秘密値の非表示、既知脆弱性の検出、未識別JARの未完了判定を確認する。  
 通常の単体検証では署名失敗時の停止、対象ファイルの限定、時間上限時の所有コンテナ削除も確認する。
+
+## Semgrepによるソース検査
+
+Semgrep CE 1.185.0の公式イメージを版とdigestで固定し、実行時に取得する公開ルールとローカルの補完ルール4件で検査する。  
+構文解析を省略させない検証用ルールも1件使用する。  
+公開ルールはホスト側で毎回オンライン取得し、一時領域に展開する。  
+アカウント・ログイン・トークンは不要で、GitHubの公開APIと配布先へ接続する。  
+取得コミットとアーカイブのSHA-256を表示し、取得失敗時は未完了として終了する。  
+取得対象、対象構文、検査の限界、更新手順は[ルールの説明](../../scripts/internal/security/semgrep/README.md)を参照する。
+
+対象はGit管理されている現在の`api/src`配下と`frontend`配下のソースである。  
+拡張子は`.kt`、`.kts`、`.ts`、`.tsx`、`.js`、`.jsx`、`.mjs`、`.cjs`、`.mts`、`.cts`とする。  
+テストと設定ファイルも含め、検査用の一時コピーを読み取り専用で渡す。  
+未追跡・削除済みのファイル、対象外の拡張子は検査せず、symlinkを含む対象は追跡せずに未完了とする。
+
+`semgrep scan --oss-only`とローカルの`--config`だけを使用し、ログインやクラウド連携を行わない。  
+[公式のメトリクス設定](https://semgrep.dev/docs/metrics)に従って送信と版確認を無効化する。  
+さらに検査コンテナを`network_mode: none`とし、コード、検出内容、メトリクスの外部送信を通信経路から遮断する。  
+公開ルールの取得とイメージの初回取得は、ソース検査とは別にホスト側で行う。
+
+コンテナは非rootで動作し、ルートファイルシステム、ソース、ルールを読み取り専用にする。  
+書き込みは一時領域の`/tmp`に限定し、資格情報、ホストのホーム、Dockerソケットを共有しない。  
+検査後は一時コピー、コンテナ、一時ログを破棄し、検出箇所のソース本文や生のJSON・エラー出力は表示・保存しない。  
+端末にはパス、開始行、ルールID、重大度、対象件数、走査件数、指摘件数を表示する。
+
+指摘があれば重大度によらず`1`を返す。  
+解析エラー、未走査の対象、ルールの省略、時間上限、設定・起動・実行失敗は`2`を優先する。  
+対象全件の走査が完了し、指摘も解析エラーもなければ`0`を返す。  
+ファイル上限は1,000,000バイト、解析の上限はルール・ファイル単位30秒、メモリ上限はエンジンの設定で1,024 MB、並列数は2、ホスト側の実行上限は600秒とする。  
+時間上限・中断時は当該実行の検査コンテナだけを終了する。
+
+```shell
+python3 scripts/internal/security/test_semgrep_checks.py
+RUN_SEMGREP_INTEGRATION=1 python3 scripts/internal/security/test_semgrep_checks.py
+./scripts/internal/security/check-source.sh
+python3 scripts/internal/security/test_security_runners.py
+docker compose -f compose.security.yml config --quiet
+python3 scripts/check-docs.py
+```

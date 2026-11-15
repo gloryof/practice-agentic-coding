@@ -1,0 +1,18 @@
+rules:
+  - id: local-typescript-fetch-url
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: 関数引数がfetchの接続先に使われています。許可する接続先の固定と検証を監査してください。
+    metadata:
+      category: security
+      confidence: LOW
+      cwe: [CWE-918]
+    mode: taint
+    pattern-sources:
+      - patterns:
+          - pattern-inside: function ...(..., $INPUT, ...) { ... }
+          - focus-metavariable: $INPUT
+    pattern-sinks:
+      - patterns:
+          - pattern: fetch($URL, ...)
+          - focus-metavariable: $URL

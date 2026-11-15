@@ -1,0 +1,10 @@
+# セキュリティルールの事前フィルターに一致しないソースもパーサーへ渡す。
+# 同じパターンを肯定・否定するため、指摘自体は生成しない。
+rules:
+  - id: local-parse-check
+    languages: [kotlin, typescript, javascript]
+    severity: INFO
+    message: 解析を実行するための検証用ルールです。
+    patterns:
+      - pattern: $X
+      - pattern-not: $X

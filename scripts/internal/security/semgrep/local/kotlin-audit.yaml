@@ -1,0 +1,43 @@
+rules:
+  - id: local-kotlin-concatenated-sql
+    languages: [kotlin]
+    severity: WARNING
+    message: SQLの文字列連結を監査し、外部入力の混入とパラメーター化の有無を確認してください。
+    metadata:
+      category: security
+      confidence: LOW
+      cwe: [CWE-89]
+    pattern-either:
+      - pattern: $DB.executeQuery($X + $Y, ...)
+      - pattern: $DB.executeUpdate($X + $Y, ...)
+      - pattern: $DB.prepareStatement($X + $Y, ...)
+      - pattern: $DB.executeTemplate($X + $Y, ...)
+  - id: local-kotlin-dynamic-file
+    languages: [kotlin]
+    severity: WARNING
+    message: 動的なファイルパスを監査し、入力の検証とアクセス可能なディレクトリを確認してください。
+    metadata:
+      category: security
+      confidence: LOW
+      cwe: [CWE-22]
+    patterns:
+      - pattern-either:
+          - pattern: java.io.File($PATH)
+          - pattern: java.io.File($BASE, $PATH)
+          - pattern: java.nio.file.Paths.get($PATH)
+      - pattern-not: java.io.File("...")
+      - pattern-not: java.io.File($BASE, "...")
+      - pattern-not: java.nio.file.Paths.get("...")
+  - id: local-kotlin-weak-tls
+    languages: [kotlin]
+    severity: WARNING
+    message: 旧式TLS設定またはホスト名検証の無効化を監査してください。
+    metadata:
+      category: security
+      confidence: MEDIUM
+      cwe: [CWE-295, CWE-327]
+    pattern-either:
+      - pattern: javax.net.ssl.SSLContext.getInstance("SSL")
+      - pattern: javax.net.ssl.SSLContext.getInstance("TLSv1")
+      - pattern: javax.net.ssl.SSLContext.getInstance("TLSv1.1")
+      - pattern: '$BUILDER.hostnameVerifier { _, _ -> true }'

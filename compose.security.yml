@@ -1,6 +1,36 @@
 name: security-check
 
 services:
+  semgrep:
+    image: semgrep/semgrep:1.185.0@sha256:67518c174185a2043fdbed16c70631b79209499b3671178e7194379b48295a0d
+    user: "65532:65532"
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    working_dir: /input
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=512m,mode=1777
+    environment:
+      HOME: /tmp
+      SEMGREP_SETTINGS_FILE: /tmp/settings.yml
+      SEMGREP_LOG_FILE: /tmp/semgrep.log
+      SEMGREP_SEND_METRICS: "off"
+      SEMGREP_ENABLE_VERSION_CHECK: "0"
+    volumes:
+      - type: bind
+        source: ${SEMGREP_INPUT:-./scripts/internal/security}
+        target: /input
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${SEMGREP_RULES:-./scripts/internal/security/semgrep/local}
+        target: /rules
+        read_only: true
+        bind:
+          create_host_path: false
+    entrypoint: [semgrep]
   trivy:
     image: ghcr.io/aquasecurity/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
     read_only: true
