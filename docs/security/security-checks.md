@@ -1,7 +1,8 @@
 # セキュリティ検査の実行方法
 
 npm依存、Java依存JAR、PostgreSQL・Redisイメージ、ソースコード、秘密情報を個別に検査できる。  
-static全体も実行でき、各検査の結果を集約する。
+static全体も実行でき、各検査の結果を集約する。  
+dynamicでは検査専用環境を起動し、ZAPによるBFF・業務APIの動的検査を実行する。
 
 ## 実行前提とコマンド
 
@@ -29,8 +30,110 @@ Trivy・Semgrep検査にはPython 3.9以上、秘密情報・ソース検査に�
 ```
 
 リポジトリ外をカレントディレクトリとして実行しても、スクリプトの配置から対象を特定する。  
-`--group dynamic`は未実装として`2`を返し、環境を起動しない。  
+`--group dynamic`は検査専用環境を起動してZAPを実行する。  
+アプリ固有シナリオの接続は子タスク05で行うため、現段階のグループ全体は未完了の`2`になる。  
 `--only`、`--all`は提供しない。
+
+## ZAPによる動的検査
+
+次のコマンドは、検査専用環境の準備、ZAP、片付けを順に実行する。
+
+```shell
+./scripts/internal/security/check-zap.sh
+./scripts/run-security-checks.sh --group dynamic
+```
+
+Docker Engine・Compose v2、Python 3.9以上、Git、JDK 27、Node.js 24、npm、`lsof`を使用する。  
+`frontend/`の依存関係は事前に`npm ci`で準備する。  
+ホストへのZAP、Pythonのrequests・PyYAMLの導入は不要である。  
+コンテナから`host.docker.internal`でホストへ接続できるDocker環境を使用する。  
+Rancher DesktopのmacOS環境で確認し、Linux向けのホスト名設定は自動追加しない。
+
+### 環境の分離と所有権
+
+- PostgreSQL・Redisは検査専用Composeサービス、API・BFFはローカルプロセスとして起動する。
+- 3000・8080・5432・6379の全ポートをIPv4・IPv6で確認し、使用中なら資源作成とDB初期化の前に終了する。
+- 開発用Composeと`agentic` DBの初期化は呼び出さず、検査用の`security` DBへmigration・標準seedを適用する。
+- 実行IDで区別したDBボリューム・ネットワークと、所有ラベル付きコンテナを使う。
+- BFFはGit管理対象の現在のソースを`work/security/`の非公開ディレクトリへコピーしてビルドする。
+- 既存の`frontend/node_modules`を再利用し、開発用の`.next`や個人の環境ファイルを変更しない。
+- 起動後はAPI・BFFのリスナーPIDが、起動したプロセスと一致することを確認する。
+- 既存の検査環境を自動で引き継がず、同時起動・管理情報の上書きを拒否する。
+- 正常終了・失敗・中断時は、当該実行が所有するプロセスとラベルを照合したDocker資源だけを片付ける。
+- 片付けに失敗した場合は`2`を返し、`work/security/environment.json`を残す。
+- 取得済みイメージ、Gradleキャッシュ、APIのビルド成果物は残る。
+
+環境だけを操作する場合は、次のコマンドを使う。  
+`start`は終了まで監督し、Ctrl-Cまたは別端末の`stop`で片付ける。  
+ZAP個別入口は、手動起動した環境が残っていると実行を拒否する。
+
+```shell
+./.codex/skills/run-api-e2e/scripts/run.sh start --env security
+./.codex/skills/run-api-e2e/scripts/run.sh stop --env security
+```
+
+監督プロセスの所有権が一致しない場合、`stop`は停止・削除せずに失敗する。  
+管理情報を削除して起動を強制せず、記録されたプロセスと実行IDの資源を調べる。
+
+### 対象・認証・結果
+
+- BFFはトップ、登録、ログイン、検索・予約の画面とフォームを検査する。
+- APIは検査環境だけで有効にしたOpenAPIから業務エンドポイントを読み込む。
+- OpenAPIの外部参照を拒否し、操作単位を含む接続先指定を検査用APIへ固定する。
+- BFF・APIを未認証／認証済みの4区分に分け、探索・受動検査の後に能動検査する。
+- BFFの登録フォームで合成ユーザーを作成し、実際のhiddenフィールドを保持したmultipart送信でログインする。
+- BFFはCookie、APIは同じ資格情報から取得したBearerを使用する。
+- 認証済み検索と予約操作への到達、不正Originの拒否を確認する。
+- BFF・APIの保護対象は要求前にも認証状態を確認し、失効時は既存ユーザーで再認証する。
+- ログアウト検査には要求ごとに新しいBearerを用意する。
+- 各区分の終了時に認証状態を再確認し、失効が残れば一度だけ再認証して区分を再検査する。
+- 認証失敗、探索不足、能動検査の要求数ゼロ、中断・未完了を成功扱いしない。
+- 対象制限スクリプトは、外部ホストとAPI管理系への通信を検査用BFFの無害なパスへ置き換える。
+- 認証やOrigin照合を緩和せず、ブラウザ固有の確認は既存Playwright E2Eで補う。
+
+準備・ビルドを除くZAP全体は最大30分とし、対象へ送る要求は直列に実行する。  
+能動検査はLOW強度の安定版標準ルールを使用する。  
+Next.jsの署名済みAction参照・バインド情報は変形せず、利用者が入力する項目を検査する。  
+認証済みのログイン検査には200ミリ秒の待機を入れ、既存のログイン制限を変更せず再認証の余地を残す。  
+Alpha・Beta、DOMブラウザ検査、管理系、Log4Shell・XXEの外部コールバックを使うルールは初期対象外である。  
+使用するZAP 2.17.0の公式イメージは版とdigestを固定し、自動更新を無効にする。  
+主要アドオンの固定版は`zap_scan.py`の`expected`に記録し、起動時に照合する。
+
+Low以上の指摘候補があれば`1`、Informationalだけか指摘がなければ`0`、失敗・未完了は`2`になる。  
+Compose自身の終了コード`1`との混同を避けるため、コンテナ内部の指摘判定は`10`を使い、公開入口で`1`へ変換する。  
+端末には検査区分、定義済みのルート、ルールID・重大度別件数を表示する。  
+パスワード、Cookie、Bearer、メールアドレス、通信本文、攻撃入力は表示しない。  
+ZAP制御APIはコンテナ内のloopbackに限定し、通信記録と資格情報は一時領域とともに破棄する。
+
+Next.jsが初回ビルドを`SecurityFatalError`の更新推奨通知で止めた場合は、その旨を表示し、同じ隔離コピーで一度だけ再実行する。  
+更新推奨は検査成功で解消したとは扱わず、子タスク05で評価する。  
+ビルド失敗時のログは`work/security/bff-build.log`または`work/security/api-build-migration.log`に残す。  
+実行時のアプリログと検査用コピーは片付け時に削除する。
+
+### 検査ランナーの回帰確認
+
+次のテストは、引数、ポート競合、所有権、中断時の片付け、結果判定を確認する。
+
+```shell
+python3 scripts/internal/security/test_api_runner_arguments.py
+python3 scripts/internal/security/test_dynamic_security.py
+python3 scripts/internal/security/test_zap_checks.py
+python3 scripts/internal/security/test_security_runners.py
+docker compose -f compose.security.yml config --quiet
+python3 scripts/check-docs.py
+```
+
+ZAP内のPython依存を使う単体テストは、リポジトリ直下で次のように実行する。  
+通信は行わず、実フォームの送信形式、認証失敗、時間上限、未完了判定、外部OpenAPI参照の拒否を確認する。
+
+```shell
+docker run --rm --network none --read-only \
+  --tmpfs /tmp:rw,nosuid,size=64m,mode=1777 \
+  --mount "type=bind,source=$PWD/scripts/internal/security,target=/checks,readonly" \
+  --entrypoint python3 \
+  ghcr.io/zaproxy/zaproxy:2.17.0@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af \
+  /checks/test_zap_scan.py
+```
 
 ## 結果の意味と現在の範囲
 

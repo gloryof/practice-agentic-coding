@@ -15,12 +15,23 @@ description: リポジトリのローカルPostgreSQLデータベースを初期
   `./.codex/skills/run-api-e2e/scripts/run.sh e2e`
 - スキルが管理するPostgreSQLサービスを停止・削除する:
   `./.codex/skills/run-api-e2e/scripts/run.sh stop`
+- 検査専用DB・Redis・API・BFFを起動し、終了まで監督する:
+  `./.codex/skills/run-api-e2e/scripts/run.sh start --env security`
+- 検査専用環境の監督プロセスへ終了を要求する:
+  `./.codex/skills/run-api-e2e/scripts/run.sh stop --env security`
 
-コマンドはリポジトリ内のどのディレクトリからでも実行できる。
+コマンドはリポジトリ内のどのディレクトリからでも実行できる。  
+`--env`省略時と`--env dev`は従来の開発用操作を使用する。  
+`--env security`は`start`と`stop`だけに対応する。  
+検査専用環境の詳細とZAP実行は[セキュリティ検査の実行方法](../../../docs/security/security-checks.md)を参照する。
 
 ## 安全ルールに従う
 
-- `start`と`e2e`はローカルの`agentic`データベースを削除して再作成するため、実行前にユーザーへ警告する。
+- 開発用の`start`と`e2e`はローカルの`agentic`データベースを削除して再作成するため、実行前にユーザーへ警告する。
+- 検査用の操作で開発用DBの初期化や開発用Composeを呼び出さない。
+- 検査専用環境は3000・8080・5432・6379のいずれかが使用中なら、資源作成前に終了する。
+- 検査専用環境はCtrl-C、正常終了、失敗時に所有資源だけを片付ける。  
+  監督プロセスの所有権が一致しない場合、停止や管理情報の削除を手動で回避しない。
 - ランナーのポート確認やCompose所有権確認を回避しない。
 - ポート`8080`を既に使用しているプロセスを停止しない。  
   ユーザーに停止を依頼してから再実行する。

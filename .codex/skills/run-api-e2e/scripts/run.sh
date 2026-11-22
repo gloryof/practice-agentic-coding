@@ -28,13 +28,14 @@ fail() {
 
 usage() {
     cat <<'EOF'
-Usage: run.sh <start|e2e|stop>
+使用方法: run.sh <start|e2e|stop> [--env dev|security]
 
-  start  Recreate the local database, migrate, seed, and run the API.
-  e2e    Recreate the local database, run the API and E2E tests, then clean up.
-  stop   Stop and remove the skill-managed PostgreSQL service.
+  start  指定した環境を準備して起動する。
+  e2e    開発用DBを再作成し、APIとE2Eを実行して片付ける。
+  stop   指定した環境の管理対象資源を停止・削除する。
 
-WARNING: start and e2e delete and recreate the local agentic database.
+注意: dev環境のstartとe2eは、ローカルのagentic DBを削除して再作成する。
+security環境は検査専用DB・Redis・API・BFFを起動し、終了時に片付ける。
 EOF
 }
 
@@ -195,7 +196,30 @@ run_stop() {
 }
 
 main() {
-    case "${1:-}" in
+    local operation="${1:-}" environment=dev
+    if [[ $# -gt 0 ]]; then shift; fi
+    if [[ $# -gt 0 ]]; then
+        if [[ $# -ne 2 || "$1" != --env ]]; then
+            usage >&2
+            exit 2
+        fi
+        environment="$2"
+    fi
+    case "${environment}" in
+        dev) ;;
+        security)
+            if [[ "${operation}" != start && "${operation}" != stop ]]; then
+                printf '[run-api-e2e] security環境はstartとstopだけに対応します。\n' >&2
+                exit 2
+            fi
+            exec python3 "${REPO_ROOT}/scripts/internal/security/security_environment.py" "${operation}"
+            ;;
+        *)
+            printf '[run-api-e2e] 不明な環境指定です。\n' >&2
+            exit 2
+            ;;
+    esac
+    case "${operation}" in
         start)
             run_start
             ;;

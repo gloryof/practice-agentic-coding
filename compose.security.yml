@@ -1,6 +1,58 @@
 name: security-check
 
 services:
+  zap:
+    profiles: [dynamic]
+    image: ghcr.io/zaproxy/zaproxy:2.17.0@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af
+    user: zap
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    labels:
+      security.run: ${SECURITY_RUN_ID:-unused}
+    networks: [security-runtime]
+    tmpfs:
+      - /tmp:rw,nosuid,size=1536m,mode=1777
+    environment:
+      HOME: /tmp
+      SECURITY_SCAN_SECONDS: ${SECURITY_SCAN_SECONDS:-1800}
+    volumes:
+      - type: bind
+        source: ./scripts/internal/security
+        target: /checks
+        read_only: true
+    entrypoint: [python3, /checks/zap_scan.py]
+  security-postgres:
+    profiles: [dynamic]
+    image: postgres:16@sha256:3950ad7c3148ca2175ef1b6c36c9efbf78957ae8fbe8b3a5d7c35af50500382f
+    labels:
+      security.run: ${SECURITY_RUN_ID:-unused}
+    ports: ["127.0.0.1:5432:5432"]
+    environment:
+      POSTGRES_DB: security
+      POSTGRES_USER: security
+      POSTGRES_PASSWORD: ${SECURITY_DB_PASSWORD:-unused}
+    volumes:
+      - security-db:/var/lib/postgresql/data
+    networks: [security-runtime]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U security -d security"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  security-redis:
+    profiles: [dynamic]
+    image: redis:7-alpine@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe
+    labels:
+      security.run: ${SECURITY_RUN_ID:-unused}
+    ports: ["127.0.0.1:6379:6379"]
+    command: [redis-server, --save, "", --appendonly, "no"]
+    networks: [security-runtime]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 2s
+      timeout: 3s
+      retries: 30
   semgrep:
     image: semgrep/semgrep:1.185.0@sha256:67518c174185a2043fdbed16c70631b79209499b3671178e7194379b48295a0d
     user: "65532:65532"
@@ -98,3 +150,13 @@ services:
 
 volumes:
   trivy-cache:
+  security-db:
+    name: security-db-${SECURITY_RUN_ID:-unused}
+    labels:
+      security.run: ${SECURITY_RUN_ID:-unused}
+
+networks:
+  security-runtime:
+    name: security-runtime-${SECURITY_RUN_ID:-unused}
+    labels:
+      security.run: ${SECURITY_RUN_ID:-unused}
