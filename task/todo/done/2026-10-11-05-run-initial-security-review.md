@@ -33,7 +33,7 @@ static・dynamicと補完レビューを実施し、小規模な修正と再検�
 | Finding ID | Affected Component | Severity | Evidence | Impact | Recommendation |
 |---|---|---|---|---|---|
 | SEC-01 | npm開発依存 | High | 更新後もHigh 12件・Moderate 11件 | 計測・ブラウザ取得時の開発者環境への影響 | [07の対応記録](2026-10-11-07-remediate-lhci-dependencies.md) |
-| SEC-02 | Docker通信の内包JAR | High | テスト4構成に3 CVE・12件 | 不正なDocker HTTP応答による資源枯渇など | [08でtransportを更新](../2026-10-11-08-replace-shaded-httpcomponents-transport.md) |
+| SEC-02 | Docker通信の内包JAR | High | テスト4構成に3 CVE・12件 | 不正なDocker HTTP応答による資源枯渇など | [08で学習用途のリスクを許容し終了](2026-10-11-08-replace-shaded-httpcomponents-transport.md) |
 | SEC-03 | PostgreSQL・Redis | Critical/High/Medium | PostgreSQL 559件、Redis 1件 | OS・内包ツールの条件別評価が必要 | [09でイメージを評価・更新](../2026-10-11-09-refresh-database-container-images.md) |
 | SEC-04 | BFF・API応答 | Medium/Low | ZAPのヘッダー・エラー・CSRF候補 | 防御不足・構成識別・エラー情報の露出候補 | [10で応答単位に評価](../2026-10-11-10-resolve-zap-findings.md) |
 | SEC-05 | API例外ログ | Medium | 例外本文・cause・要求URIをそのまま記録していた | 入力値・DBエラー等のログへの混入 | 今回修正、回帰テストを追加 |
@@ -155,7 +155,7 @@ scripts/run-security-checks.sh
 task/todo/2026-10-11-05-run-initial-security-review.md
 task/todo/2026-10-11-06-establish-repeatable-security-checks.md
 task/todo/done/2026-10-11-07-remediate-lhci-dependencies.md
-task/todo/2026-10-11-08-replace-shaded-httpcomponents-transport.md
+task/todo/done/2026-10-11-08-replace-shaded-httpcomponents-transport.md
 task/todo/2026-10-11-09-refresh-database-container-images.md
 task/todo/2026-10-11-10-resolve-zap-findings.md
 task/todo/2026-10-11-11-validate-external-trace-id.md
