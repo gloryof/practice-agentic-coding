@@ -15,7 +15,7 @@ case "$2" in
         checks=(npm-audit java-dependencies container-images source secrets)
         ;;
     dynamic)
-        checks=(zap scenarios)
+        checks=(dynamic)
         ;;
     *)
         printf '不明な検査グループ: %s\n' "$2" >&2

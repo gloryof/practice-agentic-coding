@@ -10,6 +10,7 @@ import threading
 import uuid
 
 from security_environment import ROOT, STATE, COMPOSE, EnvironmentFailure, say
+from scenario_checks import run_scenarios, check_runtime_logs
 
 
 def stream_scan_output(stream):
@@ -20,7 +21,8 @@ def stream_scan_output(stream):
 
 
 def main():
-    if len(sys.argv) != 1:
+    with_scenarios = sys.argv[1:] == ["--with-scenarios"]
+    if len(sys.argv) != 1 and not with_scenarios:
         say("ZAP個別検査は引数を受け付けません。")
         return 2
     supervisor = None
@@ -52,15 +54,20 @@ def main():
             time.sleep(0.5)
         else:
             raise EnvironmentFailure("検査環境の準備が時間上限に達しました。")
+        deadline = time.monotonic() + 1800
+        scenario_result = run_scenarios(deadline) if with_scenarios else 0
+        remaining = int(deadline - time.monotonic())
+        if remaining <= 0:
+            raise EnvironmentFailure("動的検査は30分の時間上限に達しました。")
         scanner = subprocess.Popen(COMPOSE + ["run", "--rm", "--no-deps", "-T", "--name", name, "zap"],
                                    env={**os.environ, "SECURITY_RUN_ID": run_id,
-                                        "SECURITY_SCAN_SECONDS": "1800"}, start_new_session=True,
+                                        "SECURITY_SCAN_SECONDS": str(remaining)}, start_new_session=True,
                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace")
         reader = threading.Thread(target=stream_scan_output, args=(scanner.stdout,), daemon=True)
         reader.start()
         try:
             # 結果読み取りと終了処理を含め、ZAPをホスト側でも監督する。
-            code = scanner.wait(timeout=1800)
+            code = scanner.wait(timeout=max(0, deadline - time.monotonic()))
             reader.join(timeout=5)
         except subprocess.TimeoutExpired as error:
             raise EnvironmentFailure("ZAPは30分の時間上限に達しました。") from error
@@ -69,7 +76,10 @@ def main():
             result = 2
         if result == 2:
             say("ZAPコンテナの起動・実行は失敗または未完了です。")
-    except (EnvironmentFailure, OSError, ValueError, KeyError, InterruptedError) as error:
+        if with_scenarios:
+            result = max(result, scenario_result, check_runtime_logs(run_id))
+    except (EnvironmentFailure, OSError, ValueError, KeyError, InterruptedError, subprocess.SubprocessError) as error:
+        result = 2
         say(str(error) if isinstance(error, EnvironmentFailure) else "ZAP検査は失敗・中断しました。")
     finally:
         signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -103,7 +113,8 @@ def main():
             result = 2
         if run_id and STATE.exists():
             result = 2
-    say(f"ZAP判定: 終了コード{result}（0=指摘なし、1=指摘あり、2=失敗・未完了）")
+    label = "動的検査" if with_scenarios else "ZAP"
+    say(f"{label}判定: 終了コード{result}（0=指摘なし、1=指摘あり、2=失敗・未完了）")
     return result
 
 

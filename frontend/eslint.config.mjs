@@ -7,6 +7,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
 import testingLibrary from "eslint-plugin-testing-library";
 import vitest from "@vitest/eslint-plugin";
+import ts from "typescript";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,14 +21,16 @@ function sourceFiles(directory) {
   });
 }
 
-// The directive, rather than the directory name, determines the Client boundary.
-const clientFiles = ["app", "features", "shared"]
-  .flatMap(sourceFiles)
-  .filter((file) =>
-    /^(?:\uFEFF)?\s*(?:(?:\/\/[^\n]*\n|\/\*[\s\S]*?\*\/)\s*)*["']use client["'];?/.test(
-      readFileSync(path.join(root, file), "utf8"),
-    ),
+// ディレクトリ名ではなく、コメントと空白を除いた先頭の宣言で境界を判定する。
+const clientFiles = ["app", "features", "shared"].flatMap(sourceFiles).filter((file) => {
+  const scanner = ts.createScanner(
+    ts.ScriptTarget.Latest,
+    true,
+    ts.LanguageVariant.Standard,
+    readFileSync(path.join(root, file), "utf8"),
   );
+  return scanner.scan() === ts.SyntaxKind.StringLiteral && scanner.getTokenValue() === "use client";
+});
 
 const features = readdirSync(path.join(root, "features"), { withFileTypes: true })
   .filter((entry) => entry.isDirectory())

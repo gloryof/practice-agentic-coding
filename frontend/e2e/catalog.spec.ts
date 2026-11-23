@@ -62,6 +62,15 @@ test("ログイン後に蔵書を検索し、在庫と検索状態を確認で�
   await page.getByRole("searchbox", { name: "タイトル" }).fill("該当しない書名");
   await page.getByRole("button", { name: "蔵書を検索" }).click();
   await expect(page.getByRole("heading", { name: "該当する本はありません" })).toBeVisible();
+
+  const htmlInput = '<img src=x onerror="document.documentElement.dataset.securityProbe=1">';
+  await page.getByRole("searchbox", { name: "タイトル" }).fill(htmlInput);
+  await page.getByRole("searchbox", { name: "ISBN" }).fill("");
+  await page.getByRole("button", { name: "蔵書を検索" }).click();
+  await expect(page).toHaveURL((url) => url.searchParams.get("title") === htmlInput);
+  await expect(page.getByRole("searchbox", { name: "タイトル" })).toHaveValue(htmlInput);
+  await expect(page.locator("img[onerror]")).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.dataset.securityProbe)).toBeUndefined();
   expect(directApiRequests).toEqual([]);
   expect(errors).toEqual([]);
 });

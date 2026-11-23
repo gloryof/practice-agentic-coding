@@ -13,6 +13,32 @@ import zap_checks
 
 
 class ZapChecksTest(unittest.TestCase):
+    def test_scenario_failure_keeps_dynamic_incomplete_after_successful_zap(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            state = Path(temporary) / "state.json"
+            supervisor = Mock(pid=123)
+            supervisor.poll.return_value = None
+            supervisor.wait.return_value = 0
+            supervisor.terminate.side_effect = lambda: state.unlink(missing_ok=True)
+            scanner = Mock()
+            scanner.stdout = io.StringIO("")
+            scanner.wait.return_value = 0
+            scanner.poll.return_value = 0
+            def spawn(arguments, **_kwargs):
+                if "start" in arguments:
+                    state.write_text(json.dumps({"pid": 123, "run_id": "test-run", "ready": True}))
+                    return supervisor
+                return scanner
+            with patch.object(zap_checks, "STATE", state), \
+                 patch.object(zap_checks.signal, "signal"), \
+                 patch.object(zap_checks.sys, "argv", ["runner", "--with-scenarios"]), \
+                 patch.object(zap_checks, "run_scenarios", return_value=2) as scenarios, \
+                 patch.object(zap_checks, "check_runtime_logs", return_value=0), \
+                 patch.object(zap_checks.subprocess, "Popen", side_effect=spawn):
+                self.assertEqual(zap_checks.main(), 2)
+                scenarios.assert_called_once()
+                supervisor.terminate.assert_called_once()
+
     def test_scanner_and_cleanup_exit_contract(self):
         for scan_code, cleanup_code, expected in ((0, 0, 0), (10, 0, 1), (1, 0, 2),
                                                   (2, 0, 2), (10, 2, 2)):

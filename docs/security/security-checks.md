@@ -31,7 +31,7 @@ Trivy・Semgrep検査にはPython 3.9以上、秘密情報・ソース検査に�
 
 リポジトリ外をカレントディレクトリとして実行しても、スクリプトの配置から対象を特定する。  
 `--group dynamic`は検査専用環境を起動してZAPを実行する。  
-アプリ固有シナリオの接続は子タスク05で行うため、現段階のグループ全体は未完了の`2`になる。  
+同じ検査専用環境でアプリ固有シナリオとZAPを実行し、結果を集約する。  
 `--only`、`--all`は提供しない。
 
 ## ZAPによる動的検査
@@ -106,7 +106,8 @@ Compose自身の終了コード`1`との混同を避けるため、コンテナ�
 ZAP制御APIはコンテナ内のloopbackに限定し、通信記録と資格情報は一時領域とともに破棄する。
 
 Next.jsが初回ビルドを`SecurityFatalError`の更新推奨通知で止めた場合は、その旨を表示し、同じ隔離コピーで一度だけ再実行する。  
-更新推奨は検査成功で解消したとは扱わず、子タスク05で評価する。  
+更新推奨は検査成功で解消したとは扱わず、公式アドバイザリと照合してTODOへ記録する。  
+初回確認ではNext.js 16.4.3を公式修正版16.4.5へ更新した。  
 ビルド失敗時のログは`work/security/bff-build.log`または`work/security/api-build-migration.log`に残す。  
 実行時のアプリログと検査用コピーは片付け時に削除する。
 
@@ -118,10 +119,36 @@ Next.jsが初回ビルドを`SecurityFatalError`の更新推奨通知で止め�
 python3 scripts/internal/security/test_api_runner_arguments.py
 python3 scripts/internal/security/test_dynamic_security.py
 python3 scripts/internal/security/test_zap_checks.py
+python3 scripts/internal/security/test_scenario_checks.py
 python3 scripts/internal/security/test_security_runners.py
 docker compose -f compose.security.yml config --quiet
 python3 scripts/check-docs.py
 ```
+
+### アプリ固有シナリオと補完確認
+
+`--group dynamic`は環境の準備後、APIのログイン・ログアウト・検索E2E、ChromiumのブラウザE2E、ZAPの順に実行する。  
+準備・ビルド後に共通の30分期限を設定し、API E2Eのコンパイルを含むシナリオとZAPへ残り時間だけを渡す。  
+ZAPだけを再実行する場合は`check-zap.sh`を使う。  
+シナリオ失敗後も残り時間内ならZAPを続行し、シナリオ失敗・時間超過はグループを未完了の`2`とする。
+
+- API E2Eは現在のBearerの失効と、別セッションの維持を確認する。
+- ブラウザE2Eは未認証の検索拒否、Cookie改ざん・固定化・期限切れCookie、ログアウト後のCookie再利用、異なるOriginの拒否、検索入力のHTML非実行、予約を確認する。
+- 必須のブラウザ10シナリオがすべて完了したことをJSONの集計でも確認し、空実行・skip・flakyを成功扱いしない。
+- 期限切れのストア内セッションとAPIトークンは、時計を制御できる既存単体テストで補完する。
+- `playwright.security.config.ts`はサーバーを起動せず、ランナーが所有する環境だけへ接続する。
+- 開発用`agentic-postgres`を直接pauseする既存の在庫障害注入テストは、この設定で除外する。  
+  この検査ではDB障害時のブラウザ回復を保証せず、通常のAPI品質ゲートのDAOテストとコードレビューで補完する。
+- Playwrightのtrace・スクリーンショット・動画・HTMLレポートを無効化し、一時出力先を終了時に削除する。
+- ブラウザのJSON結果はメモリ内で処理し、失敗した固定テスト名だけを表示する。  
+  生のアサーション値や通信本文は表示しない。
+- API・BFFの実行時ログは片付け前に既知の合成メール・パスワードと代表的なBearer・Cookie形式を確認する。  
+  候補があれば値を表示せず`1`、ログを読めなければ`2`とする。  
+  この確認は未知の秘密値やすべてのエンコード形式を検出するものではない。
+
+Node.js 24とJDK 27を選択した端末で実行する。  
+TestcontainersがRancher Desktopを検出できない場合は、稼働中のDocker contextのソケットを`DOCKER_HOST`へ指定し、`TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock`を設定してAPI品質ゲートを再実行する。  
+終了直後のポートがまだ使用不可なら、既存サービスを停止せず、解放後に再実行する。
 
 ZAP内のPython依存を使う単体テストは、リポジトリ直下で次のように実行する。  
 通信は行わず、実フォームの送信形式、認証失敗、時間上限、未完了判定、外部OpenAPI参照の拒否を確認する。

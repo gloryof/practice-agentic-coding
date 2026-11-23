@@ -49,7 +49,7 @@ Semgrep CEと既存の公開セキュリティルールを使う方針を決定�
 - `check-source.sh`から個別実行でき、既存のstaticグループからも呼び出される。
 - 代表的な危険例と安全例、構文不正、サイズ超過、抑制コメント、取得失敗、アーカイブの入力境界、通信・権限制約を検証した。
 - 対象構文と解析限界は[ルールの説明](../../../scripts/internal/security/semgrep/README.md)、実行手順は[セキュリティ検査の実行方法](../../../docs/security/security-checks.md)に記載した。
-- 補完レビューは[初回全体確認TODO](../2026-10-11-05-run-initial-security-review.md)で引き続き追跡する。
+- 補完レビューは[初回全体確認TODO](2026-10-11-05-run-initial-security-review.md)で引き続き追跡する。
 
 ## レビュー記録
 
