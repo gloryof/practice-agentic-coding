@@ -51,7 +51,7 @@ High・Criticalの指摘と過去のHigh候補を受容しておらず、外部�
 - [05: 初回の全体確認・指摘対応・再検査（完了）](done/2026-10-11-05-run-initial-security-review.md)
 - [07: Lighthouse CIの依存更新（管理者指定で終了、更新は未完了）](done/2026-10-11-07-remediate-lhci-dependencies.md)
 - [08: Docker通信の内包Java依存（学習用途でリスク許容し終了）](done/2026-10-11-08-replace-shaded-httpcomponents-transport.md)
-- [09: PostgreSQL・Redisイメージ更新](2026-10-11-09-refresh-database-container-images.md)
+- [09: PostgreSQL・Redisイメージ更新（現状の対応範囲で完了）](done/2026-10-11-09-refresh-database-container-images.md)
 - [10: ZAP候補の評価と修正](2026-10-11-10-resolve-zap-findings.md)
 - [11: 外部trace IDの検証](2026-10-11-11-validate-external-trace-id.md)
 

@@ -4,10 +4,12 @@
 `product/operational-nonfunctional-baseline.md`の技術非依存な目標を、現在のSpring Boot APIとPostgreSQLで設計・検証するための技術固有前提を定義する。
 
 ## 現在の構成
-- ローカルで動作する単一のSpring Boot APIとPostgreSQL 16を使用する。
+- ローカルで動作する単一のSpring Boot APIとPostgreSQLを使用する。
 - 全コンテキストは現在一つのデータベースを共有する。
 - 本番相当の外部サービス依存はない。
 - ローカルとテストのデータは破棄可能であり、現在のデータベースはバックアップ対象外とする。
+- Debian版からの切り替えでは既存のデータ領域を流用せず、標準migrationとseedでDBを再作成する。  
+  Alpineのlibc・localeの差があるため、既存DBの物理データ互換性や文字列の並び順の同一性を保証しない。
 
 ## 性能検証
 - `product/operational-nonfunctional-baseline.md`の利用規模、ピーク負荷、p95/p99を合否基準とする。

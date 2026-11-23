@@ -90,8 +90,10 @@ private object SharedPostgres {
     private const val warmupRetryIntervalMillis = 200L
 
     val container: PostgreSQLContainer =
-        PostgreSQLContainer("postgres:16")
-            .withDatabaseName("agentic")
+        // Composeと同じ16.16-alpine3.24を固定する。Testcontainers 2ではタグとdigestを併記できない。
+        PostgreSQLContainer(
+            "postgres@sha256:f2f98726820d0342055351c6e9d36e705f5bfffb3dd53ff556325114b08afb6d",
+        ).withDatabaseName("agentic")
             .withUsername("agentic")
             .withPassword("agentic")
             .withCopyFileToContainer(

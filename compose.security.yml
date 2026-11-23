@@ -24,7 +24,7 @@ services:
     entrypoint: [python3, /checks/zap_scan.py]
   security-postgres:
     profiles: [dynamic]
-    image: postgres:16@sha256:3950ad7c3148ca2175ef1b6c36c9efbf78957ae8fbe8b3a5d7c35af50500382f
+    image: postgres:16.16-alpine3.24@sha256:f2f98726820d0342055351c6e9d36e705f5bfffb3dd53ff556325114b08afb6d
     labels:
       security.run: ${SECURITY_RUN_ID:-unused}
     ports: ["127.0.0.1:5432:5432"]
