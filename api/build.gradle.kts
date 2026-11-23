@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.flywaydb:flyway-database-postgresql:13.12.1")
+        classpath("org.flywaydb:flyway-database-postgresql:13.13.0")
         classpath("org.postgresql:postgresql:42.7.14")
     }
 }
@@ -11,11 +11,11 @@ buildscript {
 plugins {
     kotlin("jvm") version "2.4.10"
     kotlin("plugin.spring") version "2.4.10"
-    id("org.springframework.boot") version "4.1.2"
+    id("org.springframework.boot") version "4.2.0"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
-    id("org.flywaydb.flyway") version "13.12.1"
-    id("com.google.devtools.ksp") version "2.3.13"
+    id("org.flywaydb.flyway") version "13.13.0"
+    id("com.google.devtools.ksp") version "2.3.14"
     id("dev.detekt") version "2.0.0-alpha.6"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
 }
@@ -26,7 +26,7 @@ description = "Demo project for Spring Boot"
 
 // Komapper 7が要求するcoroutine APIをSpring Bootの管理版で下げない。
 extra["kotlin-coroutines.version"] = "1.11.0"
-extra["flyway.version"] = "13.12.1"
+extra["flyway.version"] = "13.13.0"
 
 val e2eTestSourceSet = sourceSets.create("e2eTest")
 val architectureTestSourceSet =
@@ -71,7 +71,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("tools.jackson.module:jackson-module-kotlin")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.1")
     implementation("org.flywaydb:flyway-core")
     implementation("org.postgresql:postgresql")
 

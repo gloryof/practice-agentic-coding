@@ -6,6 +6,7 @@
 ## ステータス
 - Status: Proposed
 - Updated: 2026-11-08 - 依存更新時に互換制約を確認
+- Updated: 2026-11-23 - 最新公開版とpeer依存を再確認し、制約継続を確認
 - 担当: リポジトリ管理者
 - 再確認日: 2026-11-22
 
@@ -13,8 +14,10 @@
 
 TypeScript 7.0.2は公開済みだが、`openapi-typescript` 7.13.0はpeer依存をTypeScript 5系に限定している。  
 `@vitest/eslint-plugin` 1.6.28はTypeScript 6以上を要求するため、1.6.27を維持する。  
-ESLint 10.14.0は公開済みだが、Next.js 16.4.3内部の`eslint-plugin-import`、`eslint-plugin-jsx-a11y`、`eslint-plugin-react`はESLint 9までを要求する。  
+ESLint 10.15.0は公開済みだが、Next.js 16.4.6内部の`eslint-plugin-import`、`eslint-plugin-jsx-a11y`、`eslint-plugin-react`はESLint 9までを要求する。  
 Kotlin 2.4.21ではdetektがコンパイル済みの2.4.10との不一致を検出し、検査が失敗したため2.4.10を採用する。
+
+2026-11-23時点でもdetektの最新公開版は2.0.0-alpha.6のままである。
 
 ## 課題
 
